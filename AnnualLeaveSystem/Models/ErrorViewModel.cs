@@ -1,5 +1,3 @@
-using System;
-
 namespace AnnualLeaveSystem.Models
 {
     public class ErrorViewModel

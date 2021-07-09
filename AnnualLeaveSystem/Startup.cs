@@ -1,4 +1,5 @@
 using AnnualLeaveSystem.Data;
+using AnnualLeaveSystem.Infrastructure;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -17,11 +18,10 @@ public class Startup
     public void ConfigureServices(IServiceCollection services)
     {
         services
-            .AddDbContext<ApplicationDbContext>(options => options
+            .AddDbContext<LeaveSystemDbContext>(options => options
                 .UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
         services.AddDatabaseDeveloperPageExceptionFilter();
-
 
         services
             .AddDefaultIdentity<IdentityUser>(options =>
@@ -31,7 +31,7 @@ public class Startup
                 options.Password.RequireNonAlphanumeric = false;
                 options.Password.RequireUppercase = false;
             })
-            .AddEntityFrameworkStores<ApplicationDbContext>();
+            .AddEntityFrameworkStores<LeaveSystemDbContext>();
 
         services
             .AddControllersWithViews();
@@ -39,6 +39,8 @@ public class Startup
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
     {
+        app.PrepareDatabase();
+
         if (env.IsDevelopment())
         {
             app.UseDeveloperExceptionPage();
