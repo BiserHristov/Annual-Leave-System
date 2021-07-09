@@ -33,6 +33,6 @@
 
         public bool IsCancelled { get; set; } = false;
 
-        public string RequestComments { get; set; }
+        public string Comments { get; set; }
     }
 }

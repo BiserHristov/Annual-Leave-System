@@ -1,12 +1,13 @@
 ﻿namespace AnnualLeaveSystem.Infrastructure
 {
+    using System;
+    using System.Linq;
     using AnnualLeaveSystem.Data;
     using AnnualLeaveSystem.Data.Models;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.DependencyInjection;
-    using System;
-    using System.Linq;
+
 
     public static class ApplicationBuilderExtensions
     {

@@ -1,5 +1,6 @@
 using AnnualLeaveSystem.Data;
 using AnnualLeaveSystem.Infrastructure;
+using AnnualLeaveSystem.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -35,6 +36,9 @@ public class Startup
 
         services
             .AddControllersWithViews();
+        services.AddTransient<IGetLeaveTypesService, GetLeaveTypesService>();
+        services.AddTransient<IGetEmployeesInTeamService, GetEmployeesInTeamService>();
+
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
