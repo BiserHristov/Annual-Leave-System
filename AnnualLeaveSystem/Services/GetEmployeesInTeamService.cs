@@ -19,7 +19,7 @@
         IEnumerable<ReplacementEmployeeViewModel> IGetEmployeesInTeamService.GetEmployeesInTeam()
         {
             return this.db.Employees
-              .Where(e => e.TeamId == 2) // TODO: Take the current user teamId!!!
+              .Where(e => e.TeamId == 4) // TODO: Take the current user teamId!!!
               .Select(e => new ReplacementEmployeeViewModel
               {
                   Id = e.Id,
@@ -27,5 +27,5 @@
               })
               .ToList();
         }
-    }
+    } 
 }

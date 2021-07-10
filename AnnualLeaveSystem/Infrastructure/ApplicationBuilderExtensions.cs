@@ -26,6 +26,7 @@
             SeedLeaveTypes(data);
             SeedDepartaments(data);
             SeedEmployees(data);
+            SeedOfficialHolidays(data);
 
             return app;
         }
@@ -67,11 +68,11 @@
             data.Teams.AddRange(new[]{
                 new Team
                     {
-                        ProjectId = 5
+                        ProjectId = 1
                     },
                 new Team
                     {
-                        ProjectId = 6
+                        ProjectId = 2
                     },
 
                 });
@@ -149,7 +150,7 @@
                        ImageUrl="https://data.whicdn.com/images/356867091/original.jpg",
                        JobTitle= "Specialist",
                        DepartmentId=1,
-                       TeamId=2
+                       TeamId=4
 
                    },
 
@@ -161,7 +162,7 @@
                        ImageUrl="https://klohmakeup.files.wordpress.com/2013/03/layers20start20image2.jpg",
                        JobTitle= "Spacialist",
                        DepartmentId=2,
-                       TeamId=2
+                       TeamId=4
 
                    },
 
@@ -173,7 +174,7 @@
                        ImageUrl="https://st.depositphotos.com/1807998/3521/i/950/depositphotos_35212277-stock-photo-young-man-in-park.jpg",
                        JobTitle= "Senior Specialist",
                        DepartmentId=3,
-                       TeamId=3
+                       TeamId=5
 
                    },
                 new Employee
@@ -184,7 +185,7 @@
                        ImageUrl="https://data.whicdn.com/images/312637959/original.jpg",
                        JobTitle= "Senior Specialist",
                        DepartmentId=3,
-                       TeamId=3
+                       TeamId=5
 
                    },
 
@@ -194,6 +195,105 @@
             data.SaveChanges();
         }
 
+        private static void SeedOfficialHolidays(LeaveSystemDbContext data)
+        {
+            if (data.OfficialHolidays.Any())
+            {
+                return;
+            }
+
+            var holidays = new[]  {
+            new OfficialHoliday{
+                Date= new DateTime(2021, 01, 01),
+                Name= "New Year`s Day",
+            },
+            new OfficialHoliday{
+                Date= new DateTime(2021, 03, 03),
+                Name= "Liberation Day",
+            },
+            new OfficialHoliday{
+                Date= new DateTime(2021, 04, 30),
+                Name= "Good Friday",
+            },
+            new OfficialHoliday{
+                Date= new DateTime(2021, 05, 01),
+                Name= "International Workers Day",
+            },
+            new OfficialHoliday{
+                Date= new DateTime(2021, 05, 02),
+                Name= "Easter",
+            },
+            new OfficialHoliday{
+                Date= new DateTime(2021, 05, 03),
+                Name= "Easter",
+            },
+            new OfficialHoliday{
+                Date= new DateTime(2021, 05, 04),
+                Name= "Easter",
+            },
+            new OfficialHoliday{
+                Date= new DateTime(2021, 05, 06),
+                Name= "St George`s Day",
+            },
+            new OfficialHoliday{
+                Date= new DateTime(2021, 05, 24),
+                Name= "Sts Cyril and Methodius Day",
+            },
+            new OfficialHoliday{
+                Date= new DateTime(2021, 09, 06),
+                Name= "Unification Day",
+            },
+            new OfficialHoliday{
+                Date= new DateTime(2021, 09, 22),
+                Name= "Independence Day",
+            },
+            new OfficialHoliday{
+                Date= new DateTime(2021, 12, 24),
+                Name= "Christmas",
+            },
+            new OfficialHoliday{
+                Date= new DateTime(2021, 12, 25),
+                Name= "Christmas",
+            },
+            new OfficialHoliday{
+                Date= new DateTime(2021, 12, 26),
+                Name= "Christmas",
+            },
+            new OfficialHoliday{
+                Date= new DateTime(2021, 12, 27),
+                Name= "Christmas",
+            },
+            new OfficialHoliday{
+                Date= new DateTime(2021, 12, 28).Date,
+                Name= "Christmas",
+            }};
+
+
+            data.OfficialHolidays.AddRange(holidays);
+
+            data.SaveChanges();
+
+        }
+
 
     }
 }
+
+
+//
+//,
+//new DateTime,
+//new DateTime(2021, ),
+//new DateTime(2021, ),
+//new DateTime(2021, ),
+//new DateTime(2021, ),
+//new DateTime(2021, ),
+//new DateTime(2021,),
+//new DateTime(2021, ),
+//new DateTime(2021, ),
+//new DateTime(2021, ),
+//new DateTime(2021, ),
+//new DateTime(2021, 12, 25),
+//new DateTime(2021, 12, 26),
+//new DateTime(2021, 12, 27),
+//new DateTime(2021, 12, 28),

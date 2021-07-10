@@ -22,6 +22,7 @@ namespace AnnualLeaveSystem.Data
         public DbSet<Team> Teams { get; set; }
 
         public DbSet<Project> Projects { get; set; }
+        public DbSet<OfficialHoliday> OfficialHolidays { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -74,6 +75,10 @@ namespace AnnualLeaveSystem.Data
               .HasForeignKey(t => t.ProjectId)
               .OnDelete(DeleteBehavior.Restrict);
 
+            builder
+                .Entity<OfficialHoliday>()
+                .Property(p => p.Date)
+                .HasColumnType("date");
 
             base.OnModelCreating(builder);
         }

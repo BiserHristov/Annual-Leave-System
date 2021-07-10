@@ -1,5 +1,6 @@
 ﻿namespace AnnualLeaveSystem.Models.Leaves
 {
+    using AnnualLeaveSystem.Data.Models;
     using System;
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
@@ -8,20 +9,28 @@
 
     public class AddLeaveFormModel
     {
-        [Display(Name ="Start date")]
-        public DateTime StartDate { get; init; }
+        [Required]
+        [Display(Name = "Start date")]
+        public DateTime StartDate { get; set; }
 
+        [Required]
         [Display(Name = "End date")]
-        public DateTime EndDate { get; init; }
+        public DateTime EndDate { get; set; }
 
+        [Required]
         [Display(Name = "Leave type")]
         public int LeaveTypeId { get; init; }
 
-        public string ReplacementEmployeeId { get; init; }
+        [Required]
+        public int ReplacementEmployeeId { get; init; }
+
+        public int TotalDays { get; set; }
 
         public string Comments { get; init; }
 
         public IEnumerable<LeaveTypeViewModel> LeaveTypes { get; set; }
+
+        public IEnumerable<OfficialHoliday> ОfficialHolidays { get; set; }
 
         public IEnumerable<ReplacementEmployeeViewModel> EmployeesInTeam { get; set; }
     }

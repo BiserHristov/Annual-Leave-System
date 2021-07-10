@@ -38,6 +38,7 @@ public class Startup
             .AddControllersWithViews();
         services.AddTransient<IGetLeaveTypesService, GetLeaveTypesService>();
         services.AddTransient<IGetEmployeesInTeamService, GetEmployeesInTeamService>();
+        services.AddTransient<IGetOfficialHolidaysService, GetOfficialHolidaysService>();
 
     }
 

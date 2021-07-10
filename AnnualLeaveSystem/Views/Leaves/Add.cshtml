@@ -9,19 +9,49 @@
         <div class="col-sm-12 offset-lg-2 col-lg-8 offset-xl-3 col-xl-6">
             <h2 class="heading-margin text-center"> Add Leave Request:</h2>
             <form method="post">
-                <div asp-validation-summary="All" class="text-danger"></div>
 
-                <div class="form-group">
+
+                <div class="form-group date datepicker" id="startDate">
                     <label asp-for="StartDate"></label>
-                    <input asp-for="StartDate" class="form-control datepicker" id="datetimepicker4" placeholder="Your start date..." />
-                    <span asp-validation-for="StartDate" class="text-danger"></span>
+                    <input asp-for="StartDate" type="text" id="StartDateInput" class="form-control">
+                    <span asp-validation-for="StartDate" class="small text-danger"></span>
+                    <div class="input-group-addon">
+                        <span class="glyphicon glyphicon-th"></span>
+                    </div>
+                </div>
+
+                <div class="form-group date datepicker" id="endDate">
+                    <label asp-for="EndDate"></label>
+                    <input asp-for="EndDate" type="text" class="form-control" id="EndDateInput">
+                    <span asp-validation-for="EndDate" class="small text-danger"></span>
+                    <div class="input-group-addon">
+                        <span class="glyphicon glyphicon-th"></span>
+                    </div>
                 </div>
 
                 <div class="form-group">
-                    <label asp-for="EndDate"></label>
-                    <input asp-for="EndDate" class="form-control datepicker" placeholder="Your end date..." />
-                    <span asp-validation-for="EndDate" class="text-danger"></span>
+                    <label asp-for="TotalDays"></label>
+                    <input asp-for="TotalDays" type='text' class="form-control" id="TotalDays">
+                    <span asp-validation-for="TotalDays" class="small text-danger"></span>
                 </div>
+
+                @*<div class="form-group">
+                            <label asp-for="StartDate"></label>
+                            <input asp-for="StartDate" class="form-control datepicker" placeholder="Your start date..." />
+                            <span asp-validation-for="StartDate" class="small text-danger"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="EndDate"></label>
+                            <input asp-for="EndDate" class="form-control datepicker" placeholder="Your end date..." />
+                            <span asp-validation-for="EndDate" class="small text-danger"></span>
+                        </div>
+
+                    <div class="form-group">
+                            <label asp-for=""></label>
+                            <input asp-for="" class="form-control"  placeholder="Number of days" />
+                            <span asp-validation-for="" class="small text-danger"></span>
+                        </div>*@
 
                 <div class="form-group">
                     <label asp-for="LeaveTypeId"></label>
@@ -31,7 +61,8 @@
                             <option value="@type.Id">@type.Name</option>
                         }
                     </select>
-                    <span asp-validation-for="LeaveTypes" class="text-danger"></span>
+
+                    <span asp-validation-for="LeaveTypes" class="small text-danger"></span>
                 </div>
 
                 <div class="form-group">
@@ -51,15 +82,20 @@
                     <span asp-validation-for="Comments" class="text-danger"></span>
                 </div>
                 <input type="submit" class="btn btn-primary" value="Add" />
-                @*<script type="text/javascript">
-                        $(function() {
-                           // Bootstrap DateTimePicker v4
-                            $('#datetimepicker4').datetimepicker({
-                                 format: 'DD/MM/YYYY'
-                           });
-                        });
-                    </script>*@
+
             </form>
         </div>
     </div>
 </div>
+
+@*@section BootstrapDatePicker
+    {
+        <script type="text/javascript">
+            $(function () {
+                // Bootstrap DateTimePicker v4
+                $('#datepicker1').datetimepicker({
+                    format: 'DD/MM/YYYY'
+                });
+            });
+        </script>
+    }*@
