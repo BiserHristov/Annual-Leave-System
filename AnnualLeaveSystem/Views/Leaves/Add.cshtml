@@ -13,16 +13,16 @@
 
                 <div class="form-group date datepicker" id="startDate">
                     <label asp-for="StartDate"></label>
-                    <input asp-for="StartDate" type="text" id="StartDateInput" class="form-control">
+                    <input asp-for="StartDate" type="text" id="StartDateInput" class="form-control" value="@(Model.StartDate.Year<=1000?DateTime.Now.ToLocalTime().ToString("dd/MM/yyyy") : Model.StartDate.ToString("dd/MM/yyyy"))">
                     <span asp-validation-for="StartDate" class="small text-danger"></span>
                     <div class="input-group-addon">
                         <span class="glyphicon glyphicon-th"></span>
                     </div>
                 </div>
-
+                
                 <div class="form-group date datepicker" id="endDate">
                     <label asp-for="EndDate"></label>
-                    <input asp-for="EndDate" type="text" class="form-control" id="EndDateInput">
+                    <input asp-for="EndDate" type="text" class="form-control" id="EndDateInput" value="@(Model.EndDate.Year<=1000?DateTime.Now.ToLocalTime().ToString("dd/MM/yyyy") : Model.EndDate.ToString("dd/MM/yyyy"))">
                     <span asp-validation-for="EndDate" class="small text-danger"></span>
                     <div class="input-group-addon">
                         <span class="glyphicon glyphicon-th"></span>
@@ -31,7 +31,7 @@
 
                 <div class="form-group">
                     <label asp-for="TotalDays"></label>
-                    <input asp-for="TotalDays" type='text' class="form-control" id="TotalDays">
+                    <input asp-for="TotalDays" type='text' class="form-control" id="TotalDays" value="@(Model.TotalDays==0?0:Model.TotalDays)">
                     <span asp-validation-for="TotalDays" class="small text-danger"></span>
                 </div>
 
@@ -66,14 +66,14 @@
                 </div>
 
                 <div class="form-group">
-                    <label asp-for="ReplacementEmployeeId"></label>
-                    <select asp-for="ReplacementEmployeeId" class="form-control">
+                    <label asp-for="SubstituteEmployeeId"></label>
+                    <select asp-for="SubstituteEmployeeId" class="form-control">
                         @foreach (var type in Model.EmployeesInTeam)
                         {
                             <option value="@type.Id">@type.Name</option>
                         }
                     </select>
-                    <span asp-validation-for="ReplacementEmployeeId" class="text-danger"></span>
+                    <span asp-validation-for="SubstituteEmployeeId" class="text-danger"></span>
                 </div>
 
                 <div class="form-group">
@@ -81,7 +81,8 @@
                     <textarea asp-for="Comments" class="form-control datepicker" rows=4 placeholder="Comments..."></textarea>
                     <span asp-validation-for="Comments" class="text-danger"></span>
                 </div>
-                <input type="submit" class="btn btn-primary" value="Add" />
+                <input type="submit" class="btn btn-primary float-right" value="Add" />
+                @*<a class="btn btn-primary float-left" asp-area="" asp-controller="Home" asp-action="Index">Home</a>*@
 
             </form>
         </div>

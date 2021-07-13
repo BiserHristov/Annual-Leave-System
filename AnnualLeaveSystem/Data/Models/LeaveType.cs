@@ -16,5 +16,6 @@
         public int DefaultDays { get; set; }
 
         public ICollection<Leave> Leaves { get; init; } = new HashSet<Leave>();
+        public ICollection<EmployeeLeaveType> TypesEmployees { get; set; } = new HashSet<EmployeeLeaveType>();
     }
 }

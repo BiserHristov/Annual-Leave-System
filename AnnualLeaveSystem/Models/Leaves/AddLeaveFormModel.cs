@@ -22,11 +22,14 @@
         public int LeaveTypeId { get; init; }
 
         [Required]
-        public int ReplacementEmployeeId { get; init; }
+        public int SubstituteEmployeeId { get; init; }
 
+        public int RequestEmployeeId { get; init; }
         public int TotalDays { get; set; }
 
         public string Comments { get; init; }
+
+        public DateTime RequestedDate { get; set; } = DateTime.UtcNow;
 
         public IEnumerable<LeaveTypeViewModel> LeaveTypes { get; set; }
 

@@ -4,14 +4,16 @@ using AnnualLeaveSystem.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace AnnualLeaveSystem.Data.Migrations
 {
     [DbContext(typeof(LeaveSystemDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210712170347_AddEmployeeLeaveTypesTable")]
+    partial class AddEmployeeLeaveTypesTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -141,9 +143,6 @@ namespace AnnualLeaveSystem.Data.Migrations
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("SubstituteEmployeeId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
                     b.HasIndex("ApproveEmployeeId");
@@ -151,8 +150,6 @@ namespace AnnualLeaveSystem.Data.Migrations
                     b.HasIndex("LeaveTypeId");
 
                     b.HasIndex("RequestEmployeeId");
-
-                    b.HasIndex("SubstituteEmployeeId");
 
                     b.ToTable("Leaves");
                 });
@@ -504,19 +501,11 @@ namespace AnnualLeaveSystem.Data.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("AnnualLeaveSystem.Data.Models.Employee", "SubstituteEmployee")
-                        .WithMany("SubstituteLeaves")
-                        .HasForeignKey("SubstituteEmployeeId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.Navigation("ApproveEmployee");
 
                     b.Navigation("LeaveType");
 
                     b.Navigation("RequestEmployee");
-
-                    b.Navigation("SubstituteEmployee");
                 });
 
             modelBuilder.Entity("AnnualLeaveSystem.Data.Models.Team", b =>
@@ -593,8 +582,6 @@ namespace AnnualLeaveSystem.Data.Migrations
                     b.Navigation("EmployeesTypes");
 
                     b.Navigation("RequestedLeaves");
-
-                    b.Navigation("SubstituteLeaves");
                 });
 
             modelBuilder.Entity("AnnualLeaveSystem.Data.Models.LeaveType", b =>

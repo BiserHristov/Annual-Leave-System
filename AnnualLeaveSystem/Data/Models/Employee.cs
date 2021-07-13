@@ -47,8 +47,13 @@
         [InverseProperty("RequestEmployee")]
         public virtual ICollection<Leave> RequestedLeaves { get; init; } = new HashSet<Leave>();
 
+        [InverseProperty("SubstituteEmployee")]
+        public virtual ICollection<Leave> SubstituteLeaves { get; init; } = new HashSet<Leave>();
+
         [InverseProperty("ApproveEmployee")]
         public virtual ICollection<Leave> ApprovedLeaves { get; init; } = new HashSet<Leave>();
+
+        public virtual ICollection<EmployeeLeaveType> EmployeesTypes { get; set; } = new HashSet<EmployeeLeaveType>();
 
     }
 }

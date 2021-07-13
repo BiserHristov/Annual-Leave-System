@@ -25,6 +25,11 @@
         public Employee RequestEmployee { get; set; }
 
         [Required]
+        public int SubstituteEmployeeId { get; set; }
+
+        public Employee SubstituteEmployee { get; set; }
+
+        [Required]
         public int ApproveEmployeeId { get; set; }
 
         public Employee ApproveEmployee { get; set; }

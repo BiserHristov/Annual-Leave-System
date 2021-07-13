@@ -4,14 +4,16 @@ using AnnualLeaveSystem.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace AnnualLeaveSystem.Data.Migrations
 {
     [DbContext(typeof(LeaveSystemDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210713115358_ChangeReplacementEmployeePropertyToSubstituteEmployee")]
+    partial class ChangeReplacementEmployeePropertyToSubstituteEmployee
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -135,9 +137,6 @@ namespace AnnualLeaveSystem.Data.Migrations
                     b.Property<int>("LeaveTypeId")
                         .HasColumnType("int");
 
-                    b.Property<int>("RequestEmployeeId")
-                        .HasColumnType("int");
-
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("datetime2");
 
@@ -149,8 +148,6 @@ namespace AnnualLeaveSystem.Data.Migrations
                     b.HasIndex("ApproveEmployeeId");
 
                     b.HasIndex("LeaveTypeId");
-
-                    b.HasIndex("RequestEmployeeId");
 
                     b.HasIndex("SubstituteEmployeeId");
 
@@ -498,14 +495,8 @@ namespace AnnualLeaveSystem.Data.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("AnnualLeaveSystem.Data.Models.Employee", "RequestEmployee")
-                        .WithMany("RequestedLeaves")
-                        .HasForeignKey("RequestEmployeeId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("AnnualLeaveSystem.Data.Models.Employee", "SubstituteEmployee")
-                        .WithMany("SubstituteLeaves")
+                        .WithMany("RequestedLeaves")
                         .HasForeignKey("SubstituteEmployeeId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
@@ -513,8 +504,6 @@ namespace AnnualLeaveSystem.Data.Migrations
                     b.Navigation("ApproveEmployee");
 
                     b.Navigation("LeaveType");
-
-                    b.Navigation("RequestEmployee");
 
                     b.Navigation("SubstituteEmployee");
                 });
@@ -593,8 +582,6 @@ namespace AnnualLeaveSystem.Data.Migrations
                     b.Navigation("EmployeesTypes");
 
                     b.Navigation("RequestedLeaves");
-
-                    b.Navigation("SubstituteLeaves");
                 });
 
             modelBuilder.Entity("AnnualLeaveSystem.Data.Models.LeaveType", b =>

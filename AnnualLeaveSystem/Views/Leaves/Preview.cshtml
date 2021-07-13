@@ -1,0 +1,23 @@
+﻿
+@model AddLeaveFormModel;
+
+@{
+    this.ViewData["Title"] = "Preview";
+}
+<form>
+
+
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12 offset-lg-2 col-lg-8 offset-xl-3 col-xl-6">
+                <h3>LEAVE REQUEST</h3>
+                <div>From <b>Pesho</b></div>
+                <div>Dear Mr/Mrs Director</div>
+                <div>I would like to use my annual leave for @Model.TotalDays business days, for period from @Model.StartDate.ToString("dd-MM-yyyy") till @Model.EndDate.ToString("dd-MM-yyyy")</div>
+                <div>Leave type: @Model.LeaveTypeId</div>
+                <div>My substitute will be @Model.SubstituteEmployeeId</div>
+            </div>
+        </div>
+    </div>
+    <div>Date: @Model.RequestedDate.ToString("dd-MM-yyyy")</div>
+</form>

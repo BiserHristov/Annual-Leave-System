@@ -7,35 +7,33 @@
 
 
 $(function () {
-    //$('.datepicker').datepicker({
-    //    format: "dd.mm.yyyy",
-    //    orientation: "top",
-    //    autoclose: true
-    //});
-    var startDate = parseDate($('#StartDateInput').val());
-    var endDate = parseDate($('#EndDateInput').val());
-    $('#TotalDays').text(getBusinessDatesCount(startDate, endDate));
-
-
+    //var modelDate = new Date('@Model.StartDate');
+   
     $('#startDate').datepicker({
         format: 'dd.mm.yyyy',
         startDate: '-0d',
+        //date: moment(),
         autoclose: true
     }).on("changeDate", function (e) {
         $('#endDate').datepicker("setStartDate", e.date);
         startDate = parseDate($('#StartDateInput').val());
+        if (startDate > parseDate($('#EndDateInput').val())) {
+            $('#EndDateInput').val($('#StartDateInput').val())
+        }
         endDate = parseDate($('#EndDateInput').val());
         $('#TotalDays').val(getBusinessDatesCount(startDate, endDate));
     });
 
-    var d = new Date();
-    var now = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+    //var d = new Date();
+    //var now = new Date(d.getFullYear(), d.getMonth(), d.getDate());
 
-    $('#startDate').datepicker('update', now);
+   // $('#startDate').datepicker('update', now);
 
     $('#endDate').datepicker({
         format: 'dd.mm.yyyy',
-        autoclose: true
+        autoclose: true,
+        //date: moment(),
+        startDate: '-0d'
     }).on("changeDate", function (e) {
         $('#startDate').datepicker("setEndDate", e.date);
         startDate = parseDate($('#StartDateInput').val());
@@ -43,7 +41,15 @@ $(function () {
         $('#TotalDays').val(getBusinessDatesCount(startDate, endDate));
 
     });
-    $('#endDate').datepicker('update', now);
+    //$('#endDate').datepicker('update', now);
+    //var modelTotalDays = Html.Raw(Json.Encode(Model.TotalDays));
+    //var userObj = '@Model'
+
+    var startDate = parseDate($('#StartDateInput').val());
+    var endDate = parseDate($('#EndDateInput').val());
+    $('#TotalDays').val(getBusinessDatesCount(startDate, endDate));
+
+
 
 });
 
@@ -54,7 +60,7 @@ function getBusinessDatesCount(startDate, endDate) {
     const curDate = new Date(startDate.getTime());
     while (curDate <= endDate) {
         const dayOfWeek = curDate.getDay();
-        if (!(dayOfWeek == 0 || dayOfWeek==6)) count++;
+        if (!(dayOfWeek == 0 || dayOfWeek == 6)) count++;
         curDate.setDate(curDate.getDate() + 1);
     }
 

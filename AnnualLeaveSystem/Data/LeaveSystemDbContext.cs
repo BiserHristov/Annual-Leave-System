@@ -23,6 +23,7 @@ namespace AnnualLeaveSystem.Data
 
         public DbSet<Project> Projects { get; set; }
         public DbSet<OfficialHoliday> OfficialHolidays { get; set; }
+        public DbSet<EmployeeLeaveType> EmployeesLeaveTypes { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -50,8 +51,15 @@ namespace AnnualLeaveSystem.Data
             builder
               .Entity<Leave>()
               .HasOne(l => l.RequestEmployee)
-              .WithMany(re => re.RequestedLeaves)
+              .WithMany(ae => ae.RequestedLeaves)
               .HasForeignKey(l => l.RequestEmployeeId)
+              .OnDelete(DeleteBehavior.Restrict);
+
+            builder
+              .Entity<Leave>()
+              .HasOne(l => l.SubstituteEmployee)
+              .WithMany(re => re.SubstituteLeaves)
+              .HasForeignKey(l => l.SubstituteEmployeeId)
               .OnDelete(DeleteBehavior.Restrict);
 
             builder
@@ -70,7 +78,7 @@ namespace AnnualLeaveSystem.Data
 
             builder
               .Entity<Team>()
-              .HasOne(t=> t.Project)
+              .HasOne(t => t.Project)
               .WithMany(p => p.Teams)
               .HasForeignKey(t => t.ProjectId)
               .OnDelete(DeleteBehavior.Restrict);
@@ -79,6 +87,15 @@ namespace AnnualLeaveSystem.Data
                 .Entity<OfficialHoliday>()
                 .Property(p => p.Date)
                 .HasColumnType("date");
+
+            //builder
+            //  .Entity<Employee>()
+            //  .HasMany(e=>e.EmployeesTypes)
+            //  .WithMany(t=>t.LeaveTypes)
+            //  .HasForeignKey(t => t.ProjectId)
+            //  .OnDelete(DeleteBehavior.Restrict); ;
+
+            builder.Entity<EmployeeLeaveType>().HasKey(el => new { el.EmployeeId, el.LeaveTypeId });
 
             base.OnModelCreating(builder);
         }
