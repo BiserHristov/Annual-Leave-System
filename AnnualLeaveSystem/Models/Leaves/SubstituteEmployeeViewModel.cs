@@ -5,7 +5,7 @@
     using System.Linq;
     using System.Threading.Tasks;
 
-    public class ReplacementEmployeeViewModel
+    public class SubstituteEmployeeViewModel
     {
         public int Id { get; init; }
         public string Name { get; init; }

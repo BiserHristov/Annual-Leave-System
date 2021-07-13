@@ -2,16 +2,21 @@
 {
     using System;
     using System.ComponentModel.DataAnnotations;
+    using System.ComponentModel.DataAnnotations.Schema;
+
     public class Leave
     {
         public int Id { get; init; }
 
-        public DateTime AppliedOn { get; set; } = DateTime.UtcNow;
+        [Column(TypeName = "date")]
+        public DateTime AppliedOn { get; set; } = DateTime.UtcNow.Date;
 
         [Required]
+        [Column(TypeName = "date")]
         public DateTime StartDate { get; set; }
 
         [Required]
+        [Column(TypeName = "date")]
         public DateTime EndDate { get; set; }
 
         [Required]
@@ -29,8 +34,8 @@
 
         public Employee SubstituteEmployee { get; set; }
 
-        [Required]
-        public int ApproveEmployeeId { get; set; }
+        
+        public int? ApproveEmployeeId { get; set; }
 
         public Employee ApproveEmployee { get; set; }
 

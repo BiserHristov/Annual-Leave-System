@@ -7,6 +7,7 @@
     using System.Linq;
     using System.Threading.Tasks;
 
+    using static AnnualLeaveSystem.Data.DataConstants;
     public class GetEmployeesInTeamService : IGetEmployeesInTeamService
     {
         private readonly LeaveSystemDbContext db;
@@ -16,16 +17,16 @@
             this.db = db;
         }
 
-        IEnumerable<ReplacementEmployeeViewModel> IGetEmployeesInTeamService.GetEmployeesInTeam()
+        IEnumerable<SubstituteEmployeeViewModel> IGetEmployeesInTeamService.GetEmployeesInTeam()
         {
             return this.db.Employees
-              .Where(e => e.TeamId == 4) // TODO: Take the current user teamId!!!
-              .Select(e => new ReplacementEmployeeViewModel
+              .Where(e => e.TeamId == 4 && e.Id != _EmployeeId) // TODO: Take the current user teamId!!!
+              .Select(e => new SubstituteEmployeeViewModel
               {
                   Id = e.Id,
                   Name = $"{e.FirstName} {e.MiddleName} {e.LastName}",
               })
               .ToList();
         }
-    } 
+    }
 }

@@ -27,6 +27,7 @@
             SeedDepartaments(data);
             SeedEmployees(data);
             SeedOfficialHolidays(data);
+            SeedEmployeesLeaveTypes(data);
 
             return app;
         }
@@ -275,7 +276,33 @@
 
         }
 
+        private static void SeedEmployeesLeaveTypes(LeaveSystemDbContext data)
+        {
+            if (data.EmployeesLeaveTypes.Any())
+            {
+                return;
+            }
 
+            var employeeIDs = data.Employees.Select(e => e.Id).ToList();
+            var leaveTypeIDs = data.LeaveTypes.Select(lt => lt.Id).ToList();
+
+            foreach (var employeeID in employeeIDs)
+            {
+                foreach (var leaveTypeID in leaveTypeIDs)
+                {
+                    var employeeLeaveType = new EmployeeLeaveType
+                    {
+                        EmployeeId = employeeID,
+                        LeaveTypeId = leaveTypeID
+                    };
+
+                    data.EmployeesLeaveTypes.Add(employeeLeaveType);
+                }
+
+                data.SaveChanges();
+
+            }
+        }
     }
 }
 

@@ -8,6 +8,6 @@
 
     public interface IGetEmployeesInTeamService
     {
-        public IEnumerable<ReplacementEmployeeViewModel> GetEmployeesInTeam();
+        public IEnumerable<SubstituteEmployeeViewModel> GetEmployeesInTeam();
     }
 }

@@ -8,12 +8,12 @@
     using System;
     using System.Linq;
 
+    using static AnnualLeaveSystem.Data.DataConstants;
     public class LeavesController : Controller
     {
         private readonly IGetLeaveTypesService getLeaveTypesService;
         private readonly IGetEmployeesInTeamService getEmployeesInTeamService;
         private readonly IGetOfficialHolidaysService getOfficialHolidaysService;
-        private const int _EmployeeId = 2; //ToDo: Change with current user Id
         private readonly LeaveSystemDbContext db; //ToDo: Later maybe the db should be removed
         public LeavesController(
             IGetLeaveTypesService getLeaveTypesService,
@@ -158,14 +158,16 @@
             }
 
             employeeLeave.UsedDays = employeeLeave.UsedDays + leaveModel.TotalDays;
+            var approveEmployeeId = db.Employees.Where(e => e.Id == _EmployeeId).Select(e => e.TeamLeadId).FirstOrDefault();
+
             var leave = new Leave
             {
-                StartDate = leaveModel.StartDate,
-                EndDate = leaveModel.EndDate,
+                StartDate = leaveModel.StartDate.Date,
+                EndDate = leaveModel.EndDate.Date,
                 LeaveTypeId = leaveModel.LeaveTypeId,
-                RequestEmployeeId= _EmployeeId, //ToDo: Change it with current user Id
-                SubstituteEmployeeId = leaveModel.SubstituteEmployeeId, 
-                ApproveEmployeeId = 4, //ToDo: Change it with approveEmployeeId
+                RequestEmployeeId = _EmployeeId, //ToDo: Change it with current user Id
+                SubstituteEmployeeId = leaveModel.SubstituteEmployeeId,
+                ApproveEmployeeId = approveEmployeeId, //ToDo: Change it with approveEmployeeId
                 Comments = leaveModel.Comments,
             };
 
