@@ -5,6 +5,7 @@
     using AnnualLeaveSystem.Models.Leaves;
     using AnnualLeaveSystem.Services;
     using Microsoft.AspNetCore.Mvc;
+    using Microsoft.EntityFrameworkCore;
     using System;
     using System.Linq;
 
@@ -37,6 +38,26 @@
             };
 
             return View(model);
+        }
+
+        public IActionResult All()
+        {
+            var leaves = this.db
+                .Leaves
+                .OrderByDescending(l => l.StartDate)
+                .Select(l => new LeaveListingViewModel
+                {
+                    Id = l.Id,
+                    Name = l.RequestEmployee.FirstName + " " + l.RequestEmployee.LastName,
+                    StartDate = l.StartDate.ToLocalTime().ToShortDateString(),
+                    EndDate = l.EndDate.ToLocalTime().ToShortDateString(),
+                    TotalDays = l.TotalDays,
+                    Status = l.IsApproved ? "Approved" : (l.IsCancelled ? "Canceled" : "Not Approved"),
+                    RequestDate = l.RequestDate.ToLocalTime().ToShortDateString()
+                })
+                .ToList();
+
+            return View(leaves);
         }
 
 
@@ -73,14 +94,14 @@
                 this.ModelState.AddModelError(nameof(leaveModel.LeaveTypeId), "Leave type does not exist.");
             }
 
-            if (!this.db.Teams.Any(t => t.Id == 4 && t.Employees.Any(e => e.Id == leaveModel.SubstituteEmployeeId))) //ToDo: Change it with current user teamId
+            if (!this.db.Teams.Any(t => t.Id == _EmployeeTeamId && t.Employees.Any(e => e.Id == leaveModel.SubstituteEmployeeId))) //ToDo: Change it with current user teamId
             {
                 this.ModelState.AddModelError(nameof(leaveModel.SubstituteEmployeeId), "There is no such employee in your team.");
             }
 
-            var leaveType = this.db.LeaveTypes.FirstOrDefault(lt => lt.Id == leaveModel.LeaveTypeId); //ToDo: Magic??!?!
 
             var employeeLeave = this.db.EmployeesLeaveTypes
+                .Include(x => x.LeaveType)
                 .Where(el => el.EmployeeId == _EmployeeId &&
                        el.LeaveTypeId == leaveModel.LeaveTypeId)
                 .FirstOrDefault(); //ToDo: Change it with current user Id
@@ -164,17 +185,19 @@
             {
                 StartDate = leaveModel.StartDate.Date,
                 EndDate = leaveModel.EndDate.Date,
+                TotalDays = leaveModel.TotalDays,
                 LeaveTypeId = leaveModel.LeaveTypeId,
                 RequestEmployeeId = _EmployeeId, //ToDo: Change it with current user Id
                 SubstituteEmployeeId = leaveModel.SubstituteEmployeeId,
                 ApproveEmployeeId = approveEmployeeId, //ToDo: Change it with approveEmployeeId
                 Comments = leaveModel.Comments,
+                RequestDate = leaveModel.RequestedDate
             };
 
             this.db.Leaves.Add(leave);
             this.db.SaveChanges();
 
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction(nameof(All));
         }
 
 

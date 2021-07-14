@@ -44,8 +44,8 @@
                     {
                         Name = "MyHouse" ,
                         Description ="3-floor house with outdoor pool.",
-                        StartDate = new DateTime(2020,03,05),
-                        EndDate = new DateTime(2020,06,05)
+                        StartDate = new DateTime(2020,03,05).Date,
+                        EndDate = new DateTime(2020,06,05).Date
                     },
                 new Project
                     {
@@ -53,6 +53,13 @@
                         Description ="School management system",
                         StartDate = new DateTime(2020,06,01),
                         EndDate = new DateTime(2021,02,17)
+                    },
+                 new Project
+                    {
+                        Name = "Shoe Shop" ,
+                        Description ="Shop fpr casual shoos",
+                        StartDate = new DateTime(2021,10,05),
+                        EndDate = new DateTime(2021,12,20)
                     },
             });
 
@@ -75,6 +82,10 @@
                     {
                         ProjectId = 2
                     },
+                new Team
+                    {
+                        ProjectId = 3
+                    },
 
                 });
 
@@ -96,8 +107,28 @@
                     },
                new LeaveType
                     {
-                        Name="BloodCharity",
-                        DefaultDays=3
+                        Name="Blood charity",
+                        DefaultDays=2
+                    },
+               new LeaveType
+                    {
+                        Name="Marriage",
+                        DefaultDays=2
+                    },
+               new LeaveType
+                    {
+                        Name="Family death",
+                        DefaultDays=2
+                    },
+               new LeaveType
+                    {
+                        Name="Unpaid",
+                        DefaultDays=180
+                    },
+               new LeaveType
+                    {
+                        Name="Newborn",
+                        DefaultDays=10
                     }
 
             });
@@ -150,8 +181,9 @@
                        LastName="Ivanov",
                        ImageUrl="https://data.whicdn.com/images/356867091/original.jpg",
                        JobTitle= "Specialist",
+                       HireDate= new DateTime(1990,10,15).ToUniversalTime().Date,
                        DepartmentId=1,
-                       TeamId=4
+                       TeamId=2
 
                    },
 
@@ -162,8 +194,9 @@
                        LastName="Petrova",
                        ImageUrl="https://klohmakeup.files.wordpress.com/2013/03/layers20start20image2.jpg",
                        JobTitle= "Spacialist",
+                       HireDate= new DateTime(2020,02,02).ToUniversalTime().Date,
                        DepartmentId=2,
-                       TeamId=4
+                       TeamId=2
 
                    },
 
@@ -174,8 +207,9 @@
                        LastName="Petkov",
                        ImageUrl="https://st.depositphotos.com/1807998/3521/i/950/depositphotos_35212277-stock-photo-young-man-in-park.jpg",
                        JobTitle= "Senior Specialist",
+                       HireDate= new DateTime(2018,10,05).ToUniversalTime().Date,
                        DepartmentId=3,
-                       TeamId=5
+                       TeamId=1
 
                    },
                 new Employee
@@ -185,8 +219,9 @@
                        LastName="Petkova",
                        ImageUrl="https://data.whicdn.com/images/312637959/original.jpg",
                        JobTitle= "Senior Specialist",
+                       HireDate= new DateTime(2010,07,20).ToUniversalTime().Date,
                        DepartmentId=3,
-                       TeamId=5
+                       TeamId=1
 
                    },
 
@@ -205,63 +240,63 @@
 
             var holidays = new[]  {
             new OfficialHoliday{
-                Date= new DateTime(2021, 01, 01),
+                Date= new DateTime(2021, 01, 01).Date,
                 Name= "New Year`s Day",
             },
             new OfficialHoliday{
-                Date= new DateTime(2021, 03, 03),
+                Date= new DateTime(2021, 03, 03).Date,
                 Name= "Liberation Day",
             },
             new OfficialHoliday{
-                Date= new DateTime(2021, 04, 30),
+                Date= new DateTime(2021, 04, 30).Date,
                 Name= "Good Friday",
             },
             new OfficialHoliday{
-                Date= new DateTime(2021, 05, 01),
+                Date= new DateTime(2021, 05, 01).Date,
                 Name= "International Workers Day",
             },
             new OfficialHoliday{
-                Date= new DateTime(2021, 05, 02),
+                Date= new DateTime(2021, 05, 02).Date,
                 Name= "Easter",
             },
             new OfficialHoliday{
-                Date= new DateTime(2021, 05, 03),
+                Date= new DateTime(2021, 05, 03).Date,
                 Name= "Easter",
             },
             new OfficialHoliday{
-                Date= new DateTime(2021, 05, 04),
+                Date= new DateTime(2021, 05, 04).Date,
                 Name= "Easter",
             },
             new OfficialHoliday{
-                Date= new DateTime(2021, 05, 06),
+                Date= new DateTime(2021, 05, 06).Date,
                 Name= "St George`s Day",
             },
             new OfficialHoliday{
-                Date= new DateTime(2021, 05, 24),
+                Date= new DateTime(2021, 05, 24).Date,
                 Name= "Sts Cyril and Methodius Day",
             },
             new OfficialHoliday{
-                Date= new DateTime(2021, 09, 06),
+                Date= new DateTime(2021, 09, 06).Date,
                 Name= "Unification Day",
             },
             new OfficialHoliday{
-                Date= new DateTime(2021, 09, 22),
+                Date= new DateTime(2021, 09, 22).Date,
                 Name= "Independence Day",
             },
             new OfficialHoliday{
-                Date= new DateTime(2021, 12, 24),
+                Date= new DateTime(2021, 12, 24).Date,
                 Name= "Christmas",
             },
             new OfficialHoliday{
-                Date= new DateTime(2021, 12, 25),
+                Date= new DateTime(2021, 12, 25).Date,
                 Name= "Christmas",
             },
             new OfficialHoliday{
-                Date= new DateTime(2021, 12, 26),
+                Date= new DateTime(2021, 12, 26).Date,
                 Name= "Christmas",
             },
             new OfficialHoliday{
-                Date= new DateTime(2021, 12, 27),
+                Date= new DateTime(2021, 12, 27).Date,
                 Name= "Christmas",
             },
             new OfficialHoliday{

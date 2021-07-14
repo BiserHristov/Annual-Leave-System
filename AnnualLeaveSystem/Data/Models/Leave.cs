@@ -9,7 +9,7 @@
         public int Id { get; init; }
 
         [Column(TypeName = "date")]
-        public DateTime AppliedOn { get; set; } = DateTime.UtcNow.Date;
+        public DateTime RequestDate { get; set; }
 
         [Required]
         [Column(TypeName = "date")]
@@ -18,6 +18,8 @@
         [Required]
         [Column(TypeName = "date")]
         public DateTime EndDate { get; set; }
+
+        public int TotalDays { get; set; }
 
         [Required]
         public int LeaveTypeId { get; set; }
@@ -34,7 +36,7 @@
 
         public Employee SubstituteEmployee { get; set; }
 
-        
+
         public int? ApproveEmployeeId { get; set; }
 
         public Employee ApproveEmployee { get; set; }

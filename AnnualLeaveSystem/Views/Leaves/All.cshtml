@@ -1,0 +1,38 @@
+﻿@model IEnumerable<LeaveListingViewModel>;
+
+@{
+    this.ViewData["Title"] = "All leaves";
+}
+
+
+<table class="table table-hover">
+    <thead>
+        <tr>
+            <th scope="col">Name</th>
+            <th scope="col">Start date</th>
+            <th scope="col">End date</th>
+            <th scope="col">Total days</th>
+            <th scope="col">Status</th>
+            <th scope="col">Request date</th>
+            <th scope="col"></th>
+
+        </tr>
+    </thead>
+    <tbody>
+
+        @foreach (var leave in Model)
+        {
+        <tr>
+            <th scope="row">@leave.Name</th>
+            <td>@leave.StartDate</td>
+            <td>@leave.EndDate</td>
+            <td>@leave.TotalDays</td>
+            <td>@leave.Status</td>
+            <td>@leave.RequestDate</td>
+            <td>
+                <a asp-controller="Leaves" asp-action="Details" asp-route-id="@leave.Id" class="btn btn-primary" >Details</a>
+            </td>
+        </tr>
+        }
+    </tbody>
+</table>

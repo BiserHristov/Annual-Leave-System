@@ -20,7 +20,7 @@
         IEnumerable<SubstituteEmployeeViewModel> IGetEmployeesInTeamService.GetEmployeesInTeam()
         {
             return this.db.Employees
-              .Where(e => e.TeamId == 4 && e.Id != _EmployeeId) // TODO: Take the current user teamId!!!
+              .Where(e => e.TeamId == _EmployeeTeamId && e.Id != _EmployeeId) // TODO: Take the current user teamId!!!
               .Select(e => new SubstituteEmployeeViewModel
               {
                   Id = e.Id,

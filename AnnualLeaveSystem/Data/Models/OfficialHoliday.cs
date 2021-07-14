@@ -10,9 +10,10 @@
     {
         public int Id { get; init; }
 
-        public DateTime Date { get; set; }
+        [Column(TypeName = "date")]
+        public DateTime Date { get; init; }
 
-        public string Name { get; set; }
+        public string Name { get; init; }
 
     }
 }
