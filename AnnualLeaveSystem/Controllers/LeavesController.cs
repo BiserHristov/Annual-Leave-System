@@ -7,6 +7,7 @@
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.EntityFrameworkCore;
     using System;
+    using System.Collections.Generic;
     using System.Linq;
 
     using static AnnualLeaveSystem.Data.DataConstants;
@@ -40,24 +41,49 @@
             return View(model);
         }
 
-        public IActionResult All()
+        public IActionResult All(Status? status, string firstName, string lastName, string startDate)
         {
-            var leaves = this.db
-                .Leaves
+            var leavesQuery = this.db.Leaves.AsQueryable();
+
+            if (status != null)
+            {
+                leavesQuery = leavesQuery.Where(l => l.Status.ToString().ToLower() == status.ToString().ToLower());
+            }
+
+            if (!string.IsNullOrWhiteSpace(firstName))
+            {
+                leavesQuery = leavesQuery.Where(l => l.RequestEmployee.FirstName.ToLower().Contains(firstName.Trim().ToLower()));
+            }
+
+            if (!string.IsNullOrWhiteSpace(lastName))
+            {
+                leavesQuery = leavesQuery.Where(l => l.RequestEmployee.LastName.ToLower() == lastName.Trim().ToLower());
+            }
+
+            var leaves = leavesQuery
                 .OrderByDescending(l => l.StartDate)
                 .Select(l => new LeaveListingViewModel
                 {
                     Id = l.Id,
-                    Name = l.RequestEmployee.FirstName + " " + l.RequestEmployee.LastName,
+                    FirstName = l.RequestEmployee.FirstName,
+                    LastName = l.RequestEmployee.LastName,
                     StartDate = l.StartDate.ToLocalTime().ToShortDateString(),
                     EndDate = l.EndDate.ToLocalTime().ToShortDateString(),
                     TotalDays = l.TotalDays,
-                    Status = l.IsApproved ? "Approved" : (l.IsCancelled ? "Canceled" : "Not Approved"),
+                    Status = l.Status.ToString(),
                     RequestDate = l.RequestDate.ToLocalTime().ToShortDateString()
                 })
                 .ToList();
 
-            return View(leaves);
+            var statuses = Enum.GetValues(typeof(Status))
+                .Cast<Status>()
+                .ToList();
+
+            return View(new AllLeavesQueryModel
+            {
+                Leaves = leaves,
+                Statuses = statuses,
+            });
         }
 
 
@@ -140,7 +166,7 @@
 
             var substituteLeaves = this.db.Leaves
                 .Where(l => l.SubstituteEmployeeId == _EmployeeId &&
-                            l.IsApproved &&
+                            l.Status == Status.Approved &&
                             l.EndDate >= DateTime.UtcNow.Date)
                 .ToList();  //ToDo: Change it with current user Id
 

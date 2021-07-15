@@ -41,9 +41,7 @@
 
         public Employee ApproveEmployee { get; set; }
 
-        public bool IsApproved { get; set; } = false;
-
-        public bool IsCancelled { get; set; } = false;
+        public Status Status { get; set; } = Status.InProgress;
 
         public string Comments { get; set; }
     }

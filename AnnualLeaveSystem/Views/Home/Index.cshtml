@@ -1,12 +1,17 @@
-﻿@{
+﻿@model IndexViewModel;
+
+@{
     ViewData["Title"] = "Wellcome!";
 }
 
 <div class="text-center heading-margin">
-    <h1>Welcome to Annual Leave System!</h1>
+    <h1 class="font-italic">Welcome to Annual Leave System!</h1>
+</div>
+<div class="text-center">
+    <h4>Currently we have in total:</h4>
 </div>
 <div class="text-center col-sm-12 offset-lg-2 col-lg-8 offset-xl-3 col-xl-6">
-    <table class="table">
+    <table class="table table-bordered">
         <thead class="table-dark">
             <tr>
                 <th scope="col">Employees</th>
@@ -17,10 +22,10 @@
         </thead>
         <tbody>
             <tr>
-                <td>1</td>
-                <td>Mark</td>
-                <td>Otto</td>
-                <td>Moto</td>
+                <td class="font-weight-bold">@Model.EmployeesCount</td>
+                <td class="font-weight-bold">@Model.ApprovedLeaveCount</td>
+                <td class="font-weight-bold">@Model.InProgressLeaveCount</td>
+                <td class="font-weight-bold">@Model.AllLeavesTotalDays</td>
             </tr>
         </tbody>
     </table>
