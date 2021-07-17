@@ -9,22 +9,25 @@
 
     public class AllLeavesQueryModel
     {
+        public const int LeavesPerPage = 2;
+        public int CurrentPage { get; set; } = 1;
+
         [Display(Name = "First Name")]
         public string FirstName { get; init; }
 
         [Display(Name = "Last Name")]
         public string LastName { get; init; }
 
-        [Display(Name = "Start date")]
-        public string StartDate { get; init; }
+        public Status? Status { get; init; }
 
-        public string Status { get; init; }
+        public int TotalLeaves { get; set; }
 
-        public IEnumerable<Status> Statuses { get; init; } = new HashSet<Status>();
+        public IEnumerable<Status> Statuses { get; set; } = new HashSet<Status>();
 
         [Display(Name = "Sort by")]
         public LeaveSorting Sorting { get; set; }
+        // public IEnumerable<LeaveSorting> Sortings { get; init; } = new HashSet<LeaveSorting>();
 
-        public IEnumerable<LeaveListingViewModel> Leaves { get; init; } = new HashSet<LeaveListingViewModel>();
+        public IEnumerable<LeaveListingViewModel> Leaves { get; set; } = new HashSet<LeaveListingViewModel>();
     }
 }

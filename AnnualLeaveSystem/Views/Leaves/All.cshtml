@@ -8,9 +8,11 @@
 
 <form method="get">
     <div class="row mb-4">
+
         <div class="form-group col-md-2">
             <label asp-for="Status"></label>
             <select asp-for="Status" class="form-control">
+                <option value="" selected>All</option>
                 @foreach (var status in Model.Statuses)
                 {
                     <option value="@((int)status)">@status</option>
@@ -24,9 +26,29 @@
             <input asp-for="FirstName" class="form-control" />
         </div>
 
+        <div class="form-group col-md-2">
+            <label asp-for="LastName"></label>
+            <input asp-for="LastName" class="form-control" />
+        </div>
 
+        <div class="form-group col-md-2">
+            <label asp-for="Sorting"></label>
+            <select asp-for="Sorting" class="form-control">
+                <option value="0" selected>Start date</option>
+                <option value="1">Request date</option>
+                <option value="2">Full name</option>
+                <option value="3">Total days</option>
+            </select>
+        </div>
+
+        <div class="col-md-2 mt-4">
+            <div class="mt-2"></div>
+            <input class="btn btn-success" type="submit" value="Search" />
+        </div>
 
     </div>
+
+
 
 </form>
 
@@ -74,3 +96,47 @@
 
     </tbody>
 </table>
+@{
+    var previousPage = Model.CurrentPage - 1;
+    if (previousPage < 1)
+    {
+        previousPage = 1;
+    }
+
+    var nextPage = Model.CurrentPage + 1;
+    var maxPage = Math.Ceiling((double)Model.TotalLeaves / AllLeavesQueryModel.LeavesPerPage);
+
+    if (nextPage > maxPage)
+    {
+        nextPage = (int)maxPage;
+    }
+
+    var modelStatus = Model.Status != null ? (int?)Model.Status : null;
+}
+<div class="row">
+    <div class="col-md-4">
+        <a class="btn btn-info @(Model.CurrentPage == 1 ? "disabled" : string.Empty)"
+           asp-controller="Leaves"
+           asp-action="All"
+           asp-route-CurrentPage="@previousPage"
+           asp-route-Status="@modelStatus"
+           asp-route-FirstName="@Model.FirstName"
+           asp-route-LastName="@Model.LastName"
+           asp-route-Sorting="@((int)Model.Sorting)">Previous</a>
+    </div>
+
+    <div class="col-md-4">
+        <a class="btn btn-info">@Model.CurrentPage</a>
+    </div>
+
+    <div class="col-md-4">
+        <a class="btn btn-info @((Model.CurrentPage == maxPage || Model.Leaves.Count()==0) ? "disabled" : string.Empty)"
+           asp-controller="Leaves"
+           asp-action="All"
+           asp-route-CurrentPage="@nextPage"
+           asp-route-Status="@modelStatus"
+           asp-route-FirstName="@Model.FirstName"
+           asp-route-LastName="@Model.LastName"
+           asp-route-Sorting="@((int)Model.Sorting)">Next</a>
+    </div>
+</div>

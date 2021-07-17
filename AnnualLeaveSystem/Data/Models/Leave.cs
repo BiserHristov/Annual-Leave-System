@@ -41,7 +41,8 @@
 
         public Employee ApproveEmployee { get; set; }
 
-        public Status Status { get; set; } = Status.InProgress;
+        [EnumDataType(typeof(Status))]
+        public Status LeaveStatus { get; set; } = Status.Pending;
 
         public string Comments { get; set; }
     }

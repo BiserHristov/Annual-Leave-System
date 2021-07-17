@@ -9,7 +9,7 @@
     {
         StartDate = 0,
         RequestDate = 1,
-        Satus = 2,
-        Fullname = 3,
+        Fullname = 2,
+        TotalDays = 3,
     }
 }

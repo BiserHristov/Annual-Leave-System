@@ -48,8 +48,8 @@ namespace AnnualLeaveSystem.Data.Migrations
 
                     b.Property<string>("FirstName")
                         .IsRequired()
-                        .HasMaxLength(10)
-                        .HasColumnType("nvarchar(10)");
+                        .HasMaxLength(15)
+                        .HasColumnType("nvarchar(15)");
 
                     b.Property<DateTime>("HireDate")
                         .HasColumnType("date");
@@ -69,8 +69,8 @@ namespace AnnualLeaveSystem.Data.Migrations
                         .HasColumnType("nvarchar(20)");
 
                     b.Property<string>("MiddleName")
-                        .HasMaxLength(10)
-                        .HasColumnType("nvarchar(10)");
+                        .HasMaxLength(15)
+                        .HasColumnType("nvarchar(15)");
 
                     b.Property<int>("TeamId")
                         .HasColumnType("int");
@@ -123,6 +123,9 @@ namespace AnnualLeaveSystem.Data.Migrations
                     b.Property<DateTime>("EndDate")
                         .HasColumnType("date");
 
+                    b.Property<int>("LeaveStatus")
+                        .HasColumnType("int");
+
                     b.Property<int>("LeaveTypeId")
                         .HasColumnType("int");
 
@@ -134,9 +137,6 @@ namespace AnnualLeaveSystem.Data.Migrations
 
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("date");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
 
                     b.Property<int>("SubstituteEmployeeId")
                         .HasColumnType("int");

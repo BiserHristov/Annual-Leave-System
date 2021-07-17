@@ -214,7 +214,7 @@
                    },
                 new Employee
                    {
-                       FirstName="Dimtrichka",
+                       FirstName="Dimitrichka",
                        MiddleName="Georgieva",
                        LastName="Petkova",
                        ImageUrl="https://data.whicdn.com/images/312637959/original.jpg",

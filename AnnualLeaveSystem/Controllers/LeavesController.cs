@@ -41,27 +41,80 @@
             return View(model);
         }
 
-        public IActionResult All(Status? status, string firstName, string lastName, string startDate)
+        public IActionResult All([FromQuery] AllLeavesQueryModel query)
         {
             var leavesQuery = this.db.Leaves.AsQueryable();
 
-            if (status != null)
+            if (query.Status != null)
             {
-                leavesQuery = leavesQuery.Where(l => l.Status.ToString().ToLower() == status.ToString().ToLower());
+                switch (query.Status)
+                {
+
+                    case Status.Approved:
+                        leavesQuery = leavesQuery.Where(l => l.LeaveStatus == Status.Approved);
+                        break;
+
+                    case Status.Pending:
+                        leavesQuery = leavesQuery.Where(l => l.LeaveStatus == Status.Pending);
+                        break;
+
+                    case Status.Canceled:
+                        leavesQuery = leavesQuery.Where(l => l.LeaveStatus == Status.Canceled);
+                        break;
+
+                    case Status.Rejected:
+                        leavesQuery = leavesQuery.Where(l => l.LeaveStatus == Status.Rejected);
+                        break;
+
+                        //Default case is when "query.Status=null". In that case we do not need any filter by status.
+                }
+
             }
 
-            if (!string.IsNullOrWhiteSpace(firstName))
+
+            if (!string.IsNullOrWhiteSpace(query.FirstName))
             {
-                leavesQuery = leavesQuery.Where(l => l.RequestEmployee.FirstName.ToLower().Contains(firstName.Trim().ToLower()));
+                leavesQuery = leavesQuery.Where(l => l.RequestEmployee.FirstName.ToLower().Contains(query.FirstName.Trim().ToLower()));
             }
 
-            if (!string.IsNullOrWhiteSpace(lastName))
+            if (!string.IsNullOrWhiteSpace(query.LastName))
             {
-                leavesQuery = leavesQuery.Where(l => l.RequestEmployee.LastName.ToLower() == lastName.Trim().ToLower());
+                leavesQuery = leavesQuery.Where(l => l.RequestEmployee.LastName.ToLower() == query.LastName.Trim().ToLower());
             }
+
+
+            switch (query.Sorting)
+            {
+
+                case LeaveSorting.RequestDate:
+                    leavesQuery = leavesQuery.OrderByDescending(x => x.RequestDate);
+                    break;
+
+                case LeaveSorting.TotalDays:
+                    leavesQuery = leavesQuery.OrderByDescending(x => x.TotalDays);
+                    break;
+
+                case LeaveSorting.Fullname:
+                    leavesQuery = leavesQuery
+                        .OrderBy(x => x.RequestEmployee.FirstName)
+                        .ThenBy(x => x.RequestEmployee.LastName);
+                    break;
+
+                case LeaveSorting.StartDate:
+                default:
+                    leavesQuery = leavesQuery.OrderByDescending(x => x.StartDate);
+                    break;
+
+            }
+
+            //if (query.CurrentPage - 1 < 1)
+            //{
+            //    query.CurrentPage = 1;
+            //}
 
             var leaves = leavesQuery
-                .OrderByDescending(l => l.StartDate)
+                .Skip((query.CurrentPage - 1) * AllLeavesQueryModel.LeavesPerPage)
+                .Take(AllLeavesQueryModel.LeavesPerPage)
                 .Select(l => new LeaveListingViewModel
                 {
                     Id = l.Id,
@@ -70,20 +123,22 @@
                     StartDate = l.StartDate.ToLocalTime().ToShortDateString(),
                     EndDate = l.EndDate.ToLocalTime().ToShortDateString(),
                     TotalDays = l.TotalDays,
-                    Status = l.Status.ToString(),
+                    Status = l.LeaveStatus.ToString(),
                     RequestDate = l.RequestDate.ToLocalTime().ToShortDateString()
                 })
                 .ToList();
 
             var statuses = Enum.GetValues(typeof(Status))
-                .Cast<Status>()
-                .ToList();
+                               .Cast<Status>()
+                               .ToList();
 
-            return View(new AllLeavesQueryModel
-            {
-                Leaves = leaves,
-                Statuses = statuses,
-            });
+            var totalLeaves = leavesQuery.Count();
+
+            query.Statuses = statuses;
+            query.Leaves = leaves;
+            query.TotalLeaves = totalLeaves;
+
+            return View(query);
         }
 
 
@@ -166,7 +221,7 @@
 
             var substituteLeaves = this.db.Leaves
                 .Where(l => l.SubstituteEmployeeId == _EmployeeId &&
-                            l.Status == Status.Approved &&
+                            l.LeaveStatus == Status.Approved &&
                             l.EndDate >= DateTime.UtcNow.Date)
                 .ToList();  //ToDo: Change it with current user Id
 

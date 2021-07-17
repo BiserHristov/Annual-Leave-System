@@ -6,9 +6,9 @@
         public const int DepartmentNameMaxLength = 20;
 
         public const int EmployeeFirstNameMinLength = 2;
-        public const int EmployeeFirstNameMaxLength = 10;
+        public const int EmployeeFirstNameMaxLength = 15;
         public const int EmployeeMiddleNameMinLength = 2;
-        public const int EmployeeMiddleNameMaxLength = 10;
+        public const int EmployeeMiddleNameMaxLength = 15;
         public const int EmployeeLastNameMinLength = 2;
         public const int EmployeeLastNameMaxLength = 20;
         public const int EmployeeJobTitleMinLength = 3;
