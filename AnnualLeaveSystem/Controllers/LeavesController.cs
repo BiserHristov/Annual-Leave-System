@@ -132,11 +132,11 @@
                                .Cast<Status>()
                                .ToList();
 
-            var totalLeaves = leavesQuery.Count();
+            var leavesCount = leavesQuery.Count();
 
             query.Statuses = statuses;
             query.Leaves = leaves;
-            query.TotalLeaves = totalLeaves;
+            query.LeavesCount = leavesCount;
 
             return View(query);
         }
