@@ -1,14 +1,15 @@
 ﻿namespace AnnualLeaveSystem.Data.Models
 {
+    using Microsoft.AspNetCore.Identity;
     using System;
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
 
     using static AnnualLeaveSystem.Data.DataConstants;
-    public class Employee
+    public class Employee : IdentityUser
     {
-        public int Id { get; init; }
+        //public int Id { get; init; }
 
         [Required]
         [MaxLength(EmployeeFirstNameMaxLength)]
@@ -33,7 +34,7 @@
 
         public Department Department { get; set; }
 
-        public int? TeamLeadId { get; set; }
+        public string TeamLeadId { get; set; }
 
         public Employee TeamLead { get; set; }
 

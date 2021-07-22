@@ -287,6 +287,41 @@
         //    return View(leaveModel);
         //    // return RedirectToAction("Index", "Home");
         //}
+
+        public IActionResult Details(int leaveId)
+        {
+            if (leaveId == 0)
+            {
+                return this.NotFound();
+            }
+
+            var leave = this.db.Leaves
+                 .Include(l => l.LeaveType)
+                .Include(l => l.RequestEmployee)
+                .Include(l => l.ApproveEmployee)
+                .Include(l => l.SubstituteEmployee)
+                .FirstOrDefault(l => l.Id == leaveId);
+
+            if (leave == null)
+            {
+                return NotFound();
+            }
+
+            return View(new LeaveDetailsViewModel
+            {
+                RequestEmployeeName = leave.RequestEmployee.FirstName + " " + leave.RequestEmployee.MiddleName + " " + leave.RequestEmployee.LastName,
+                StartDate = leave.StartDate,
+                EndDate = leave.EndDate,
+                TotalDays = leave.TotalDays,
+                Type = leave.LeaveType.Name,
+                Status = leave.LeaveStatus.ToString(),
+                ApproveEmployeeName = leave.ApproveEmployee.FirstName + " " + leave.ApproveEmployee.MiddleName + " " + leave.ApproveEmployee.LastName,
+                SubstituteEmployeeName = leave.SubstituteEmployee.FirstName + " " + leave.SubstituteEmployee.MiddleName + " " + leave.SubstituteEmployee.LastName,
+                RequestDate = leave.RequestDate,
+                Comments = leave.Comments
+            });
+        }
+
         private static double GetBusinessDays(DateTime startD, DateTime endD)
         {
             double calcBusinessDays =

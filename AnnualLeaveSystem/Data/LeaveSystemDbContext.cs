@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace AnnualLeaveSystem.Data
 {
-    public class LeaveSystemDbContext : IdentityDbContext
+    public class LeaveSystemDbContext : IdentityDbContext<Employee>
     {
         public LeaveSystemDbContext(DbContextOptions<LeaveSystemDbContext> options)
             : base(options)

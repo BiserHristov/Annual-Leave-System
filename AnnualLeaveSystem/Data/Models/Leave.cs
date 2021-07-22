@@ -27,17 +27,17 @@
         public LeaveType LeaveType { get; set; }
 
         [Required]
-        public int RequestEmployeeId { get; set; }
+        public string RequestEmployeeId { get; set; }
 
         public Employee RequestEmployee { get; set; }
 
         [Required]
-        public int SubstituteEmployeeId { get; set; }
+        public string SubstituteEmployeeId { get; set; }
 
         public Employee SubstituteEmployee { get; set; }
 
 
-        public int? ApproveEmployeeId { get; set; }
+        public string ApproveEmployeeId { get; set; }
 
         public Employee ApproveEmployee { get; set; }
 

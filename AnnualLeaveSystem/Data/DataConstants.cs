@@ -22,7 +22,7 @@
         public const int ProjectNameMinLength = 5;
         public const int ProjectNameMaxLength = 20;
 
-        public const int _EmployeeId = 3;
-        public const int _EmployeeTeamId = 2;
+        public const string _EmployeeId = "a63981b1-406b-42ea-a36a-27252db15bee";
+        public const int _EmployeeTeamId = 1;
     }
 }

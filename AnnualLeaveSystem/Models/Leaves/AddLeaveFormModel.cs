@@ -21,13 +21,13 @@
         [Display(Name = "Leave type")]
         public int LeaveTypeId { get; init; }
 
-        public int RequestEmployeeId { get; init; }
+        public string RequestEmployeeId { get; init; }
 
         [Required]
         [Display(Name = "Substitute employee")]
-        public int SubstituteEmployeeId { get; init; }
+        public string SubstituteEmployeeId { get; init; }
 
-        public int ApproveEmployeeId { get; set; }
+        public string ApproveEmployeeId { get; set; }
 
         [Display(Name = "Total days")]
         public int TotalDays { get; set; }

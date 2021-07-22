@@ -1,4 +1,5 @@
 using AnnualLeaveSystem.Data;
+using AnnualLeaveSystem.Data.Models;
 using AnnualLeaveSystem.Infrastructure;
 using AnnualLeaveSystem.Services;
 using Microsoft.AspNetCore.Builder;
@@ -25,7 +26,7 @@ public class Startup
         services.AddDatabaseDeveloperPageExceptionFilter();
 
         services
-            .AddDefaultIdentity<IdentityUser>(options =>
+            .AddDefaultIdentity<Employee>(options =>
             {
                 options.Password.RequireDigit = false;
                 options.Password.RequireLowercase = false;

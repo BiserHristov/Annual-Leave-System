@@ -173,6 +173,34 @@
                 return;
             }
 
+            var firstTeamLead = new Employee
+            {
+                FirstName = "Boris",
+                MiddleName = "Ivanov",
+                LastName = "Stoyanov",
+                ImageUrl = "https://thumbs.dreamstime.com/z/artificial-nose-3655155.jpg",
+                JobTitle = "Team Lead",
+                HireDate = new DateTime(2010, 07, 20).ToUniversalTime().Date,
+                DepartmentId = 3,
+                TeamId = 1
+            };
+
+            var secondTeamLead = new Employee
+            {
+                FirstName = "Kubrat",
+                MiddleName = "Hristov",
+                LastName = "Hristoskov",
+                ImageUrl = "https://www.thesun.co.uk/wp-content/uploads/2019/09/000613.jpg",
+                JobTitle = "Team Lead",
+                HireDate = new DateTime(2010, 10, 21).ToUniversalTime().Date,
+                DepartmentId = 2,
+                TeamId = 2
+            };
+
+            data.Employees.Add(firstTeamLead);
+            data.Employees.Add(secondTeamLead);
+
+
             data.Employees.AddRange(new[]{
                new Employee
                    {
@@ -183,8 +211,8 @@
                        JobTitle= "Specialist",
                        HireDate= new DateTime(1990,10,15).ToUniversalTime().Date,
                        DepartmentId=1,
-                       TeamId=2
-
+                       TeamId=1,
+                       TeamLeadId=firstTeamLead.Id
                    },
 
                new Employee
@@ -196,7 +224,8 @@
                        JobTitle= "Spacialist",
                        HireDate= new DateTime(2020,02,02).ToUniversalTime().Date,
                        DepartmentId=2,
-                       TeamId=2
+                       TeamId=1,
+                       TeamLeadId=firstTeamLead.Id
 
                    },
 
@@ -209,7 +238,8 @@
                        JobTitle= "Senior Specialist",
                        HireDate= new DateTime(2018,10,05).ToUniversalTime().Date,
                        DepartmentId=3,
-                       TeamId=1
+                       TeamId=2,
+                       TeamLeadId=secondTeamLead.Id
 
                    },
                 new Employee
@@ -221,14 +251,16 @@
                        JobTitle= "Senior Specialist",
                        HireDate= new DateTime(2010,07,20).ToUniversalTime().Date,
                        DepartmentId=3,
-                       TeamId=1
-
+                       TeamId=2,
+                       TeamLeadId=secondTeamLead.Id
                    },
 
 
             });
 
+
             data.SaveChanges();
+
         }
 
         private static void SeedOfficialHolidays(LeaveSystemDbContext data)

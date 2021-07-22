@@ -11,7 +11,7 @@
         {
 
         }
-        public int EmployeeId { get; set; }
+        public string EmployeeId { get; set; }
         public Employee Employee { get; set; }
         public int LeaveTypeId { get; set; }
         public LeaveType LeaveType { get; set; }

@@ -1,0 +1,62 @@
+﻿@model LeaveDetailsViewModel;
+
+@{
+    this.ViewData["Title"] = "Details";
+}
+
+<div class="container">
+    <div class="row">
+        <div class="col-sm-12 offset-lg-2 col-lg-8 offset-xl-3 col-xl-6">
+            <h3>Leave Details:</h3>
+            <table class="table">
+                <tbody>
+                    <tr>
+                        <th>Employee Name: </th>
+                        <td>@Model.RequestEmployeeName</td>
+                    </tr>
+                    <tr>
+                        <th>Start Date: </th>
+                        <td>@Model.StartDate.ToLocalTime().ToShortDateString()</td>
+                    </tr>
+                    <tr>
+                        <th>End Date: </th>
+                        <td>@Model.EndDate.ToLocalTime().ToShortDateString()</td>
+                    </tr>
+                    <tr>
+                        <th>Total Days: </th>
+                        <td>@Model.TotalDays</td>
+                    </tr>
+                    <tr>
+                        <th>Type: </th>
+                        <td>@Model.Type</td>
+                    </tr>
+                    <tr>
+                        <th>Status: </th>
+                        <td>@Model.Status</td>
+                    </tr>
+                    <tr>
+                        <th>Approval Name: </th>
+                        <td>@Model.ApproveEmployeeName</td>
+                    </tr>
+                    <tr>
+                        <th>Substitute Name: </th>
+                        <td>@Model.SubstituteEmployeeName</td>
+                    </tr>
+                    <tr>
+                        <th>Request Date: </th>
+                        <td>@Model.RequestDate.ToLocalTime().ToShortDateString()</td>
+                    </tr>
+                    <tr>
+                        <th>Comments: </th>
+                        <td>@Model.Comments</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <a asp-controller="Leaves" asp-action="All" class="btn btn-primary">Back</a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
