@@ -2,6 +2,7 @@ using AnnualLeaveSystem.Data;
 using AnnualLeaveSystem.Data.Models;
 using AnnualLeaveSystem.Infrastructure;
 using AnnualLeaveSystem.Services;
+using AnnualLeaveSystem.Services.Statistics;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -40,6 +41,8 @@ public class Startup
         services.AddTransient<IGetLeaveTypesService, GetLeaveTypesService>();
         services.AddTransient<IGetEmployeesInTeamService, GetEmployeesInTeamService>();
         services.AddTransient<IGetOfficialHolidaysService, GetOfficialHolidaysService>();
+        services.AddTransient<IStatisticsService, StatisticsService>();
+
 
     }
 

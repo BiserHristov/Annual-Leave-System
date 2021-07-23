@@ -6,33 +6,34 @@
     using AnnualLeaveSystem.Data.Models;
     using AnnualLeaveSystem.Models;
     using AnnualLeaveSystem.Models.Home;
+    using AnnualLeaveSystem.Services.Statistics;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Logging;
     public class HomeController : Controller
     {
-        private readonly LeaveSystemDbContext db;
+        private readonly IStatisticsService statistics;
 
-        public HomeController(LeaveSystemDbContext db)
+        public HomeController( IStatisticsService statistics)
         {
-            this.db = db;
+            this.statistics = statistics;
         }
 
         public IActionResult Index()
         {
             var homeModel = new IndexViewModel
             {
-                EmployeesCount = this.db.Employees.Count(),
-                ApprovedLeaveCount = this.db.Leaves.Count(l => l.LeaveStatus == Status.Approved),
-                InProgressLeaveCount = this.db.Leaves.Count(l => l.LeaveStatus == Status.Pending),
-                AllLeavesTotalDays = this.db.Leaves.Sum(l => l.TotalDays),
+                EmployeesCount = this.statistics.Get().EmployeesCount,
+                ApprovedLeaveCount = this.statistics.Get().ApprovedLeaveCount,
+                InProgressLeaveCount = this.statistics.Get().InProgressLeaveCount,
+                AllLeavesTotalDays = this.statistics.Get().AllLeavesTotalDays
             };
 
             return View(homeModel);
 
+        }
+
+        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+        public IActionResult Error() => View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+
     }
-
-    [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-    public IActionResult Error() => View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-
-}
 }
