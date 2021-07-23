@@ -4,6 +4,7 @@
     using AnnualLeaveSystem.Data.Models;
     using AnnualLeaveSystem.Models.Leaves;
     using AnnualLeaveSystem.Services;
+    using AnnualLeaveSystem.Services.Leaves;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.EntityFrameworkCore;
     using System;
@@ -13,6 +14,8 @@
     using static AnnualLeaveSystem.Data.DataConstants;
     public class LeavesController : Controller
     {
+        private readonly ILeaveService leaveService;
+
         private readonly IGetLeaveTypesService getLeaveTypesService;
         private readonly IGetEmployeesInTeamService getEmployeesInTeamService;
         private readonly IGetOfficialHolidaysService getOfficialHolidaysService;
@@ -21,12 +24,13 @@
             IGetLeaveTypesService getLeaveTypesService,
             IGetEmployeesInTeamService getEmployeesInTeamService,
             IGetOfficialHolidaysService getOfficialHolidaysService,
-            LeaveSystemDbContext db)
+            LeaveSystemDbContext db, ILeaveService leaveService)
         {
             this.getLeaveTypesService = getLeaveTypesService;
             this.getEmployeesInTeamService = getEmployeesInTeamService;
             this.getOfficialHolidaysService = getOfficialHolidaysService;
             this.db = db;
+            this.leaveService = leaveService;
         }
 
         public IActionResult Add()
@@ -43,100 +47,24 @@
 
         public IActionResult All([FromQuery] AllLeavesQueryModel query)
         {
-            var leavesQuery = this.db.Leaves.AsQueryable();
+            var queryResult = this.leaveService.All(
+                query.Status,
+                query.FirstName,
+                query.LastName,
+                query.Sorting,
+                query.CurrentPage,
+                AllLeavesQueryModel.LeavesPerPage);
 
-            if (query.Status != null)
-            {
-                switch (query.Status)
-                {
-
-                    case Status.Approved:
-                        leavesQuery = leavesQuery.Where(l => l.LeaveStatus == Status.Approved);
-                        break;
-
-                    case Status.Pending:
-                        leavesQuery = leavesQuery.Where(l => l.LeaveStatus == Status.Pending);
-                        break;
-
-                    case Status.Canceled:
-                        leavesQuery = leavesQuery.Where(l => l.LeaveStatus == Status.Canceled);
-                        break;
-
-                    case Status.Rejected:
-                        leavesQuery = leavesQuery.Where(l => l.LeaveStatus == Status.Rejected);
-                        break;
-
-                        //Default case is when "query.Status=null". In that case we do not need any filter by status.
-                }
-
-            }
-
-
-            if (!string.IsNullOrWhiteSpace(query.FirstName))
-            {
-                leavesQuery = leavesQuery.Where(l => l.RequestEmployee.FirstName.ToLower().Contains(query.FirstName.Trim().ToLower()));
-            }
-
-            if (!string.IsNullOrWhiteSpace(query.LastName))
-            {
-                leavesQuery = leavesQuery.Where(l => l.RequestEmployee.LastName.ToLower() == query.LastName.Trim().ToLower());
-            }
-
-
-            switch (query.Sorting)
-            {
-
-                case LeaveSorting.RequestDate:
-                    leavesQuery = leavesQuery.OrderByDescending(x => x.RequestDate);
-                    break;
-
-                case LeaveSorting.TotalDays:
-                    leavesQuery = leavesQuery.OrderByDescending(x => x.TotalDays);
-                    break;
-
-                case LeaveSorting.Fullname:
-                    leavesQuery = leavesQuery
-                        .OrderBy(x => x.RequestEmployee.FirstName)
-                        .ThenBy(x => x.RequestEmployee.LastName);
-                    break;
-
-                case LeaveSorting.StartDate:
-                default:
-                    leavesQuery = leavesQuery.OrderByDescending(x => x.StartDate);
-                    break;
-
-            }
-
-            //if (query.CurrentPage - 1 < 1)
-            //{
-            //    query.CurrentPage = 1;
-            //}
-
-            var leaves = leavesQuery
-                .Skip((query.CurrentPage - 1) * AllLeavesQueryModel.LeavesPerPage)
-                .Take(AllLeavesQueryModel.LeavesPerPage)
-                .Select(l => new LeaveListingViewModel
-                {
-                    Id = l.Id,
-                    FirstName = l.RequestEmployee.FirstName,
-                    LastName = l.RequestEmployee.LastName,
-                    StartDate = l.StartDate.ToLocalTime().ToShortDateString(),
-                    EndDate = l.EndDate.ToLocalTime().ToShortDateString(),
-                    TotalDays = l.TotalDays,
-                    Status = l.LeaveStatus.ToString(),
-                    RequestDate = l.RequestDate.ToLocalTime().ToShortDateString()
-                })
-                .ToList();
 
             var statuses = Enum.GetValues(typeof(Status))
                                .Cast<Status>()
                                .ToList();
 
-            var leavesCount = leavesQuery.Count();
+            var leavesCount = queryResult.Leaves.Count();
 
             query.Statuses = statuses;
-            query.Leaves = leaves;
             query.LeavesCount = leavesCount;
+            query.Leaves = queryResult.Leaves;
 
             return View(query);
         }

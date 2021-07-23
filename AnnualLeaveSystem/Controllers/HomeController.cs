@@ -13,19 +13,21 @@
     {
         private readonly IStatisticsService statistics;
 
-        public HomeController( IStatisticsService statistics)
+        public HomeController(IStatisticsService statistics)
         {
             this.statistics = statistics;
         }
 
         public IActionResult Index()
         {
+            var allStatistics = this.statistics.Get();
+
             var homeModel = new IndexViewModel
             {
-                EmployeesCount = this.statistics.Get().EmployeesCount,
-                ApprovedLeaveCount = this.statistics.Get().ApprovedLeaveCount,
-                InProgressLeaveCount = this.statistics.Get().InProgressLeaveCount,
-                AllLeavesTotalDays = this.statistics.Get().AllLeavesTotalDays
+                EmployeesCount = allStatistics.EmployeesCount,
+                ApprovedLeaveCount = allStatistics.ApprovedLeaveCount,
+                InProgressLeaveCount = allStatistics.InProgressLeaveCount,
+                AllLeavesTotalDays = allStatistics.AllLeavesTotalDays
             };
 
             return View(homeModel);

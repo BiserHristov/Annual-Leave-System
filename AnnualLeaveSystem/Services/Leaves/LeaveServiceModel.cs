@@ -1,11 +1,11 @@
-﻿namespace AnnualLeaveSystem.Models.Leaves
+﻿namespace AnnualLeaveSystem.Services.Leaves
 {
     using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
 
-    public class LeaveListingViewModel
+    public class LeaveServiceModel
     {
         public int Id { get; init; }
         public string FirstName { get; init; }
@@ -15,7 +15,5 @@
         public int TotalDays { get; init; }
         public string Status { get; init; }
         public string RequestDate { get; init; }
-
-
     }
 }
