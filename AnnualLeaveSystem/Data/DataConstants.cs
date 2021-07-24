@@ -2,25 +2,40 @@
 {
     public class DataConstants
     {
-        public const int DepartmentNameMinLength = 2;
-        public const int DepartmentNameMaxLength = 20;
+        public class Department
+        {
 
-        public const int EmployeeFirstNameMinLength = 2;
-        public const int EmployeeFirstNameMaxLength = 15;
-        public const int EmployeeMiddleNameMinLength = 2;
-        public const int EmployeeMiddleNameMaxLength = 15;
-        public const int EmployeeLastNameMinLength = 2;
-        public const int EmployeeLastNameMaxLength = 20;
-        public const int EmployeeJobTitleMinLength = 3;
-        public const int EmployeeJobTitleMaxLength = 25;
+            public const int NameMinLength = 2;
+            public const int NameMaxLength = 20;
+        }
+        public class Employee
+        {
+            public const int PasswordMinLength = 6;
+            public const int PasswordMaxLength = 30;
+            public const int FirstNameMinLength = 2;
+            public const int FirstNameMaxLength = 15;
+            public const int MiddleNameMinLength = 0;
+            public const int MiddleNameMaxLength = 15;
+            public const int LastNameMinLength = 2;
+            public const int LastNameMaxLength = 20;
+            public const int JobTitleMinLength = 3;
+            public const int JobTitleMaxLength = 25;
+        }
 
-        public const int LeaveTypeNameMinLength = 5;
-        public const int LeaveTypeNameMaxLength = 25;
-        public const int LeaveTypeDefaultDaysMinValue = 2;
-        public const int LeaveTypeDefaultDaysMaxValue = 25;
+        public class LeaveType
+        {
+            public const int NameMinLength = 5;
+            public const int NameMaxLength = 25;
+            public const int DefaultDaysMinValue = 2;
+            public const int DefaultDaysMaxValue = 25;
+        }
 
-        public const int ProjectNameMinLength = 5;
-        public const int ProjectNameMaxLength = 20;
+        public class Project
+        {
+            public const int NameMinLength = 5;
+            public const int NameMaxLength = 20;
+        }
+
 
         public const string _EmployeeId = "268d6161-e015-474a-a4bc-252ba15aa016";
         public const int _EmployeeTeamId = 2;

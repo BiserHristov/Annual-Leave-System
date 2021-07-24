@@ -4,7 +4,7 @@
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
-    using static AnnualLeaveSystem.Data.DataConstants;
+    using static AnnualLeaveSystem.Data.DataConstants.Project;
 
 
     public class Project
@@ -12,7 +12,7 @@
         public int Id { get; init; }
 
         [Required]
-        [MaxLength(ProjectNameMaxLength)]
+        [MaxLength(NameMaxLength)]
         public string Name { get; set; }
 
         [Required]

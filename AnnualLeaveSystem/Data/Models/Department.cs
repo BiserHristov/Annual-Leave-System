@@ -3,13 +3,13 @@
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
 
-    using static AnnualLeaveSystem.Data.DataConstants;
+    using static AnnualLeaveSystem.Data.DataConstants.Department;
     public class Department
     {
         public int Id { get; init; }
 
         [Required]
-        [MaxLength(DepartmentNameMaxLength)]
+        [MaxLength(NameMaxLength)]
         public string Name { get; set; }
 
         public ICollection<Employee> Employees { get; init; } = new HashSet<Employee>();

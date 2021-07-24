@@ -4,6 +4,7 @@ using AnnualLeaveSystem.Infrastructure;
 using AnnualLeaveSystem.Services;
 using AnnualLeaveSystem.Services.Leaves;
 using AnnualLeaveSystem.Services.Statistics;
+using AnnualLeaveSystem.Services.Users;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -35,6 +36,7 @@ public class Startup
                 options.Password.RequireNonAlphanumeric = false;
                 options.Password.RequireUppercase = false;
             })
+            .AddRoles<IdentityRole>()
             .AddEntityFrameworkStores<LeaveSystemDbContext>();
 
         services
@@ -44,6 +46,8 @@ public class Startup
         services.AddTransient<IGetOfficialHolidaysService, GetOfficialHolidaysService>();
         services.AddTransient<IStatisticsService, StatisticsService>();
         services.AddTransient<ILeaveService, LeaveService>();
+        services.AddTransient<IUserService, UserService>();
+
 
 
 

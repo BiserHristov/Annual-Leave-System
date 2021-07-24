@@ -6,27 +6,26 @@
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
 
-    using static AnnualLeaveSystem.Data.DataConstants;
+    using static AnnualLeaveSystem.Data.DataConstants.Employee;
     public class Employee : IdentityUser
     {
-        //public int Id { get; init; }
-
+        
         [Required]
-        [MaxLength(EmployeeFirstNameMaxLength)]
+        [MaxLength(FirstNameMaxLength)]
         public string FirstName { get; set; }
 
-        [MaxLength(EmployeeMiddleNameMaxLength)]
+        [MaxLength(MiddleNameMaxLength)]
         public string MiddleName { get; set; }
 
         [Required]
-        [MaxLength(EmployeeLastNameMaxLength)]
+        [MaxLength(LastNameMaxLength)]
         public string LastName { get; set; }
 
         [Required]
         public string ImageUrl { get; set; }
 
         [Required]
-        [MaxLength(EmployeeJobTitleMaxLength)]
+        [MaxLength(JobTitleMaxLength)]
         public string JobTitle { get; set; }
 
         [Required]

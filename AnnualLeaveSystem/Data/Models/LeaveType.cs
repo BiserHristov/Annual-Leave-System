@@ -3,13 +3,13 @@
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
 
-    using static AnnualLeaveSystem.Data.DataConstants;
+    using static AnnualLeaveSystem.Data.DataConstants.LeaveType;
     public class LeaveType
     {
         public int Id { get; init; }
 
         [Required]
-        [MaxLength(LeaveTypeNameMaxLength)]
+        [MaxLength(NameMaxLength)]
         public string Name { get; set; }
 
         [Required]
