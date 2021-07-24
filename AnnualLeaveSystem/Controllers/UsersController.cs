@@ -5,6 +5,7 @@
     using AnnualLeaveSystem.Services.Users;
     using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Mvc;
+    using System;
     using System.Linq;
     using System.Threading.Tasks;
 
@@ -26,11 +27,9 @@
 
         public IActionResult Register()
         {
-            var model = new RegisterFormModel
-            {
-                Teams = this.userService.AllTeams(),
-                Departments = this.userService.AllDepartments(),
-            };
+            var model = new RegisterFormModel();
+
+            AddTeamsAndDepartments(model);
 
             return View(model);
         }
@@ -47,8 +46,7 @@
 
             if (!ModelState.IsValid)
             {
-                user.Teams = this.userService.AllTeams();
-                user.Departments = this.userService.AllDepartments();
+                AddTeamsAndDepartments(user);
                 return View(user);
             }
             var teamLeadId = userService.GetTeamLeadId(user.TeamId);
@@ -68,6 +66,7 @@
 
             };
 
+
             if (string.IsNullOrWhiteSpace(teamLeadId))
             {
                 registeredUser.TeamLeadId = registeredUser.Id;
@@ -84,11 +83,65 @@
 
                 }
 
+                AddTeamsAndDepartments(user);
+
                 return View(user);
             }
 
+            await signInManager.SignInAsync(registeredUser, true);
+
+          
+
 
             return RedirectToAction("Index", "Home");
+        }
+
+
+        public IActionResult Login()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Login(LoginFormModel user)
+        {
+            var searchedUser = await this.userManager.FindByEmailAsync(user.Email);
+
+            if (searchedUser == null)
+            {
+                return AddError(user);
+            }
+
+            var passwordIsValid = await this.userManager.CheckPasswordAsync(searchedUser, user.Password);
+
+            if (!passwordIsValid)
+            {
+                return AddError(user);
+            }
+
+            await signInManager.SignInAsync(searchedUser, true);
+
+            return RedirectToAction("Index", "Home");
+        }
+
+        public async Task<IActionResult> Logout()
+        {
+            await this.signInManager.SignOutAsync();
+
+            return RedirectToAction("Index", "Home");
+        }
+        private void AddTeamsAndDepartments(RegisterFormModel user)
+        {
+            user.Teams = this.userService.AllTeams();
+            user.Departments = this.userService.AllDepartments();
+        }
+        private IActionResult AddError(LoginFormModel user)
+        {
+            const string invalidCredentialsMessage = "Credentials are not valid";
+            ModelState.AddModelError(string.Empty, invalidCredentialsMessage);
+
+            return View(user);
+
         }
     }
 }
