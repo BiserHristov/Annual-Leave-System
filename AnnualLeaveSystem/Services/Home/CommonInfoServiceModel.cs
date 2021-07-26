@@ -5,7 +5,7 @@
     using System.Linq;
     using System.Threading.Tasks;
 
-    public class StatisticsServiceModel
+    public class CommonInfoServiceModel
     {
         public int EmployeesCount { get; init; }
         public int ApprovedLeaveCount { get; init; }

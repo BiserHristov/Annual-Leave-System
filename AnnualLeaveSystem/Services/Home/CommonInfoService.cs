@@ -7,16 +7,16 @@
     using System.Linq;
     using System.Threading.Tasks;
 
-    public class StatisticsService : IStatisticsService
+    public class CommonInfoService : ICommonInfoService
     {
         private readonly LeaveSystemDbContext db;
 
-        public StatisticsService(LeaveSystemDbContext db)
+        public CommonInfoService(LeaveSystemDbContext db)
         {
             this.db = db;
         }
 
-        public StatisticsServiceModel Get()
+        public CommonInfoServiceModel Get()
         {
             var employeesCount = this.db.Employees.Count();
 
@@ -30,7 +30,7 @@
                 .Leaves
                 .Sum(l => l.TotalDays);
 
-            return new StatisticsServiceModel
+            return new CommonInfoServiceModel
             {
                 EmployeesCount = employeesCount,
                 ApprovedLeaveCount = approvedLeavesCount,

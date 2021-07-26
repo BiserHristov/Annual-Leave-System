@@ -5,8 +5,8 @@
     using System.Linq;
     using System.Threading.Tasks;
 
-    public interface IStatisticsService
+    public interface ICommonInfoService
     {
-        public StatisticsServiceModel Get();
+        public CommonInfoServiceModel Get();
     }
 }

@@ -18,6 +18,7 @@
 
         public IEnumerable<LeaveTypeViewModel> GetLeaveTypes()
         {
+            
             return this.db.LeaveTypes
                  .Select(l => new LeaveTypeViewModel
                  {

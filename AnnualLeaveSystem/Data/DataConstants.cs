@@ -4,7 +4,6 @@
     {
         public class Department
         {
-
             public const int NameMinLength = 2;
             public const int NameMaxLength = 20;
         }
@@ -37,7 +36,12 @@
         }
 
 
-        public const string _EmployeeId = "268d6161-e015-474a-a4bc-252ba15aa016";
-        public const int _EmployeeTeamId = 2;
+        public class User
+        {
+            
+
+            public const int _EmployeeTeamId = 2;
+        }
+
     }
 }

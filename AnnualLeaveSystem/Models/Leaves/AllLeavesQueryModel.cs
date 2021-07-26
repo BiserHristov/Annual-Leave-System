@@ -12,10 +12,10 @@
     {
         public const int LeavesPerPage = 2;
         public int CurrentPage { get; set; } = 1;
-        public int LeavesCount { get; set; }
+        public int TotalLeaves { get; set; }
         public bool HasPreviousPage => this.CurrentPage > 1;
         public int PreviousPageNumber => this.CurrentPage - 1;
-        public int MaxPage => (int)Math.Ceiling((double)this.LeavesCount / LeavesPerPage);
+        public int MaxPage => (int)Math.Ceiling((double)this.TotalLeaves / LeavesPerPage);
         public bool HasNextPage => this.CurrentPage < this.MaxPage;
         public int NextPageNumber => this.CurrentPage + 1;
 

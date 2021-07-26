@@ -11,5 +11,6 @@
         public IEnumerable<RegisterDepartamentViewModel> AllDepartments();
         public IEnumerable<int> AllTeams();
         public string GetTeamLeadId(int teamId);
+        public void AddLeaveTypesToEmployee(string employeeId);
     }
 }

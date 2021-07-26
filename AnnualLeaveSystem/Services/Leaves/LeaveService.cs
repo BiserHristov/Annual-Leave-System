@@ -89,10 +89,39 @@
 
             }
 
+            var totalLeaves = leavesQuery.Count();
 
-            var leaves = leavesQuery
+            leavesQuery = leavesQuery
                 .Skip((currentPage - 1) * leavesPerPage)
-                .Take(leavesPerPage)
+                .Take(leavesPerPage);
+
+            var leaves = GetLeaves(leavesQuery);
+
+
+            return new LeaveQueryServiceModel
+            {
+                FirstName = firstName,
+                LastName = lastName,
+                Sorting = sorting,
+                Status = status,
+                CurrentPage = currentPage,
+                LeavesPerPage = leavesPerPage,
+                TotalLeaves=totalLeaves,
+                Leaves = leaves
+            };
+        }
+
+        public IEnumerable<LeaveServiceModel> ByEmployee(string employeeId)
+        {
+            var resultQuery = this.db.Leaves
+                 .Where(e => e.RequestEmployeeId == employeeId);
+
+            return GetLeaves(resultQuery);
+        }
+
+        private IEnumerable<LeaveServiceModel> GetLeaves(IQueryable<Leave> query)
+        {
+            return query
                 .Select(l => new LeaveServiceModel
                 {
                     Id = l.Id,
@@ -105,17 +134,6 @@
                     RequestDate = l.RequestDate.ToLocalTime().ToShortDateString(),
                 })
                 .ToList();
-
-            return new LeaveQueryServiceModel
-            {
-                FirstName = firstName,
-                LastName = lastName,
-                Sorting = sorting,
-                Status = status,
-                CurrentPage = currentPage,
-                LeavesPerPage = leavesPerPage,
-                Leaves = leaves
-            };
         }
     }
 }

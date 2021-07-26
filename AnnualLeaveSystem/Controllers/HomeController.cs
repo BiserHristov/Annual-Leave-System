@@ -11,9 +11,9 @@
     using Microsoft.Extensions.Logging;
     public class HomeController : Controller
     {
-        private readonly IStatisticsService statistics;
+        private readonly ICommonInfoService statistics;
 
-        public HomeController(IStatisticsService statistics)
+        public HomeController(ICommonInfoService statistics)
         {
             this.statistics = statistics;
         }

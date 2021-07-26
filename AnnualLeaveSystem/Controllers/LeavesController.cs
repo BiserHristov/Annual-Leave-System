@@ -2,16 +2,20 @@
 {
     using AnnualLeaveSystem.Data;
     using AnnualLeaveSystem.Data.Models;
+    using AnnualLeaveSystem.Infrastructure;
     using AnnualLeaveSystem.Models.Leaves;
     using AnnualLeaveSystem.Services;
     using AnnualLeaveSystem.Services.Leaves;
+    using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.EntityFrameworkCore;
     using System;
     using System.Collections.Generic;
     using System.Linq;
 
-    using static AnnualLeaveSystem.Data.DataConstants;
+    using static AnnualLeaveSystem.Data.DataConstants.User;
+
+    [Authorize]
     public class LeavesController : Controller
     {
         private readonly ILeaveService leaveService;
@@ -20,12 +24,15 @@
         private readonly IGetEmployeesInTeamService getEmployeesInTeamService;
         private readonly IGetOfficialHolidaysService getOfficialHolidaysService;
         private readonly LeaveSystemDbContext db; //ToDo: Later maybe the db should be removed
+
+
         public LeavesController(
             IGetLeaveTypesService getLeaveTypesService,
             IGetEmployeesInTeamService getEmployeesInTeamService,
             IGetOfficialHolidaysService getOfficialHolidaysService,
             LeaveSystemDbContext db, ILeaveService leaveService)
         {
+
             this.getLeaveTypesService = getLeaveTypesService;
             this.getEmployeesInTeamService = getEmployeesInTeamService;
             this.getOfficialHolidaysService = getOfficialHolidaysService;
@@ -38,37 +45,12 @@
             var model = new AddLeaveFormModel
             {
                 LeaveTypes = this.getLeaveTypesService.GetLeaveTypes(),
-                EmployeesInTeam = this.getEmployeesInTeamService.GetEmployeesInTeam(),
+                EmployeesInTeam = this.getEmployeesInTeamService.GetEmployeesInTeam(this.User.GetId()),
                 ОfficialHolidays = this.getOfficialHolidaysService.GetHolidays(),
             };
 
             return View(model);
         }
-
-        public IActionResult All([FromQuery] AllLeavesQueryModel query)
-        {
-            var queryResult = this.leaveService.All(
-                query.Status,
-                query.FirstName,
-                query.LastName,
-                query.Sorting,
-                query.CurrentPage,
-                AllLeavesQueryModel.LeavesPerPage);
-
-
-            var statuses = Enum.GetValues(typeof(Status))
-                               .Cast<Status>()
-                               .ToList();
-
-            var leavesCount = queryResult.Leaves.Count();
-
-            query.Statuses = statuses;
-            query.LeavesCount = leavesCount;
-            query.Leaves = queryResult.Leaves;
-
-            return View(query);
-        }
-
 
 
         [HttpPost]
@@ -103,6 +85,7 @@
                 this.ModelState.AddModelError(nameof(leaveModel.LeaveTypeId), "Leave type does not exist.");
             }
 
+
             if (!this.db.Teams.Any(t => t.Id == _EmployeeTeamId && t.Employees.Any(e => e.Id == leaveModel.SubstituteEmployeeId))) //ToDo: Change it with current user teamId
             {
                 this.ModelState.AddModelError(nameof(leaveModel.SubstituteEmployeeId), "There is no such employee in your team.");
@@ -111,7 +94,7 @@
 
             var employeeLeave = this.db.EmployeesLeaveTypes
                 .Include(x => x.LeaveType)
-                .Where(el => el.EmployeeId == _EmployeeId &&
+                .Where(el => el.EmployeeId == this.User.GetId() &&
                        el.LeaveTypeId == leaveModel.LeaveTypeId)
                 .FirstOrDefault(); //ToDo: Change it with current user Id
 
@@ -121,7 +104,7 @@
             }
 
 
-            var leaves = this.db.Leaves.Where(l => l.RequestEmployeeId == _EmployeeId && l.EndDate >= DateTime.UtcNow.Date).ToList();  //ToDo: Change it with current user Id
+            var leaves = this.db.Leaves.Where(l => l.RequestEmployeeId == this.User.GetId() && l.EndDate >= DateTime.UtcNow.Date).ToList();  //ToDo: Change it with current user Id
 
             for (int i = 0; i < leaves.Count; i++)
             {
@@ -148,7 +131,7 @@
             }
 
             var substituteLeaves = this.db.Leaves
-                .Where(l => l.SubstituteEmployeeId == _EmployeeId &&
+                .Where(l => l.SubstituteEmployeeId == this.User.GetId() &&
                             l.LeaveStatus == Status.Approved &&
                             l.EndDate >= DateTime.UtcNow.Date)
                 .ToList();  //ToDo: Change it with current user Id
@@ -183,12 +166,12 @@
             if (!ModelState.IsValid)
             {
                 leaveModel.LeaveTypes = this.getLeaveTypesService.GetLeaveTypes();
-                leaveModel.EmployeesInTeam = this.getEmployeesInTeamService.GetEmployeesInTeam();
+                leaveModel.EmployeesInTeam = this.getEmployeesInTeamService.GetEmployeesInTeam(this.User.GetId());
                 return View(leaveModel);
             }
 
             employeeLeave.UsedDays = employeeLeave.UsedDays + leaveModel.TotalDays;
-            var approveEmployeeId = db.Employees.Where(e => e.Id == _EmployeeId).Select(e => e.TeamLeadId).FirstOrDefault();
+            var approveEmployeeId = db.Employees.Where(e => e.Id == this.User.GetId()).Select(e => e.TeamLeadId).FirstOrDefault();
 
             var leave = new Leave
             {
@@ -196,7 +179,7 @@
                 EndDate = leaveModel.EndDate.Date,
                 TotalDays = leaveModel.TotalDays,
                 LeaveTypeId = leaveModel.LeaveTypeId,
-                RequestEmployeeId = _EmployeeId, //ToDo: Change it with current user Id
+                RequestEmployeeId = this.User.GetId(), //ToDo: Change it with current user Id
                 SubstituteEmployeeId = leaveModel.SubstituteEmployeeId,
                 ApproveEmployeeId = approveEmployeeId, //ToDo: Change it with approveEmployeeId
                 Comments = leaveModel.Comments,
@@ -210,11 +193,33 @@
         }
 
 
-        //public IActionResult Preview(AddLeaveFormModel leaveModel)
-        //{
-        //    return View(leaveModel);
-        //    // return RedirectToAction("Index", "Home");
-        //}
+        public IActionResult All([FromQuery] AllLeavesQueryModel query)
+        {
+            var queryResult = this.leaveService.All(
+                query.Status,
+                query.FirstName,
+                query.LastName,
+                query.Sorting,
+                query.CurrentPage,
+                AllLeavesQueryModel.LeavesPerPage);
+
+
+            var statuses = Enum.GetValues(typeof(Status))
+                               .Cast<Status>()
+                               .ToList();
+
+            var totalLeaves = queryResult.TotalLeaves;
+
+            query.Statuses = statuses;
+            query.TotalLeaves = totalLeaves;
+            query.Leaves = queryResult.Leaves;
+
+            return View(query);
+        }
+
+
+
+        
 
         public IActionResult Details(int leaveId)
         {

@@ -1,13 +1,16 @@
 ﻿namespace AnnualLeaveSystem.Controllers
 {
     using AnnualLeaveSystem.Data.Models;
+    using AnnualLeaveSystem.Infrastructure;
     using AnnualLeaveSystem.Models.Users;
     using AnnualLeaveSystem.Services.Users;
+    using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Mvc;
     using System;
     using System.Linq;
     using System.Threading.Tasks;
+
 
     public class UsersController : Controller
     {
@@ -25,8 +28,14 @@
             this.userService = userService;
         }
 
+
         public IActionResult Register()
         {
+            if (this.User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("Index", "Home");
+            }
+
             var model = new RegisterFormModel();
 
             AddTeamsAndDepartments(model);
@@ -34,9 +43,14 @@
             return View(model);
         }
 
+
         [HttpPost]
         public async Task<IActionResult> Register(RegisterFormModel user)
         {
+            if (this.User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("Index", "Home");
+            }
 
             if (user.Password != user.ConfirmPassword)
             {
@@ -88,10 +102,9 @@
                 return View(user);
             }
 
+            userService.AddLeaveTypesToEmployee(registeredUser.Id);
+
             await signInManager.SignInAsync(registeredUser, true);
-
-          
-
 
             return RedirectToAction("Index", "Home");
         }
@@ -99,12 +112,23 @@
 
         public IActionResult Login()
         {
+            if (this.User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("Index", "Home");
+            }
+
             return View();
         }
+
 
         [HttpPost]
         public async Task<IActionResult> Login(LoginFormModel user)
         {
+            if (this.User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("Index", "Home");
+            }
+
             var searchedUser = await this.userManager.FindByEmailAsync(user.Email);
 
             if (searchedUser == null)
@@ -124,6 +148,7 @@
             return RedirectToAction("Index", "Home");
         }
 
+        [Authorize]
         public async Task<IActionResult> Logout()
         {
             await this.signInManager.SignOutAsync();
@@ -143,5 +168,8 @@
             return View(user);
 
         }
+
+
+
     }
 }

@@ -16,7 +16,7 @@
             this.db = db;
         }
 
-        IEnumerable<OfficialHoliday> IGetOfficialHolidaysService.GetHolidays()
+        public IEnumerable<OfficialHoliday> GetHolidays()
         {
             return this.db.OfficialHolidays.ToList();
         }

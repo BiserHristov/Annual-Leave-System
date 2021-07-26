@@ -16,5 +16,7 @@
             LeaveSorting sorting,
             int currentPage,
             int leavesPerPage);
+
+        IEnumerable<LeaveServiceModel> ByEmployee(string employeeId);
     }
 }

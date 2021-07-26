@@ -44,7 +44,7 @@ public class Startup
         services.AddTransient<IGetLeaveTypesService, GetLeaveTypesService>();
         services.AddTransient<IGetEmployeesInTeamService, GetEmployeesInTeamService>();
         services.AddTransient<IGetOfficialHolidaysService, GetOfficialHolidaysService>();
-        services.AddTransient<IStatisticsService, StatisticsService>();
+        services.AddTransient<ICommonInfoService, CommonInfoService>();
         services.AddTransient<ILeaveService, LeaveService>();
         services.AddTransient<IUserService, UserService>();
 
