@@ -1,19 +1,15 @@
-﻿namespace AnnualLeaveSystem.Services.Leaves
-{
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Threading.Tasks;
+﻿using System;
 
-    public class LeaveServiceModel
+namespace AnnualLeaveSystem.Services.Leaves
+{
+    public class LeaveServiceModel : BaseServiceModel
     {
         public int Id { get; init; }
         public string FirstName { get; init; }
         public string LastName { get; init; }
-        public string StartDate { get; init; }
-        public string EndDate { get; init; }
-        public int TotalDays { get; init; }
         public string Status { get; init; }
-        public string RequestDate { get; init; }
+        public DateTime RequestDate { get; init; }
     }
+
+
 }

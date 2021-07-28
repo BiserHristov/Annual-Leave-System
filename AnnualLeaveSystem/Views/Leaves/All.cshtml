@@ -1,7 +1,8 @@
 ﻿@model AllLeavesQueryModel;
 
 @{
-    this.ViewData["Title"] = "All leaves";
+    ViewBag.Title = "All leaves";
+    ViewBag.LeavesAreNestedCollection = true;
 }
 
 
@@ -48,29 +49,10 @@
 
     </div>
 
-
-
 </form>
 
+<partial name="_LeavesPartial" model="@Model"/>
 
-
-<table class="table table-hover">
-    <partial name="_TableHeadPartial" />
-    <tbody>
-        @if (Model.Leaves.Count() == 0)
-        {
-            <tr>
-                <td class="text-danger">No records!</td>
-            </tr>
-
-        }
-
-
-        <partial name="_LeavesPartial" model="@Model.Leaves" />
-
-
-    </tbody>
-</table>
 @{
 
     var modelStatus = Model.Status != null ? (int?)Model.Status : null;

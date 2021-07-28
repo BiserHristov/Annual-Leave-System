@@ -1,14 +1,13 @@
 ﻿namespace AnnualLeaveSystem.Controllers
 {
     using AnnualLeaveSystem.Data.Models;
-    using AnnualLeaveSystem.Infrastructure;
     using AnnualLeaveSystem.Models.Users;
     using AnnualLeaveSystem.Services.Users;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Mvc;
-    using System;
     using System.Linq;
+    using System.Security.Claims;
     using System.Threading.Tasks;
 
 
@@ -103,6 +102,8 @@
             }
 
             userService.AddLeaveTypesToEmployee(registeredUser.Id);
+
+            await userManager.AddClaimAsync(registeredUser, new Claim("TeamId",user.TeamId.ToString()));
 
             await signInManager.SignInAsync(registeredUser, true);
 

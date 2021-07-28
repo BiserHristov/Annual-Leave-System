@@ -178,6 +178,8 @@
                 FirstName = "Boris",
                 MiddleName = "Ivanov",
                 LastName = "Stoyanov",
+                Email = "boris.stoyanov@abv.bg",
+                PasswordHash = "111111",
                 ImageUrl = "https://thumbs.dreamstime.com/z/artificial-nose-3655155.jpg",
                 JobTitle = "Team Lead",
                 HireDate = new DateTime(2010, 07, 20).ToUniversalTime().Date,
@@ -190,6 +192,8 @@
                 FirstName = "Kubrat",
                 MiddleName = "Hristov",
                 LastName = "Hristoskov",
+                Email = "Kubrat.Hristoskov@abv.bg",
+                PasswordHash = "111111",
                 ImageUrl = "https://www.thesun.co.uk/wp-content/uploads/2019/09/000613.jpg",
                 JobTitle = "Team Lead",
                 HireDate = new DateTime(2010, 10, 21).ToUniversalTime().Date,
@@ -200,13 +204,14 @@
             data.Employees.Add(firstTeamLead);
             data.Employees.Add(secondTeamLead);
 
-
             data.Employees.AddRange(new[]{
                new Employee
                    {
                        FirstName="Ivan",
                        MiddleName="Mandzhukov",
                        LastName="Ivanov",
+                       Email="Ivan.Ivanov@abv.bg",
+                       PasswordHash="111111",
                        ImageUrl="https://data.whicdn.com/images/356867091/original.jpg",
                        JobTitle= "Specialist",
                        HireDate= new DateTime(1990,10,15).ToUniversalTime().Date,
@@ -219,7 +224,9 @@
                    {
                        FirstName="Stefani",
                        MiddleName="Sokolova",
-                       LastName="Petrova",
+                       LastName="Petrova",                       
+                       Email="Stefani.Petrova@abv.bg",
+                       PasswordHash="111111",
                        ImageUrl="https://klohmakeup.files.wordpress.com/2013/03/layers20start20image2.jpg",
                        JobTitle= "Spacialist",
                        HireDate= new DateTime(2020,02,02).ToUniversalTime().Date,
@@ -234,6 +241,8 @@
                        FirstName="Stoyan",
                        MiddleName="Dimitrov",
                        LastName="Petkov",
+                       Email="Stoyan.Petkov@abv.bg",
+                       PasswordHash="111111",
                        ImageUrl="https://st.depositphotos.com/1807998/3521/i/950/depositphotos_35212277-stock-photo-young-man-in-park.jpg",
                        JobTitle= "Senior Specialist",
                        HireDate= new DateTime(2018,10,05).ToUniversalTime().Date,
@@ -247,6 +256,8 @@
                        FirstName="Dimitrichka",
                        MiddleName="Georgieva",
                        LastName="Petkova",
+                       Email="Dimitrichka.Petkova@abv.bg",
+                       PasswordHash="111111",
                        ImageUrl="https://data.whicdn.com/images/312637959/original.jpg",
                        JobTitle= "Senior Specialist",
                        HireDate= new DateTime(2010,07,20).ToUniversalTime().Date,

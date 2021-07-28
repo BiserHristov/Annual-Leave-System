@@ -4,49 +4,59 @@
     using AnnualLeaveSystem.Data.Models;
     using AnnualLeaveSystem.Infrastructure;
     using AnnualLeaveSystem.Models.Leaves;
-    using AnnualLeaveSystem.Services;
+    using AnnualLeaveSystem.Services.EmployeeLeaveTypes;
+    using AnnualLeaveSystem.Services.Employees;
     using AnnualLeaveSystem.Services.Leaves;
+    using AnnualLeaveSystem.Services.LeaveTypes;
+    using AnnualLeaveSystem.Services.Teams;
     using Microsoft.AspNetCore.Authorization;
+    using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.EntityFrameworkCore;
     using System;
-    using System.Collections.Generic;
     using System.Linq;
-
+    using System.Security.Claims;
     using static AnnualLeaveSystem.Data.DataConstants.User;
 
     [Authorize]
     public class LeavesController : Controller
     {
         private readonly ILeaveService leaveService;
+        private readonly ILeaveTypeService leaveTypeService;
+        private readonly ITeamService teamService;
+        private readonly IEmployeeLeaveTypesService employeeLeaveTypesService;
+        private readonly IEmployeeService employeeService;
 
-        private readonly IGetLeaveTypesService getLeaveTypesService;
-        private readonly IGetEmployeesInTeamService getEmployeesInTeamService;
-        private readonly IGetOfficialHolidaysService getOfficialHolidaysService;
+        private readonly UserManager<Employee> userManager;
+
         private readonly LeaveSystemDbContext db; //ToDo: Later maybe the db should be removed
 
 
         public LeavesController(
-            IGetLeaveTypesService getLeaveTypesService,
-            IGetEmployeesInTeamService getEmployeesInTeamService,
-            IGetOfficialHolidaysService getOfficialHolidaysService,
-            LeaveSystemDbContext db, ILeaveService leaveService)
+            LeaveSystemDbContext db,
+            ILeaveService leaveService,
+            ITeamService teamService,
+            ILeaveTypeService leaveTypeService,
+            UserManager<Employee> userManager,
+            IEmployeeLeaveTypesService employeeLeaveTypesService,
+            IEmployeeService employeeService)
         {
-
-            this.getLeaveTypesService = getLeaveTypesService;
-            this.getEmployeesInTeamService = getEmployeesInTeamService;
-            this.getOfficialHolidaysService = getOfficialHolidaysService;
             this.db = db;
             this.leaveService = leaveService;
+            this.teamService = teamService;
+            this.leaveTypeService = leaveTypeService;
+            this.userManager = userManager;
+            this.employeeLeaveTypesService = employeeLeaveTypesService;
+            this.employeeService = employeeService;
         }
 
         public IActionResult Add()
         {
-            var model = new AddLeaveFormModel
+            var model = new LeaveFormModel
             {
-                LeaveTypes = this.getLeaveTypesService.GetLeaveTypes(),
-                EmployeesInTeam = this.getEmployeesInTeamService.GetEmployeesInTeam(this.User.GetId()),
-                ОfficialHolidays = this.getOfficialHolidaysService.GetHolidays(),
+                LeaveTypes = this.leaveService.GetLeaveTypes(),
+                EmployeesInTeam = this.leaveService.GetEmployeesInTeam(this.User.GetId()),
+                ОfficialHolidays = this.leaveService.GetHolidays(),
             };
 
             return View(model);
@@ -54,13 +64,12 @@
 
 
         [HttpPost]
-        public IActionResult Add(AddLeaveFormModel leaveModel)
+        public IActionResult Add(LeaveFormModel leaveModel)
         {
             if (leaveModel.StartDate > leaveModel.EndDate)
             {
                 this.ModelState.AddModelError(nameof(leaveModel.StartDate), "Start date should be before end date.");
                 this.ModelState.AddModelError(nameof(leaveModel.EndDate), "End date should be after start date.");
-
             }
 
             if (leaveModel.StartDate < DateTime.UtcNow.Date)
@@ -80,23 +89,24 @@
                 this.ModelState.AddModelError(nameof(leaveModel.TotalDays), "Count of days is not correct or it is equal to zero.");
             }
 
-            if (!this.db.LeaveTypes.Any(lt => lt.Id == leaveModel.LeaveTypeId))
+            var leaveTypeExist = this.leaveTypeService.TypeExist(leaveModel.LeaveTypeId);
+
+            if (!leaveTypeExist)
             {
                 this.ModelState.AddModelError(nameof(leaveModel.LeaveTypeId), "Leave type does not exist.");
             }
 
+            var teamId = this.userManager.FindByIdAsync(this.User.GetId()).GetAwaiter().GetResult().TeamId;
 
-            if (!this.db.Teams.Any(t => t.Id == _EmployeeTeamId && t.Employees.Any(e => e.Id == leaveModel.SubstituteEmployeeId))) //ToDo: Change it with current user teamId
+            var employeeExist = this.teamService.EmployeeExistInTeam(teamId, this.User.GetId());
+            if (!employeeExist) //ToDo: Change it with current user teamId
             {
                 this.ModelState.AddModelError(nameof(leaveModel.SubstituteEmployeeId), "There is no such employee in your team.");
             }
 
 
-            var employeeLeave = this.db.EmployeesLeaveTypes
-                .Include(x => x.LeaveType)
-                .Where(el => el.EmployeeId == this.User.GetId() &&
-                       el.LeaveTypeId == leaveModel.LeaveTypeId)
-                .FirstOrDefault(); //ToDo: Change it with current user Id
+
+            var employeeLeave = employeeLeaveTypesService.GetLeaveType(this.User.GetId(), leaveModel.LeaveTypeId);
 
             if (employeeLeave.RemainingDays == 0 || employeeLeave.RemainingDays < leaveModel.TotalDays)
             {
@@ -104,12 +114,10 @@
             }
 
 
-            var leaves = this.db.Leaves.Where(l => l.RequestEmployeeId == this.User.GetId() && l.EndDate >= DateTime.UtcNow.Date).ToList();  //ToDo: Change it with current user Id
+            var leaves = this.leaveService.GetNotFinishedLeaves(this.User.GetId());
 
-            for (int i = 0; i < leaves.Count; i++)
+            foreach (var currentLeave in leaves)
             {
-                var currentLeave = leaves[i];
-
                 var isStartDateTaken = IsInRange(leaveModel.StartDate, currentLeave.StartDate, currentLeave.EndDate);
                 var isEndDateTaken = IsInRange(leaveModel.EndDate, currentLeave.StartDate, currentLeave.EndDate);
 
@@ -130,16 +138,10 @@
                 }
             }
 
-            var substituteLeaves = this.db.Leaves
-                .Where(l => l.SubstituteEmployeeId == this.User.GetId() &&
-                            l.LeaveStatus == Status.Approved &&
-                            l.EndDate >= DateTime.UtcNow.Date)
-                .ToList();  //ToDo: Change it with current user Id
+            var substituteLeaves = this.leaveService.GetSubstituteApprovedLeaves(this.User.GetId());
 
-            for (int i = 0; i < substituteLeaves.Count; i++)
+            foreach (var currentLeave in substituteLeaves)
             {
-                var currentLeave = substituteLeaves[i];
-
                 var isStartDateTaken = IsInRange(leaveModel.StartDate, currentLeave.StartDate, currentLeave.EndDate);
                 var isEndDateTaken = IsInRange(leaveModel.EndDate, currentLeave.StartDate, currentLeave.EndDate);
 
@@ -160,18 +162,16 @@
                 }
             }
 
-
-
-
             if (!ModelState.IsValid)
             {
-                leaveModel.LeaveTypes = this.getLeaveTypesService.GetLeaveTypes();
-                leaveModel.EmployeesInTeam = this.getEmployeesInTeamService.GetEmployeesInTeam(this.User.GetId());
+                leaveModel.LeaveTypes = this.leaveService.GetLeaveTypes();
+                leaveModel.EmployeesInTeam = this.leaveService.GetEmployeesInTeam(this.User.GetId());
                 return View(leaveModel);
             }
 
             employeeLeave.UsedDays = employeeLeave.UsedDays + leaveModel.TotalDays;
-            var approveEmployeeId = db.Employees.Where(e => e.Id == this.User.GetId()).Select(e => e.TeamLeadId).FirstOrDefault();
+
+            var approveEmployeeId = this.employeeService.GetTeamLeadId(this.User.GetId());
 
             var leave = new Leave
             {
@@ -179,11 +179,11 @@
                 EndDate = leaveModel.EndDate.Date,
                 TotalDays = leaveModel.TotalDays,
                 LeaveTypeId = leaveModel.LeaveTypeId,
-                RequestEmployeeId = this.User.GetId(), //ToDo: Change it with current user Id
+                RequestEmployeeId = this.User.GetId(),
                 SubstituteEmployeeId = leaveModel.SubstituteEmployeeId,
-                ApproveEmployeeId = approveEmployeeId, //ToDo: Change it with approveEmployeeId
+                ApproveEmployeeId = approveEmployeeId,
                 Comments = leaveModel.Comments,
-                RequestDate = leaveModel.RequestedDate
+                RequestDate = leaveModel.RequestDate
             };
 
             this.db.Leaves.Add(leave);
@@ -216,10 +216,6 @@
 
             return View(query);
         }
-
-
-
-        
 
         public IActionResult Details(int leaveId)
         {
@@ -255,18 +251,32 @@
             });
         }
 
-        private static double GetBusinessDays(DateTime startD, DateTime endD)
+        public IActionResult Edit(int leaveId)
+        {
+            var leave = this.leaveService.GetLeave(leaveId);
+            leave.LeaveTypes = this.leaveService.GetLeaveTypes();
+            leave.EmployeesInTeam = this.leaveService.GetEmployeesInTeam(this.User.GetId());
+
+            return View(leave);
+        }
+        public IActionResult ForApproval()
+        {
+            var leaves = leaveService.LeavesForApproval(this.User.GetId());
+
+            return View(leaves);
+        }
+        private static double GetBusinessDays(DateTime startDate, DateTime endDate)
         {
             double calcBusinessDays =
-                1 + ((endD - startD).TotalDays * 5 -
-                (startD.DayOfWeek - endD.DayOfWeek) * 2) / 7;
+                1 + ((endDate - startDate).TotalDays * 5 -
+                (startDate.DayOfWeek - endDate.DayOfWeek) * 2) / 7;
 
-            if (endD.DayOfWeek == DayOfWeek.Saturday)
+            if (endDate.DayOfWeek == DayOfWeek.Saturday)
             {
                 calcBusinessDays--;
             }
 
-            if (startD.DayOfWeek == DayOfWeek.Sunday)
+            if (startDate.DayOfWeek == DayOfWeek.Sunday)
             {
                 calcBusinessDays--;
             }

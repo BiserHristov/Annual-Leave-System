@@ -39,7 +39,6 @@
         public class User
         {
             
-
             public const int _EmployeeTeamId = 2;
         }
 

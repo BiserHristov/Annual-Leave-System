@@ -1,17 +1,61 @@
-﻿
+﻿@using AnnualLeaveSystem.Infrastructure;
 
-@foreach (var leave in Model)
-{
-    <tr>
-        <td>@leave.FirstName</td>
-        <td>@leave.LastName</td>
-        <td>@leave.StartDate</td>
-        <td>@leave.EndDate</td>
-        <td>@leave.TotalDays</td>
-        <td>@leave.Status</td>
-        <td>@leave.RequestDate</td>
-        <td>
-            <a asp-controller="Leaves" asp-action="Details" asp-route-leaveId="@leave.Id" class="btn btn-primary">Details</a>
-        </td>
-    </tr>
+@{
+    var collection = ViewBag.LeavesAreNestedCollection ? Model.Leaves : Model;
 }
+<table class="table table-hover">
+
+    <thead>
+        <tr>
+            <th scope="col">First name</th>
+            <th scope="col">Last name</th>
+            <th scope="col">Start date</th>
+            <th scope="col">End date</th>
+            <th scope="col">Total days</th>
+            <th scope="col">Status</th>
+            <th scope="col">Request date</th>
+            <th scope="col"></th>
+        </tr>
+    </thead>
+
+    <tbody>
+
+
+        @if (collection.Count == 0)
+        {
+            <tr>
+                <td class="text-danger">No records!</td>
+            </tr>
+
+        }
+
+
+        @foreach (var leave in collection)
+        {
+            <tr>
+                <td>@leave.FirstName</td>
+                <td>@leave.LastName</td>
+                <td>@leave.StartDate.ToShortDateString()</td>
+                <td>@leave.EndDate.ToShortDateString()</td>
+                <td>@leave.TotalDays</td>
+                <td>@leave.Status</td>
+                <td>@leave.RequestDate.ToShortDateString()</td>
+                <td>
+                    <a asp-controller="Leaves" asp-action="Details" asp-route-leaveId="@leave.Id" class="btn btn-primary">Details</a>
+                    @if (leave.RequestEmployeeId == this.User.GetId() && !leave.ApprovedBySubstitute)
+                    {
+                        <a asp-controller="Leaves" asp-action="Edit" asp-route-leaveId="@leave.Id" class="btn btn-warning">Edit</a>
+                    }
+                    @if (leave.SubstituteEmployeeId == this.User.GetId())
+                    {
+                        <a asp-controller="Leaves" asp-action="ForApproval" asp-route-leaveId="@leave.Id" class="btn btn-danger">Approve</a>
+                    }
+
+
+                </td>
+            </tr>
+        }
+
+
+    </tbody>
+</table>

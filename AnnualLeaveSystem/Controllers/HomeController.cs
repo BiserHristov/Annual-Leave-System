@@ -1,14 +1,10 @@
 ﻿namespace AnnualLeaveSystem.Controllers
 {
     using System.Diagnostics;
-    using System.Linq;
-    using AnnualLeaveSystem.Data;
-    using AnnualLeaveSystem.Data.Models;
     using AnnualLeaveSystem.Models;
     using AnnualLeaveSystem.Models.Home;
     using AnnualLeaveSystem.Services.Statistics;
     using Microsoft.AspNetCore.Mvc;
-    using Microsoft.Extensions.Logging;
     public class HomeController : Controller
     {
         private readonly ICommonInfoService statistics;

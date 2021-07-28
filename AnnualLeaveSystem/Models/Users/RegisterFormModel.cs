@@ -4,8 +4,6 @@
     using System;
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
-    using System.Linq;
-    using System.Threading.Tasks;
 
     using static AnnualLeaveSystem.Data.DataConstants.Employee;
     public class RegisterFormModel

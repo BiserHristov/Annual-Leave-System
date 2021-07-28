@@ -1,26 +1,13 @@
 ﻿@model IEnumerable<LeaveServiceModel>
 
 @{
-    this.ViewData["Title"] = "My leaves";
+    ViewBag.Title = "My leaves";
+    ViewBag.LeavesAreNestedCollection = false;
 }
 
-<table class="table table-hover">
-    <partial name="_TableHeadPartial" />
-    <tbody>
-        @if (Model.Count() == 0)
-        {
-            <tr>
-                <td class="text-danger">No records!</td>
-            </tr>
-
-        }
 
 
-        <partial name="_LeavesPartial" model="@Model" />
-
-
-    </tbody>
-</table>
+<partial name="_LeavesPartial" model="@Model" />
 
 
 @*<div class="row">

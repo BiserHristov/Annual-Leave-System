@@ -16,7 +16,7 @@ namespace AnnualLeaveSystem.Migrations
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
-                .HasAnnotation("ProductVersion", "5.0.7")
+                .HasAnnotation("ProductVersion", "5.0.8")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
             modelBuilder.Entity("AnnualLeaveSystem.Data.Models.Department", b =>
@@ -169,6 +169,9 @@ namespace AnnualLeaveSystem.Migrations
 
                     b.Property<string>("ApproveEmployeeId")
                         .HasColumnType("nvarchar(450)");
+
+                    b.Property<bool>("ApprovedBySubstitute")
+                        .HasColumnType("bit");
 
                     b.Property<string>("Comments")
                         .HasColumnType("nvarchar(max)");

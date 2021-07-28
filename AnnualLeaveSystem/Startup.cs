@@ -1,9 +1,13 @@
 using AnnualLeaveSystem.Data;
 using AnnualLeaveSystem.Data.Models;
 using AnnualLeaveSystem.Infrastructure;
-using AnnualLeaveSystem.Services;
+using AnnualLeaveSystem.Services.Emails;
+using AnnualLeaveSystem.Services.EmployeeLeaveTypes;
+using AnnualLeaveSystem.Services.Employees;
 using AnnualLeaveSystem.Services.Leaves;
+using AnnualLeaveSystem.Services.LeaveTypes;
 using AnnualLeaveSystem.Services.Statistics;
+using AnnualLeaveSystem.Services.Teams;
 using AnnualLeaveSystem.Services.Users;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -41,12 +45,16 @@ public class Startup
 
         services
             .AddControllersWithViews();
-        services.AddTransient<IGetLeaveTypesService, GetLeaveTypesService>();
-        services.AddTransient<IGetEmployeesInTeamService, GetEmployeesInTeamService>();
-        services.AddTransient<IGetOfficialHolidaysService, GetOfficialHolidaysService>();
         services.AddTransient<ICommonInfoService, CommonInfoService>();
         services.AddTransient<ILeaveService, LeaveService>();
+        services.AddTransient<ILeaveTypeService, LeaveTypeService>();
         services.AddTransient<IUserService, UserService>();
+        services.AddTransient<ITeamService, TeamService>();
+        services.AddTransient<IEmployeeService, EmployeeService>();
+        services.AddTransient<IEmployeeLeaveTypesService, EmployeeLeaveTypesService>();
+
+
+        services.AddTransient<IEmailSenderService, EmailSenderService>();
 
 
 

@@ -2,10 +2,7 @@
 {
     using AnnualLeaveSystem.Data.Models;
     using AnnualLeaveSystem.Models.Leaves;
-    using System;
     using System.Collections.Generic;
-    using System.Linq;
-    using System.Threading.Tasks;
 
     public interface ILeaveService
     {
@@ -17,6 +14,16 @@
             int currentPage,
             int leavesPerPage);
 
-        IEnumerable<LeaveServiceModel> ByEmployee(string employeeId);
+        public IEnumerable<LeaveServiceModel> ByEmployee(string employeeId);
+
+        public IEnumerable<SubstituteEmployeeServiceModel> GetEmployeesInTeam(string currentEmployeeId);
+
+        public IEnumerable<LeaveTypeServiceModel> GetLeaveTypes();
+        public IEnumerable<OfficialHoliday> GetHolidays();
+        public EditLeaveServiceModel GetLeave(int leaveId);
+        public IEnumerable<LeaveServiceModel> LeavesForApproval(string employeeId);
+        public IEnumerable<DateValidationServiceModel> GetNotFinishedLeaves(string employeeId);
+        public IEnumerable<DateValidationServiceModel> GetSubstituteApprovedLeaves(string substituteId);
+
     }
 }

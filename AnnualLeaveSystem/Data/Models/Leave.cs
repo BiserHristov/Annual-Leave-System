@@ -36,6 +36,7 @@
 
         public Employee SubstituteEmployee { get; set; }
 
+        public bool ApprovedBySubstitute { get; set; } = false;
 
         public string ApproveEmployeeId { get; set; }
 
