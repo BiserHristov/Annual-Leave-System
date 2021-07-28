@@ -3,6 +3,8 @@
     using AnnualLeaveSystem.Data;
     using AnnualLeaveSystem.Data.Models;
     using AnnualLeaveSystem.Models.Leaves;
+    using AnnualLeaveSystem.Services.EmployeeLeaveTypes;
+    using Microsoft.EntityFrameworkCore;
     using System;
     using System.Collections.Generic;
     using System.Linq;
@@ -17,6 +19,7 @@
         {
             this.db = db;
         }
+
 
         public LeaveQueryServiceModel All(
             Status? status,
@@ -221,6 +224,7 @@
                 .Where(l => l.RequestEmployeeId == employeeId && l.EndDate >= DateTime.UtcNow.Date)
                 .Select(l => new DateValidationServiceModel
                 {
+                    Id = l.Id,
                     StartDate = l.StartDate,
                     EndDate = l.EndDate
                 })
@@ -246,6 +250,118 @@
             return this.db.OfficialHolidays.ToList();
         }
 
+        public int Create(
+            DateTime startDate,
+            DateTime endDate,
+            int totalDays,
+            int leaveTypeId,
+            string requestEmployeeId,
+            string substituteEmployeeId,
+            string approveEmployeeId,
+            string comments,
+            DateTime requestDate)
+        {
+            var leave = new Leave
+            {
+                StartDate = startDate.Date,
+                EndDate = endDate.Date,
+                TotalDays = totalDays,
+                LeaveTypeId = leaveTypeId,
+                RequestEmployeeId = requestEmployeeId,
+                SubstituteEmployeeId = substituteEmployeeId,
+                ApproveEmployeeId = approveEmployeeId ?? requestEmployeeId,
+                Comments = comments,
+                RequestDate = requestDate
+            };
 
+            var employeeLeave = this.db.EmployeesLeaveTypes
+              .Include(x => x.LeaveType)
+              .Where(el => el.EmployeeId == leave.RequestEmployeeId &&
+                           el.LeaveTypeId == leaveTypeId)
+              .FirstOrDefault();
+
+            employeeLeave.PendingApprovalDays += totalDays;
+
+            this.db.Leaves.Add(leave);
+            this.db.SaveChanges();
+
+            return leave.Id;
+        }
+
+        public bool Edit(
+            int leaveId,
+            string currentEmployeeId,
+           DateTime startDate,
+           DateTime endDate,
+           int totalDays,
+           int leaveTypeId,
+           string requestEmployeeId,
+           string substituteEmployeeId,
+           string approveEmployeeId,
+           string comments)
+        {
+
+
+            var leave = this.db.Leaves.Find(leaveId);
+
+            if (leave.RequestEmployeeId!=currentEmployeeId)
+            {
+                return false;
+            }
+
+            var employeeLeave = GetEmployeeLeaveType(leave.LeaveTypeId, requestEmployeeId);
+            employeeLeave.PendingApprovalDays -= leave.TotalDays;
+
+            if (leave.LeaveTypeId == leaveTypeId)
+            {
+                employeeLeave.PendingApprovalDays += totalDays;
+            }
+            else
+            {
+                var currentEmployeeLeave = GetEmployeeLeaveType(leaveTypeId, requestEmployeeId);
+                currentEmployeeLeave.PendingApprovalDays += totalDays;
+            }
+
+            leave.StartDate = startDate.Date;
+            leave.EndDate = endDate.Date;
+            leave.TotalDays = totalDays;
+            leave.LeaveTypeId = leaveTypeId;
+            leave.SubstituteEmployeeId = substituteEmployeeId;
+            leave.Comments = comments;
+
+            this.db.SaveChanges();
+
+            return true;
+        }
+
+        private EmployeeLeaveType GetEmployeeLeaveType(int leaveTypeId, string reqiestEmployeeId)
+        {
+            return this.db.EmployeesLeaveTypes
+              .Include(x => x.LeaveType)
+              .Where(el => el.EmployeeId == reqiestEmployeeId &&
+                           el.LeaveTypeId == leaveTypeId)
+              .FirstOrDefault();
+        }
+
+        public bool Exist(int leaveId)
+        {
+            return this.db.Leaves.Any(l => l.Id == leaveId);
+        }
+
+        public int GetLeaveTypeId(int leaveId)
+        {
+            return this.db.Leaves
+                .Where(l => l.Id == leaveId)
+                .Select(l => l.LeaveTypeId)
+                .FirstOrDefault();
+        }
+
+        public int GetLeaveTotalDays(int leaveId)
+        {
+            return this.db.Leaves
+             .Where(l => l.Id == leaveId)
+             .Select(l => l.TotalDays)
+             .FirstOrDefault();
+        }
     }
 }

@@ -1,0 +1,12 @@
+﻿@model IEnumerable<LeaveServiceModel>
+
+@{
+    ViewBag.Title = "Leaves for approval";
+    ViewBag.LeavesAreNestedCollection = false;
+}
+
+
+
+<partial name="_LeavesPartial" model="@Model" />
+
+

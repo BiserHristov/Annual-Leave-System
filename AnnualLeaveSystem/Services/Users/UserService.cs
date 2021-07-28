@@ -2,6 +2,7 @@
 {
     using AnnualLeaveSystem.Data;
     using AnnualLeaveSystem.Data.Models;
+    using Microsoft.EntityFrameworkCore;
     using System.Collections.Generic;
     using System.Linq;
 
@@ -36,17 +37,19 @@
 
         public string GetTeamLeadId(int teamId)
         {
-            var leadId = this.db.Employees
-                .Where(e => e.TeamId == teamId)
+            var teamLeadId = this.db.Employees
+                .Include(e => e.Team)
+                .Where(e => e.TeamId == teamId &&
+                            e.TeamLeadId != null)
                 .Select(e => e.TeamLeadId)
                 .FirstOrDefault();
 
-            return leadId;
+            return teamLeadId;
         }
 
         public void AddLeaveTypesToEmployee(string employeeId)
         {
-            if (this.db.EmployeesLeaveTypes.Any(el=>el.EmployeeId==employeeId))
+            if (this.db.EmployeesLeaveTypes.Any(el => el.EmployeeId == employeeId))
             {
                 return;
             }

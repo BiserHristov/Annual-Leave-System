@@ -63,6 +63,7 @@
                 return View(user);
             }
             var teamLeadId = userService.GetTeamLeadId(user.TeamId);
+
             var registeredUser = new Employee
             {
                 Email = user.Email,

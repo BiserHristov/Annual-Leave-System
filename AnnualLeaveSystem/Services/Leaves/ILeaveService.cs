@@ -2,10 +2,34 @@
 {
     using AnnualLeaveSystem.Data.Models;
     using AnnualLeaveSystem.Models.Leaves;
+    using System;
     using System.Collections.Generic;
 
     public interface ILeaveService
     {
+
+        public bool Edit(
+           int leaveId,
+           string currentEmployeeId,
+           DateTime startDate,
+           DateTime endDate,
+           int totalDays,
+           int leaveTypeId,
+           string requestEmployeeId,
+           string substituteEmployeeId,
+           string approveEmployeeId,
+           string comments);
+        
+                    public int Create(
+                DateTime startDate,
+                DateTime endDate,
+                int totalDays,
+                int leaveTypeId,
+                string requestEmployeeId,
+                string substituteEmployeeId,
+                string approveEmployeeId,
+                string comments,
+                DateTime requestDate);
         LeaveQueryServiceModel All(
             Status? status,
             string firstName,
@@ -21,9 +45,14 @@
         public IEnumerable<LeaveTypeServiceModel> GetLeaveTypes();
         public IEnumerable<OfficialHoliday> GetHolidays();
         public EditLeaveServiceModel GetLeave(int leaveId);
+        public int GetLeaveTypeId(int leaveId);
+        public int GetLeaveTotalDays(int leaveId);
+
+
         public IEnumerable<LeaveServiceModel> LeavesForApproval(string employeeId);
         public IEnumerable<DateValidationServiceModel> GetNotFinishedLeaves(string employeeId);
         public IEnumerable<DateValidationServiceModel> GetSubstituteApprovedLeaves(string substituteId);
+        public bool Exist(int leaveId);
 
     }
 }

@@ -53,7 +53,6 @@ public class Startup
         services.AddTransient<IEmployeeService, EmployeeService>();
         services.AddTransient<IEmployeeLeaveTypesService, EmployeeLeaveTypesService>();
 
-
         services.AddTransient<IEmailSenderService, EmailSenderService>();
 
 
