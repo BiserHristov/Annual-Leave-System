@@ -29,11 +29,10 @@
 
         private readonly UserManager<Employee> userManager;
 
-        private readonly LeaveSystemDbContext db; //ToDo: Later maybe the db should be removed
+        //private readonly LeaveSystemDbContext db; //ToDo: Later maybe the db should be removed
 
 
         public LeavesController(
-            LeaveSystemDbContext db,
             ILeaveService leaveService,
             ITeamService teamService,
             ILeaveTypeService leaveTypeService,
@@ -41,7 +40,6 @@
             IEmployeeLeaveTypesService employeeLeaveTypesService,
             IEmployeeService employeeService)
         {
-            this.db = db;
             this.leaveService = leaveService;
             this.teamService = teamService;
             this.leaveTypeService = leaveTypeService;
@@ -180,7 +178,7 @@
                 leaveModel.LeaveTypeId,
                 this.User.GetId(),
                 leaveModel.SubstituteEmployeeId,
-                leaveModel.ApproveEmployeeId,
+                approveEmployeeId,
                 leaveModel.Comments,
                 leaveModel.RequestDate
                 );
@@ -220,31 +218,14 @@
                 return this.NotFound();
             }
 
-            var leave = this.db.Leaves
-                 .Include(l => l.LeaveType)
-                .Include(l => l.RequestEmployee)
-                .Include(l => l.ApproveEmployee)
-                .Include(l => l.SubstituteEmployee)
-                .FirstOrDefault(l => l.Id == leaveId);
+            var leave = this.leaveService.GetLeaveById(leaveId);
 
             if (leave == null)
             {
                 return NotFound();
             }
 
-            return View(new LeaveDetailsViewModel
-            {
-                RequestEmployeeName = leave.RequestEmployee.FirstName + " " + leave.RequestEmployee.MiddleName + " " + leave.RequestEmployee.LastName,
-                StartDate = leave.StartDate,
-                EndDate = leave.EndDate,
-                TotalDays = leave.TotalDays,
-                Type = leave.LeaveType.Name,
-                Status = leave.LeaveStatus.ToString(),
-                ApproveEmployeeName = leave.ApproveEmployee.FirstName + " " + leave.ApproveEmployee.MiddleName + " " + leave.ApproveEmployee.LastName,
-                SubstituteEmployeeName = leave.SubstituteEmployee.FirstName + " " + leave.SubstituteEmployee.MiddleName + " " + leave.SubstituteEmployee.LastName,
-                RequestDate = leave.RequestDate,
-                Comments = leave.Comments
-            });
+            return View(leave);
         }
 
         public IActionResult Edit(int leaveId)
@@ -283,6 +264,11 @@
         [HttpPost]
         public IActionResult Edit(int leaveId, LeaveFormModel leaveModel)
         {
+            if (!this.leaveService.IsOwn(leaveId, this.User.GetId()))
+            {
+                return BadRequest();
+            }
+
             if (leaveModel.StartDate > leaveModel.EndDate)
             {
                 this.ModelState.AddModelError(nameof(leaveModel.StartDate), "Start date should be before end date.");
@@ -325,9 +311,9 @@
 
             var employeeLeave = this.employeeLeaveTypesService.GetLeaveType(this.User.GetId(), leaveModel.LeaveTypeId);
             var previousLeaveTypeId = this.leaveService.GetLeaveTypeId(leaveId);
-            var previousLeaveTotalDays= this.leaveService.GetLeaveTotalDays(leaveId);
+            var previousLeaveTotalDays = this.leaveService.GetLeaveTotalDays(leaveId);
 
-            if (leaveModel.LeaveTypeId==previousLeaveTypeId)
+            if (leaveModel.LeaveTypeId == previousLeaveTypeId)
             {
                 if (employeeLeave.RemainingDays == 0 || employeeLeave.RemainingDays - (employeeLeave.PendingApprovalDays - previousLeaveTotalDays) < leaveModel.TotalDays)
                 {
@@ -337,7 +323,7 @@
             }
             else
             {
-                if (employeeLeave.RemainingDays == 0 || employeeLeave.RemainingDays - employeeLeave.PendingApprovalDays  < leaveModel.TotalDays)
+                if (employeeLeave.RemainingDays == 0 || employeeLeave.RemainingDays - employeeLeave.PendingApprovalDays < leaveModel.TotalDays)
                 {
                     this.ModelState.AddModelError(nameof(leaveModel.TotalDays), "You do no have enough days left from the selected leave type option.");
                 }
@@ -401,9 +387,9 @@
 
 
 
+
             var leaveIsEdited = this.leaveService.Edit(
-                 leaveId,
-                 this.User.GetId(),
+               leaveId,
                leaveModel.StartDate.Date,
                leaveModel.EndDate.Date,
                leaveModel.TotalDays,
@@ -414,10 +400,7 @@
                leaveModel.Comments
                );
 
-            if (!leaveIsEdited)
-            {
-                return BadRequest();
-            }
+
             return RedirectToAction(nameof(All));
 
         }

@@ -10,7 +10,6 @@
 
         public bool Edit(
            int leaveId,
-           string currentEmployeeId,
            DateTime startDate,
            DateTime endDate,
            int totalDays,
@@ -20,16 +19,16 @@
            string approveEmployeeId,
            string comments);
         
-                    public int Create(
-                DateTime startDate,
-                DateTime endDate,
-                int totalDays,
-                int leaveTypeId,
-                string requestEmployeeId,
-                string substituteEmployeeId,
-                string approveEmployeeId,
-                string comments,
-                DateTime requestDate);
+       public int Create(
+           DateTime startDate,
+           DateTime endDate,
+           int totalDays,
+           int leaveTypeId,
+           string requestEmployeeId,
+           string substituteEmployeeId,
+           string approveEmployeeId,
+           string comments,
+           DateTime requestDate);
         LeaveQueryServiceModel All(
             Status? status,
             string firstName,
@@ -47,12 +46,14 @@
         public EditLeaveServiceModel GetLeave(int leaveId);
         public int GetLeaveTypeId(int leaveId);
         public int GetLeaveTotalDays(int leaveId);
+        public LeaveDetailsServiceModel GetLeaveById (int leaveId);
 
 
         public IEnumerable<LeaveServiceModel> LeavesForApproval(string employeeId);
         public IEnumerable<DateValidationServiceModel> GetNotFinishedLeaves(string employeeId);
         public IEnumerable<DateValidationServiceModel> GetSubstituteApprovedLeaves(string substituteId);
         public bool Exist(int leaveId);
+        public bool IsOwn(int leaveId, string employeeId);
 
     }
 }

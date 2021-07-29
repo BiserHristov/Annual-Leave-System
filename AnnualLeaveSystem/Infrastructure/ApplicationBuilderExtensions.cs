@@ -2,15 +2,23 @@
 {
     using System;
     using System.Linq;
+    using System.Threading.Tasks;
     using AnnualLeaveSystem.Data;
     using AnnualLeaveSystem.Data.Models;
     using Microsoft.AspNetCore.Builder;
+    using Microsoft.AspNetCore.Identity;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.DependencyInjection;
 
 
     public static class ApplicationBuilderExtensions
     {
+
+
+        //static ApplicationBuilderExtensions()
+        //{
+
+        //}
 
         public static IApplicationBuilder PrepareDatabase(
             this IApplicationBuilder app)
@@ -57,7 +65,7 @@
                  new Project
                     {
                         Name = "Shoe Shop" ,
-                        Description ="Shop fpr casual shoos",
+                        Description ="Shop fоr casual shoos",
                         StartDate = new DateTime(2021,10,05),
                         EndDate = new DateTime(2021,12,20)
                     },
@@ -178,8 +186,7 @@
                 FirstName = "Boris",
                 MiddleName = "Ivanov",
                 LastName = "Stoyanov",
-                Email = "boris.stoyanov@abv.bg",
-                PasswordHash = "111111",
+                UserName = "boris.stoyanov@abv.bg",
                 ImageUrl = "https://thumbs.dreamstime.com/z/artificial-nose-3655155.jpg",
                 JobTitle = "Team Lead",
                 HireDate = new DateTime(2010, 07, 20).ToUniversalTime().Date,
@@ -192,14 +199,17 @@
                 FirstName = "Kubrat",
                 MiddleName = "Hristov",
                 LastName = "Hristoskov",
-                Email = "Kubrat.Hristoskov@abv.bg",
-                PasswordHash = "111111",
+                UserName = "Kubrat.Hristoskov@abv.bg",
                 ImageUrl = "https://www.thesun.co.uk/wp-content/uploads/2019/09/000613.jpg",
                 JobTitle = "Team Lead",
                 HireDate = new DateTime(2010, 10, 21).ToUniversalTime().Date,
                 DepartmentId = 2,
                 TeamId = 2
             };
+
+
+            //await userManager.CreateAsync(firstTeamLead, "111111");
+            //await userManager.CreateAsync(secondTeamLead, "111111");
 
             data.Employees.Add(firstTeamLead);
             data.Employees.Add(secondTeamLead);
@@ -210,7 +220,7 @@
                        FirstName="Ivan",
                        MiddleName="Mandzhukov",
                        LastName="Ivanov",
-                       Email="Ivan.Ivanov@abv.bg",
+                       UserName="Ivan.Ivanov@abv.bg",
                        PasswordHash="111111",
                        ImageUrl="https://data.whicdn.com/images/356867091/original.jpg",
                        JobTitle= "Specialist",
@@ -224,8 +234,8 @@
                    {
                        FirstName="Stefani",
                        MiddleName="Sokolova",
-                       LastName="Petrova",                       
-                       Email="Stefani.Petrova@abv.bg",
+                       LastName="Petrova",
+                       UserName="Stefani.Petrova@abv.bg",
                        PasswordHash="111111",
                        ImageUrl="https://klohmakeup.files.wordpress.com/2013/03/layers20start20image2.jpg",
                        JobTitle= "Spacialist",
@@ -241,7 +251,7 @@
                        FirstName="Stoyan",
                        MiddleName="Dimitrov",
                        LastName="Petkov",
-                       Email="Stoyan.Petkov@abv.bg",
+                       UserName="Stoyan.Petkov@abv.bg",
                        PasswordHash="111111",
                        ImageUrl="https://st.depositphotos.com/1807998/3521/i/950/depositphotos_35212277-stock-photo-young-man-in-park.jpg",
                        JobTitle= "Senior Specialist",
@@ -256,7 +266,7 @@
                        FirstName="Dimitrichka",
                        MiddleName="Georgieva",
                        LastName="Petkova",
-                       Email="Dimitrichka.Petkova@abv.bg",
+                       UserName="Dimitrichka.Petkova@abv.bg",
                        PasswordHash="111111",
                        ImageUrl="https://data.whicdn.com/images/312637959/original.jpg",
                        JobTitle= "Senior Specialist",

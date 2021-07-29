@@ -290,7 +290,6 @@
 
         public bool Edit(
             int leaveId,
-            string currentEmployeeId,
            DateTime startDate,
            DateTime endDate,
            int totalDays,
@@ -304,9 +303,10 @@
 
             var leave = this.db.Leaves.Find(leaveId);
 
-            if (leave.RequestEmployeeId!=currentEmployeeId)
+            if (leave == null)
             {
                 return false;
+
             }
 
             var employeeLeave = GetEmployeeLeaveType(leave.LeaveTypeId, requestEmployeeId);
@@ -362,6 +362,39 @@
              .Where(l => l.Id == leaveId)
              .Select(l => l.TotalDays)
              .FirstOrDefault();
+        }
+
+        public bool IsOwn(int leaveId, string employeeId)
+        {
+            return this.db.Leaves
+                .Any(l => l.Id == leaveId && l.RequestEmployeeId == employeeId);
+        }
+
+        public LeaveDetailsServiceModel GetLeaveById(int leaveId)
+        {
+            var leave = this.db.Leaves
+                 .Include(l => l.LeaveType)
+                 .Include(l => l.RequestEmployee)
+                .Include(l => l.ApproveEmployee)
+                .Include(l => l.SubstituteEmployee)
+                .Where(l => l.Id == leaveId)
+                .Select(l => new LeaveDetailsServiceModel
+                {
+                    RequestEmployeeName = l.RequestEmployee.FirstName + " " + l.RequestEmployee.MiddleName + " " + l.RequestEmployee.LastName,
+                    StartDate = l.StartDate,
+                    EndDate = l.EndDate,
+                    TotalDays = l.TotalDays,
+                    Type = l.LeaveType.Name,
+                    Status = l.LeaveStatus.ToString(),
+                    ApproveEmployeeName = l.ApproveEmployee.FirstName + " " + l.ApproveEmployee.MiddleName + " " + l.ApproveEmployee.LastName,
+                    SubstituteEmployeeName = l.SubstituteEmployee.FirstName + " " + l.SubstituteEmployee.MiddleName + " " + l.SubstituteEmployee.LastName,
+                    RequestDate = l.RequestDate,
+                    Comments = l.Comments
+                })
+                .FirstOrDefault();
+
+            return leave;
+
         }
     }
 }

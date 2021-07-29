@@ -1,8 +1,8 @@
-﻿namespace AnnualLeaveSystem.Models.Leaves
+﻿namespace AnnualLeaveSystem.Services.Leaves
 {
     using System;
 
-    public class LeaveDetailsViewModel
+    public class LeaveDetailsServiceModel
     {
 
         public DateTime RequestDate { get; set; }
