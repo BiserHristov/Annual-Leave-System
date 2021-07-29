@@ -4,14 +4,16 @@ using AnnualLeaveSystem.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace AnnualLeaveSystem.Migrations
 {
     [DbContext(typeof(LeaveSystemDbContext))]
-    partial class LeaveSystemDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210729142042_MakeTeamProjectIdNullable")]
+    partial class MakeTeamProjectIdNullable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -110,7 +112,7 @@ namespace AnnualLeaveSystem.Migrations
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("TeamId")
+                    b.Property<int>("TeamId")
                         .HasColumnType("int");
 
                     b.Property<string>("TeamLeadId")
@@ -290,9 +292,6 @@ namespace AnnualLeaveSystem.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<int?>("ProjectId")
                         .HasColumnType("int");
 
@@ -449,11 +448,13 @@ namespace AnnualLeaveSystem.Migrations
                     b.HasOne("AnnualLeaveSystem.Data.Models.Team", "Team")
                         .WithMany("Employees")
                         .HasForeignKey("TeamId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.HasOne("AnnualLeaveSystem.Data.Models.Employee", "TeamLead")
                         .WithMany()
-                        .HasForeignKey("TeamLeadId");
+                        .HasForeignKey("TeamLeadId")
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("Department");
 

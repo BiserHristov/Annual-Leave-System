@@ -3,11 +3,13 @@
     using System.Collections.Generic;
     public class Team
     {
-        public int Id { get; set; }
+        public int Id { get; init; }
 
-        public int ProjectId { get; set; }
+        public string Name { get; init; }
 
-        public Project Project { get; set; }
+        public int? ProjectId { get; init; }
+
+        public Project Project { get; init; }
 
         public ICollection<Employee> Employees { get; init; } = new HashSet<Employee>();
     }

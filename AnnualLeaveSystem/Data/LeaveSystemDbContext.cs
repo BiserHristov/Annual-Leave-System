@@ -41,12 +41,12 @@ namespace AnnualLeaveSystem.Data
              .HasForeignKey(e => e.TeamId)
              .OnDelete(DeleteBehavior.Restrict);
 
-            builder
-             .Entity<Employee>()
-             .HasOne(e => e.TeamLead)
-             .WithMany()
-             .HasForeignKey(e => e.TeamLeadId)
-             .OnDelete(DeleteBehavior.Restrict);
+            //builder
+            // .Entity<Employee>()
+            // .HasOne(e => e.TeamLead)
+            // .WithMany()
+            // .HasForeignKey(e => e.TeamLeadId)
+            // .OnDelete(DeleteBehavior.Restrict);
 
             builder
               .Entity<Leave>()

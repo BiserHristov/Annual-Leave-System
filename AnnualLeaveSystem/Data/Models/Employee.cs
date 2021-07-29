@@ -37,8 +37,8 @@
 
         public Employee TeamLead { get; set; }
 
-        [Required]
-        public int TeamId { get; set; }
+       // [Required]
+        public int? TeamId { get; set; }
 
         public Team Team { get; set; }
 

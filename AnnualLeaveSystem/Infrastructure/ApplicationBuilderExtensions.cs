@@ -1,6 +1,7 @@
 ﻿namespace AnnualLeaveSystem.Infrastructure
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
     using AnnualLeaveSystem.Data;
@@ -9,6 +10,8 @@
     using Microsoft.AspNetCore.Identity;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.DependencyInjection;
+
+    using static WebConstants;
 
 
     public static class ApplicationBuilderExtensions
@@ -24,8 +27,9 @@
             this IApplicationBuilder app)
         {
             using var scopedServices = app.ApplicationServices.CreateScope();
+            var serviceProvider = scopedServices.ServiceProvider;
 
-            var data = scopedServices.ServiceProvider.GetService<LeaveSystemDbContext>();
+            var data = serviceProvider.GetRequiredService<LeaveSystemDbContext>();
 
             data.Database.Migrate();
 
@@ -33,12 +37,14 @@
             SeedTeams(data);
             SeedLeaveTypes(data);
             SeedDepartaments(data);
-            SeedEmployees(data);
+            SeedEmployees(data, serviceProvider);
+            SeedAdministrators(serviceProvider);
             SeedOfficialHolidays(data);
             SeedEmployeesLeaveTypes(data);
 
             return app;
         }
+
 
         private static void SeedProjects(LeaveSystemDbContext data)
         {
@@ -82,6 +88,10 @@
             }
 
             data.Teams.AddRange(new[]{
+                new Team
+                    {
+                        Name="Admins"
+                    },
                 new Team
                     {
                         ProjectId = 1
@@ -174,7 +184,7 @@
             data.SaveChanges();
         }
 
-        private static void SeedEmployees(LeaveSystemDbContext data)
+        private static void SeedEmployees(LeaveSystemDbContext data, IServiceProvider provider)
         {
             if (data.Employees.Any())
             {
@@ -186,6 +196,7 @@
                 FirstName = "Boris",
                 MiddleName = "Ivanov",
                 LastName = "Stoyanov",
+                Email = "boris.stoyanov@abv.bg",
                 UserName = "boris.stoyanov@abv.bg",
                 ImageUrl = "https://thumbs.dreamstime.com/z/artificial-nose-3655155.jpg",
                 JobTitle = "Team Lead",
@@ -199,6 +210,7 @@
                 FirstName = "Kubrat",
                 MiddleName = "Hristov",
                 LastName = "Hristoskov",
+                Email = "Kubrat.Hristoskov@abv.bg",
                 UserName = "Kubrat.Hristoskov@abv.bg",
                 ImageUrl = "https://www.thesun.co.uk/wp-content/uploads/2019/09/000613.jpg",
                 JobTitle = "Team Lead",
@@ -208,20 +220,20 @@
             };
 
 
-            //await userManager.CreateAsync(firstTeamLead, "111111");
-            //await userManager.CreateAsync(secondTeamLead, "111111");
+            var employees = new List<Employee>();
+            employees.Add(firstTeamLead);
+            employees.Add(secondTeamLead);
 
-            data.Employees.Add(firstTeamLead);
-            data.Employees.Add(secondTeamLead);
 
-            data.Employees.AddRange(new[]{
+
+            var anotherEmployees = new List<Employee>(){
                new Employee
                    {
                        FirstName="Ivan",
                        MiddleName="Mandzhukov",
                        LastName="Ivanov",
+                       Email="Ivan.Ivanov@abv.bg",
                        UserName="Ivan.Ivanov@abv.bg",
-                       PasswordHash="111111",
                        ImageUrl="https://data.whicdn.com/images/356867091/original.jpg",
                        JobTitle= "Specialist",
                        HireDate= new DateTime(1990,10,15).ToUniversalTime().Date,
@@ -235,8 +247,8 @@
                        FirstName="Stefani",
                        MiddleName="Sokolova",
                        LastName="Petrova",
+                       Email="Stefani.Petrova@abv.bg",
                        UserName="Stefani.Petrova@abv.bg",
-                       PasswordHash="111111",
                        ImageUrl="https://klohmakeup.files.wordpress.com/2013/03/layers20start20image2.jpg",
                        JobTitle= "Spacialist",
                        HireDate= new DateTime(2020,02,02).ToUniversalTime().Date,
@@ -251,8 +263,8 @@
                        FirstName="Stoyan",
                        MiddleName="Dimitrov",
                        LastName="Petkov",
+                       Email="Stoyan.Petkov@abv.bg",
                        UserName="Stoyan.Petkov@abv.bg",
-                       PasswordHash="111111",
                        ImageUrl="https://st.depositphotos.com/1807998/3521/i/950/depositphotos_35212277-stock-photo-young-man-in-park.jpg",
                        JobTitle= "Senior Specialist",
                        HireDate= new DateTime(2018,10,05).ToUniversalTime().Date,
@@ -266,8 +278,8 @@
                        FirstName="Dimitrichka",
                        MiddleName="Georgieva",
                        LastName="Petkova",
+                       Email="Dimitrichka.Petkova@abv.bg",
                        UserName="Dimitrichka.Petkova@abv.bg",
-                       PasswordHash="111111",
                        ImageUrl="https://data.whicdn.com/images/312637959/original.jpg",
                        JobTitle= "Senior Specialist",
                        HireDate= new DateTime(2010,07,20).ToUniversalTime().Date,
@@ -277,10 +289,77 @@
                    },
 
 
-            });
+            };
+
+            employees.AddRange(anotherEmployees);
+
+            var userManager = provider.GetRequiredService<UserManager<Employee>>();
+            var roleManager = provider.GetRequiredService<RoleManager<IdentityRole>>();
 
 
-            data.SaveChanges();
+            Task
+                .Run(async () =>
+                {
+                    if (await roleManager.RoleExistsAsync(UserRoleName))
+                    {
+                        return;
+                    }
+
+                    var role = new IdentityRole { Name = UserRoleName };
+                    await roleManager.CreateAsync(role);
+                    for (int i = 0; i < employees.Count; i++)
+                    {
+                        var employee = employees[i];
+                        var result = await userManager.CreateAsync(employee, "111111");
+
+                        await userManager.AddToRoleAsync(employee, role.Name);
+                    }
+
+
+                })
+                .GetAwaiter()
+                .GetResult();
+
+
+
+        }
+        private static void SeedAdministrators(IServiceProvider provider)
+        {
+            var userManager = provider.GetRequiredService<UserManager<Employee>>();
+            var roleManager = provider.GetRequiredService<RoleManager<IdentityRole>>();
+
+            Task
+                .Run(async () =>
+                {
+                    if (await roleManager.RoleExistsAsync(AdministratorRoleName))
+                    {
+                        return;
+                    }
+                    var role = new IdentityRole { Name = AdministratorRoleName };
+                    await roleManager.CreateAsync(role);
+
+                    var employee = new Employee
+                    {
+
+                        FirstName = "Ivan",
+                        MiddleName = "Stamenov",
+                        LastName = "Petrov",
+                        UserName = "admin.ivan.petrov@gmail.com",
+                        Email = "admin.ivan.petrov@gmail.com",
+                        ImageUrl = "https://data.whicdn.com/images/312637959/original.jpg",
+                        JobTitle = "Senior Specialist",
+                        HireDate = new DateTime(2010, 02, 20).ToUniversalTime().Date,
+                        DepartmentId = 1,
+                        //TeamId=1
+
+                    };
+                    var result = await userManager.CreateAsync(employee, "111111");
+
+                    await userManager.AddToRoleAsync(employee, role.Name);
+                })
+                .GetAwaiter()
+                .GetResult();
+
 
         }
 

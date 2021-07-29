@@ -7,6 +7,6 @@
 
     public interface ITeamService
     {
-        public bool EmployeeExistInTeam(int teamId, string employeeId);
+        public bool EmployeeExistInTeam(int? teamId, string employeeId);
     }
 }
