@@ -234,11 +234,11 @@
             Task
                 .Run(async () =>
                 {
-                    var roleExist = await roleManager.RoleExistsAsync(TeamLead);
+                    var roleExist = await roleManager.RoleExistsAsync(TeamLeadRoleName);
 
                     if (!roleExist)
                     {
-                        var role = new IdentityRole { Name = TeamLead };
+                        var role = new IdentityRole { Name = TeamLeadRoleName };
                         await roleManager.CreateAsync(role);
 
                         foreach (var teamLead in teamLeads)

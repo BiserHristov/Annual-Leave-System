@@ -1,5 +1,4 @@
-﻿@using AnnualLeaveSystem.Infrastructure;
-
+﻿
 @{
     var collection = ViewBag.LeavesAreNestedCollection ? Model.Leaves : Model;
 }
@@ -42,11 +41,17 @@
                 <td>@leave.RequestDate.ToShortDateString()</td>
                 <td>
                     <a asp-controller="Leaves" asp-action="Details" asp-route-leaveId="@leave.Id" class="btn btn-primary">Details</a>
-                    @if (leave.RequestEmployeeId == this.User.GetId() && !leave.ApprovedBySubstitute)
+
+                    @if (this.User.IsAdmin() ||
+                     (leave.RequestEmployeeId == this.User.GetId() && !leave.ApprovedBySubstitute))
                     {
                         <a asp-controller="Leaves" asp-action="Edit" asp-route-leaveId="@leave.Id" class="btn btn-warning">Edit</a>
                     }
-                    @if (leave.SubstituteEmployeeId == this.User.GetId())
+
+
+                    @if (leave.Status == Status.Pending.ToString() &&
+                          (leave.ApproveEmployeeId == this.User.GetId() ||
+                          leave.SubstituteEmployeeId == this.User.GetId()))
                     {
                         <a asp-controller="Leaves" asp-action="ForApproval" asp-route-leaveId="@leave.Id" class="btn btn-danger">Approve</a>
                     }

@@ -17,6 +17,7 @@
     using System.Linq;
     using System.Security.Claims;
     using static AnnualLeaveSystem.Data.DataConstants.User;
+    using static WebConstants;
 
     [Authorize]
     public class LeavesController : Controller
@@ -182,6 +183,11 @@
                 leaveModel.Comments,
                 leaveModel.RequestDate
                 );
+
+            if (this.User.IsUser())
+            {
+                return RedirectToAction("History", "Statistic");
+            }
 
             return RedirectToAction(nameof(All));
         }
@@ -400,13 +406,17 @@
                leaveModel.Comments
                );
 
+            if (this.User.IsInRole(UserRoleName))
+            {
+                return RedirectToAction("History", "Statistic");
+            }
 
             return RedirectToAction(nameof(All));
 
         }
         public IActionResult ForApproval()
         {
-            var leaves = leaveService.LeavesForApproval(this.User.GetId());
+            var leaves = leaveService.LeavesForApproval(this.User.GetId(), this.User.IsTeamLead());
 
             return View(leaves);
         }

@@ -135,7 +135,9 @@
                     StartDate = l.StartDate.ToLocalTime().Date,
                     EndDate = l.EndDate.ToLocalTime().Date,
                     TotalDays = l.TotalDays,
+                    ApproveEmployeeId = l.ApproveEmployeeId,
                     ApprovedBySubstitute = l.ApprovedBySubstitute,
+                    SubstituteEmployeeId = l.SubstituteEmployeeId,
                     Status = l.LeaveStatus.ToString(),
                     RequestDate = l.RequestDate.ToLocalTime().Date,
                 })
@@ -194,26 +196,39 @@
                 .FirstOrDefault();
         }
 
-        public IEnumerable<LeaveServiceModel> LeavesForApproval(string employeeId)
+        public IEnumerable<LeaveServiceModel> LeavesForApproval(string employeeId, bool isTeamLead)
         {
-            var leaves = this.db.Leaves
-                .Where(l => l.SubstituteEmployeeId == employeeId &&
-                            l.ApprovedBySubstitute == false)
-                .Select(l => new LeaveServiceModel
-                {
-                    Id = l.Id,
-                    FirstName = l.RequestEmployee.FirstName,
-                    LastName = l.RequestEmployee.LastName,
-                    StartDate = l.StartDate,
-                    EndDate = l.EndDate,
-                    TotalDays = l.TotalDays,
-                    RequestDate = l.RequestDate.ToLocalTime().Date,
-                    ApprovedBySubstitute = l.ApprovedBySubstitute,
-                    RequestEmployeeId = l.RequestEmployeeId,
-                    SubstituteEmployeeId = l.SubstituteEmployeeId,
-                    Status = l.LeaveStatus.ToString()
-                })
-                .ToList();
+
+            var leavesQuery = this.db.Leaves.AsQueryable();
+
+            if (isTeamLead)
+            {
+                leavesQuery = leavesQuery.Where(l => l.ApproveEmployeeId == employeeId &&
+                  l.ApprovedBySubstitute == true);
+            }
+            else
+            {
+                leavesQuery = leavesQuery.Where(l => l.SubstituteEmployeeId == employeeId &&
+                  l.ApprovedBySubstitute == false);
+            }
+
+            var leaves = leavesQuery
+            .Select(l => new LeaveServiceModel
+            {
+                Id = l.Id,
+                FirstName = l.RequestEmployee.FirstName,
+                LastName = l.RequestEmployee.LastName,
+                StartDate = l.StartDate,
+                EndDate = l.EndDate,
+                TotalDays = l.TotalDays,
+                RequestDate = l.RequestDate.ToLocalTime().Date,
+                ApprovedBySubstitute = l.ApprovedBySubstitute,
+                ApproveEmployeeId=l.ApproveEmployeeId,
+                RequestEmployeeId = l.RequestEmployeeId,
+                SubstituteEmployeeId = l.SubstituteEmployeeId,
+                Status = l.LeaveStatus.ToString()
+            })
+            .ToList();
 
             return leaves;
         }

@@ -49,7 +49,7 @@
         public LeaveDetailsServiceModel GetLeaveById (int leaveId);
 
 
-        public IEnumerable<LeaveServiceModel> LeavesForApproval(string employeeId);
+        public IEnumerable<LeaveServiceModel> LeavesForApproval(string employeeId, bool isTeamLead);
         public IEnumerable<DateValidationServiceModel> GetNotFinishedLeaves(string employeeId);
         public IEnumerable<DateValidationServiceModel> GetSubstituteApprovedLeaves(string substituteId);
         public bool Exist(int leaveId);

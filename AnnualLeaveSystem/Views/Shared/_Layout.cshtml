@@ -23,26 +23,34 @@
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
-                        @if (SignInManager.IsSignedIn(User) )
+                        @if (SignInManager.IsSignedIn(User))
                         {
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Leaves" asp-action="All">All</a>
-                            </li>
-                        }
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Leaves" asp-action="Add">Add</a>
-                        </li>
+                            var isUser = User.IsUser();
 
-                        @*@if (!User.Identity.IsAuthenticated)
+                            @if (!isUser)
                             {
                                 <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-controller="Users" asp-action="Register">Register</a>
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Leaves" asp-action="All">All</a>
                                 </li>
-                                <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-area="Users" asp-page="Login">Login</a>
-                                </li>
+                            }
 
-                            }*@
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Leaves" asp-action="Add">Add</a>
+                            </li>
+
+                        }
+
+
+                        @*@if (!User.Identity.IsAuthenticated)
+        {
+            <li class="nav-item">
+                <a class="nav-link text-dark" asp-controller="Users" asp-action="Register">Register</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-dark" asp-area="Users" asp-page="Login">Login</a>
+            </li>
+
+        }*@
                     </ul>
                     <partial name="_LoginPartial" />
 

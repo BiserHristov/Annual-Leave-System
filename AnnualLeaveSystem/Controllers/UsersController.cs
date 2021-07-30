@@ -80,7 +80,7 @@
 
             };
 
-
+            
             if (string.IsNullOrWhiteSpace(teamLeadId))
             {
                 registeredUser.TeamLeadId = registeredUser.Id;

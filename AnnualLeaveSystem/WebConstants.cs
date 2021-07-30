@@ -9,7 +9,7 @@
     {
         public const string AdministratorRoleName = "Administrator";
         public const string UserRoleName = "User";
-        public const string TeamLead = "TeamLead";
+        public const string TeamLeadRoleName = "TeamLead";
 
     }
 }
