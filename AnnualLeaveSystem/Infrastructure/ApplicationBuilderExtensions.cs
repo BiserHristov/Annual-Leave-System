@@ -33,21 +33,23 @@
 
             data.Database.Migrate();
 
-            SeedProjects(data);
-            SeedTeams(data);
-            SeedLeaveTypes(data);
-            SeedDepartaments(data);
-            SeedEmployees(data, serviceProvider);
+            SeedProjects(serviceProvider);
+            SeedTeams(serviceProvider);
+            SeedLeaveTypes(serviceProvider);
+            SeedDepartaments(serviceProvider);
+            SeedEmployees(serviceProvider);
             SeedAdministrators(serviceProvider);
-            SeedOfficialHolidays(data);
-            SeedEmployeesLeaveTypes(data);
+            SeedOfficialHolidays(serviceProvider);
+            SeedEmployeesLeaveTypes(serviceProvider);
 
             return app;
         }
 
 
-        private static void SeedProjects(LeaveSystemDbContext data)
+        private static void SeedProjects(IServiceProvider serviceProvider)
         {
+            var data = serviceProvider.GetRequiredService<LeaveSystemDbContext>();
+
             if (data.Projects.Any())
             {
                 return;
@@ -80,8 +82,10 @@
             data.SaveChanges();
         }
 
-        private static void SeedTeams(LeaveSystemDbContext data)
+        private static void SeedTeams(IServiceProvider serviceProvider)
         {
+            var data = serviceProvider.GetRequiredService<LeaveSystemDbContext>();
+
             if (data.Teams.Any())
             {
                 return;
@@ -110,8 +114,10 @@
             data.SaveChanges();
         }
 
-        private static void SeedLeaveTypes(LeaveSystemDbContext data)
+        private static void SeedLeaveTypes(IServiceProvider serviceProvider)
         {
+            var data = serviceProvider.GetRequiredService<LeaveSystemDbContext>();
+
             if (data.LeaveTypes.Any())
             {
                 return;
@@ -154,8 +160,9 @@
             data.SaveChanges();
         }
 
-        private static void SeedDepartaments(LeaveSystemDbContext data)
+        private static void SeedDepartaments(IServiceProvider serviceProvider)
         {
+            var data = serviceProvider.GetRequiredService<LeaveSystemDbContext>();
             if (data.Departments.Any())
             {
                 return;
@@ -184,12 +191,12 @@
             data.SaveChanges();
         }
 
-        private static void SeedEmployees(LeaveSystemDbContext data, IServiceProvider provider)
+        private static void SeedEmployees(IServiceProvider serviceProvider)
         {
-            if (data.Employees.Any())
-            {
-                return;
-            }
+            var data = serviceProvider.GetRequiredService<LeaveSystemDbContext>();
+
+            var userManager = serviceProvider.GetRequiredService<UserManager<Employee>>();
+            var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
 
             var firstTeamLead = new Employee
             {
@@ -219,14 +226,36 @@
                 TeamId = 2
             };
 
-
-            var employees = new List<Employee>();
-            employees.Add(firstTeamLead);
-            employees.Add(secondTeamLead);
-
+            var teamLeads = new List<Employee>();
+            teamLeads.Add(firstTeamLead);
+            teamLeads.Add(secondTeamLead);
 
 
-            var anotherEmployees = new List<Employee>(){
+            Task
+                .Run(async () =>
+                {
+                    var roleExist = await roleManager.RoleExistsAsync(TeamLead);
+
+                    if (!roleExist)
+                    {
+                        var role = new IdentityRole { Name = TeamLead };
+                        await roleManager.CreateAsync(role);
+
+                        foreach (var teamLead in teamLeads)
+                        {
+                            var result = await userManager.CreateAsync(teamLead, "111111");
+
+                            await userManager.AddToRoleAsync(teamLead, role.Name);
+
+                        }
+
+                    }
+                })
+                .GetAwaiter()
+                .GetResult();
+
+
+            var employees = new List<Employee>(){
                new Employee
                    {
                        FirstName="Ivan",
@@ -291,28 +320,25 @@
 
             };
 
-            employees.AddRange(anotherEmployees);
-
-            var userManager = provider.GetRequiredService<UserManager<Employee>>();
-            var roleManager = provider.GetRequiredService<RoleManager<IdentityRole>>();
 
 
             Task
                 .Run(async () =>
                 {
-                    if (await roleManager.RoleExistsAsync(UserRoleName))
+                    var roleExist = await roleManager.RoleExistsAsync(UserRoleName);
+
+                    if (roleExist)
                     {
                         return;
                     }
 
                     var role = new IdentityRole { Name = UserRoleName };
                     await roleManager.CreateAsync(role);
-                    for (int i = 0; i < employees.Count; i++)
+                    foreach (var employee in employees)
                     {
-                        var employee = employees[i];
                         var result = await userManager.CreateAsync(employee, "111111");
-
                         await userManager.AddToRoleAsync(employee, role.Name);
+
                     }
 
 
@@ -323,10 +349,10 @@
 
 
         }
-        private static void SeedAdministrators(IServiceProvider provider)
+        private static void SeedAdministrators(IServiceProvider serviceProvider)
         {
-            var userManager = provider.GetRequiredService<UserManager<Employee>>();
-            var roleManager = provider.GetRequiredService<RoleManager<IdentityRole>>();
+            var userManager = serviceProvider.GetRequiredService<UserManager<Employee>>();
+            var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
 
             Task
                 .Run(async () =>
@@ -363,8 +389,10 @@
 
         }
 
-        private static void SeedOfficialHolidays(LeaveSystemDbContext data)
+        private static void SeedOfficialHolidays(IServiceProvider serviceProvider)
         {
+            var data = serviceProvider.GetRequiredService<LeaveSystemDbContext>();
+
             if (data.OfficialHolidays.Any())
             {
                 return;
@@ -443,8 +471,10 @@
 
         }
 
-        private static void SeedEmployeesLeaveTypes(LeaveSystemDbContext data)
+        private static void SeedEmployeesLeaveTypes(IServiceProvider serviceProvider)
         {
+            var data = serviceProvider.GetRequiredService<LeaveSystemDbContext>();
+
             if (data.EmployeesLeaveTypes.Any())
             {
                 return;
@@ -472,22 +502,3 @@
         }
     }
 }
-
-
-//
-//,
-//new DateTime,
-//new DateTime(2021, ),
-//new DateTime(2021, ),
-//new DateTime(2021, ),
-//new DateTime(2021, ),
-//new DateTime(2021, ),
-//new DateTime(2021,),
-//new DateTime(2021, ),
-//new DateTime(2021, ),
-//new DateTime(2021, ),
-//new DateTime(2021, ),
-//new DateTime(2021, 12, 25),
-//new DateTime(2021, 12, 26),
-//new DateTime(2021, 12, 27),
-//new DateTime(2021, 12, 28),
