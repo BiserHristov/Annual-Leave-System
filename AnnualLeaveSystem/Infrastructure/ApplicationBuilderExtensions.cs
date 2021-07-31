@@ -364,24 +364,40 @@
                     var role = new IdentityRole { Name = AdministratorRoleName };
                     await roleManager.CreateAsync(role);
 
-                    var employee = new Employee
-                    {
-
-                        FirstName = "Ivan",
-                        MiddleName = "Stamenov",
-                        LastName = "Petrov",
-                        UserName = "admin.ivan.petrov@gmail.com",
-                        Email = "admin.ivan.petrov@gmail.com",
-                        ImageUrl = "https://data.whicdn.com/images/312637959/original.jpg",
-                        JobTitle = "Senior Specialist",
-                        HireDate = new DateTime(2010, 02, 20).ToUniversalTime().Date,
-                        DepartmentId = 1,
-                        //TeamId=1
-
+                    var admins = new List<Employee>() {
+                        new Employee
+                        {
+                            FirstName = "Ivan",
+                            MiddleName = "Stamenov",
+                            LastName = "Petrov",
+                            UserName = "admin.ivan.petrov@gmail.com",
+                            Email = "admin.ivan.petrov@gmail.com",
+                            ImageUrl = "https://data.whicdn.com/images/312637959/original.jpg",
+                            JobTitle = "Senior Specialist",
+                            HireDate = new DateTime(2010, 02, 20).ToUniversalTime().Date,
+                            DepartmentId = 1,
+                        },
+                        new Employee
+                        {
+                            FirstName = "Petkan",
+                            MiddleName = "Petkanov",
+                            LastName = "Petkanov",
+                            UserName = "admin.petkan.petkanov@gmail.com",
+                            Email = "admin.petkan.petkanov@gmail.com",
+                            ImageUrl = "https://data.whicdn.com/images/312637959/original.jpg",
+                            JobTitle = "Senior Specialist",
+                            HireDate = new DateTime(2010, 02, 20).ToUniversalTime().Date,
+                            DepartmentId = 1,
+                        }
                     };
-                    var result = await userManager.CreateAsync(employee, "111111");
 
-                    await userManager.AddToRoleAsync(employee, role.Name);
+                    foreach (var admin in admins)
+                    {
+                        var result = await userManager.CreateAsync(admin, "111111");
+
+                        await userManager.AddToRoleAsync(admin, role.Name);
+                    }
+                    
                 })
                 .GetAwaiter()
                 .GetResult();

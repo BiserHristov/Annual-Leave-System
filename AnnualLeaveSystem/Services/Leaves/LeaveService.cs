@@ -8,7 +8,7 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
-
+    using System.Threading.Tasks;
     using static AnnualLeaveSystem.Data.DataConstants.User;
 
     public class LeaveService : ILeaveService
@@ -27,9 +27,21 @@
             string lastName,
             LeaveSorting sorting,
             int currentPage,
-            int leavesPerPage)
+            int leavesPerPage,
+            bool isTeamLead,
+            string employeeId)
         {
             var leavesQuery = this.db.Leaves.AsQueryable();
+
+            if (isTeamLead)
+            {
+                var teamId = this.db.Employees
+                    .Where(e => e.Id == employeeId)
+                    .Select(e => e.TeamId)
+                    .FirstOrDefault();
+
+                leavesQuery = leavesQuery.Where(l => l.RequestEmployee.TeamId == teamId);
+            }
 
             if (status != null)
             {
@@ -144,7 +156,7 @@
                 .ToList();
         }
 
-        public IEnumerable<SubstituteEmployeeServiceModel> GetEmployeesInTeam(string currentEmployeeId)
+        public ICollection<SubstituteEmployeeServiceModel> GetEmployeesInTeam(string currentEmployeeId)
         {
 
             var currentEmployeeTeamId = this.db.Employees
@@ -182,6 +194,7 @@
                 .Where(l => l.Id == leaveId)
                 .Select(l => new EditLeaveServiceModel
                 {
+                    Id=l.Id,
                     StartDate = l.StartDate,
                     EndDate = l.EndDate,
                     TotalDays = l.TotalDays,
@@ -199,7 +212,7 @@
         public IEnumerable<LeaveServiceModel> LeavesForApproval(string employeeId, bool isTeamLead)
         {
 
-            var leavesQuery = this.db.Leaves.AsQueryable();
+            var leavesQuery = this.db.Leaves.Where(l=>l.LeaveStatus==Status.Pending).AsQueryable();
 
             if (isTeamLead)
             {
@@ -223,7 +236,7 @@
                 TotalDays = l.TotalDays,
                 RequestDate = l.RequestDate.ToLocalTime().Date,
                 ApprovedBySubstitute = l.ApprovedBySubstitute,
-                ApproveEmployeeId=l.ApproveEmployeeId,
+                ApproveEmployeeId = l.ApproveEmployeeId,
                 RequestEmployeeId = l.RequestEmployeeId,
                 SubstituteEmployeeId = l.SubstituteEmployeeId,
                 Status = l.LeaveStatus.ToString()
@@ -232,6 +245,29 @@
 
             return leaves;
         }
+
+        public void Approve(int leaveId, bool isUser)
+        {
+            var leave = this.db.Leaves.Where(l => l.Id == leaveId).FirstOrDefault();
+            if (isUser)
+            {
+                leave.ApprovedBySubstitute = true;
+            }
+            else
+            {
+                leave.LeaveStatus = Status.Approved;
+                var employeeLeaveType = this.db.EmployeesLeaveTypes
+                    .Where(el => el.EmployeeId == leave.RequestEmployeeId &&
+                                el.LeaveTypeId == leave.LeaveTypeId)
+                    .FirstOrDefault();
+                employeeLeaveType.PendingApprovalDays -= leave.TotalDays;
+                employeeLeaveType.UsedDays += leave.TotalDays;
+            }
+
+            this.db.SaveChanges();
+        }
+
+
 
         public IEnumerable<DateValidationServiceModel> GetNotFinishedLeaves(string employeeId)
         {
@@ -411,5 +447,7 @@
             return leave;
 
         }
+
+
     }
 }

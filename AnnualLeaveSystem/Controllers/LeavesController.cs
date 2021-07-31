@@ -14,8 +14,10 @@
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.EntityFrameworkCore;
     using System;
+    using System.Collections.Generic;
     using System.Linq;
     using System.Security.Claims;
+    using System.Threading.Tasks;
     using static AnnualLeaveSystem.Data.DataConstants.User;
     using static WebConstants;
 
@@ -51,6 +53,9 @@
 
         public IActionResult Add()
         {
+
+
+
             var model = new LeaveFormModel
             {
                 LeaveTypes = this.leaveService.GetLeaveTypes(),
@@ -195,13 +200,16 @@
 
         public IActionResult All([FromQuery] AllLeavesQueryModel query)
         {
+
             var queryResult = this.leaveService.All(
                 query.Status,
                 query.FirstName,
                 query.LastName,
                 query.Sorting,
                 query.CurrentPage,
-                AllLeavesQueryModel.LeavesPerPage);
+                AllLeavesQueryModel.LeavesPerPage,
+                this.User.IsTeamLead(),
+                this.User.GetId());
 
 
             var statuses = Enum.GetValues(typeof(Status))
@@ -243,16 +251,17 @@
 
             var leave = this.leaveService.GetLeave(leaveId);
 
-            if (leave.RequestEmployeeId != this.User.GetId())
+            if (!this.User.IsAdmin() && leave.RequestEmployeeId != this.User.GetId())
             {
                 return Unauthorized();
             }
 
             leave.LeaveTypes = this.leaveService.GetLeaveTypes();
-            leave.EmployeesInTeam = this.leaveService.GetEmployeesInTeam(this.User.GetId());
+            leave.EmployeesInTeam = this.leaveService.GetEmployeesInTeam(leave.RequestEmployeeId);
 
             return View(new LeaveFormModel
             {
+                Id= leave.Id,
                 StartDate = leave.StartDate,
                 EndDate = leave.EndDate,
                 TotalDays = leave.TotalDays,
@@ -270,7 +279,7 @@
         [HttpPost]
         public IActionResult Edit(int leaveId, LeaveFormModel leaveModel)
         {
-            if (!this.leaveService.IsOwn(leaveId, this.User.GetId()))
+            if (!this.User.IsAdmin() && !this.leaveService.IsOwn(leaveId, this.User.GetId()))
             {
                 return BadRequest();
             }
@@ -305,17 +314,19 @@
                 this.ModelState.AddModelError(nameof(leaveModel.LeaveTypeId), "Leave type does not exist.");
             }
 
-            var teamId = this.userManager.FindByIdAsync(this.User.GetId()).GetAwaiter().GetResult().TeamId;
+
+           
+            var teamId = this.userManager.FindByIdAsync(leaveModel.RequestEmployeeId).GetAwaiter().GetResult().TeamId;
 
             var employeeExist = this.teamService.EmployeeExistInTeam(teamId, this.User.GetId());
-            if (!employeeExist) //ToDo: Change it with current user teamId
+            if (!this.User.IsAdmin() && !employeeExist) //ToDo: Change it with current user teamId
             {
                 this.ModelState.AddModelError(nameof(leaveModel.SubstituteEmployeeId), "There is no such employee in your team.");
             }
 
 
 
-            var employeeLeave = this.employeeLeaveTypesService.GetLeaveType(this.User.GetId(), leaveModel.LeaveTypeId);
+            var employeeLeave = this.employeeLeaveTypesService.GetLeaveType(leaveModel.RequestEmployeeId, leaveModel.LeaveTypeId);
             var previousLeaveTypeId = this.leaveService.GetLeaveTypeId(leaveId);
             var previousLeaveTotalDays = this.leaveService.GetLeaveTotalDays(leaveId);
 
@@ -336,7 +347,7 @@
             }
 
 
-            var leaves = this.leaveService.GetNotFinishedLeaves(this.User.GetId());
+            var leaves = this.leaveService.GetNotFinishedLeaves(leaveModel.RequestEmployeeId);
 
             foreach (var currentLeave in leaves)
             {
@@ -360,7 +371,7 @@
                 }
             }
 
-            var substituteLeaves = this.leaveService.GetSubstituteApprovedLeaves(this.User.GetId());
+            var substituteLeaves = this.leaveService.GetSubstituteApprovedLeaves(leaveModel.RequestEmployeeId);
 
             foreach (var currentLeave in substituteLeaves)
             {
@@ -387,7 +398,7 @@
             if (!ModelState.IsValid)
             {
                 leaveModel.LeaveTypes = this.leaveService.GetLeaveTypes();
-                leaveModel.EmployeesInTeam = this.leaveService.GetEmployeesInTeam(this.User.GetId());
+                leaveModel.EmployeesInTeam = this.leaveService.GetEmployeesInTeam(leaveModel.RequestEmployeeId);
                 return View(leaveModel);
             }
 
@@ -400,7 +411,7 @@
                leaveModel.EndDate.Date,
                leaveModel.TotalDays,
                leaveModel.LeaveTypeId,
-               this.User.GetId(),
+               leaveModel.RequestEmployeeId,
                leaveModel.SubstituteEmployeeId,
                leaveModel.ApproveEmployeeId,
                leaveModel.Comments
@@ -420,6 +431,20 @@
 
             return View(leaves);
         }
+
+        [HttpPost]
+        public IActionResult ForApproval(int leaveId)
+        {
+            if (!this.leaveService.Exist(leaveId))
+            {
+                return BadRequest();
+            }
+
+            leaveService.Approve(leaveId, this.User.IsUser());
+
+            return RedirectToAction(nameof(ForApproval));
+        }
+
         private static double GetBusinessDays(DateTime startDate, DateTime endDate)
         {
             double calcBusinessDays =

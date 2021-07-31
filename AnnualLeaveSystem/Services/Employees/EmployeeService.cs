@@ -1,6 +1,7 @@
 ﻿namespace AnnualLeaveSystem.Services.Employees
 {
     using AnnualLeaveSystem.Data;
+    using AnnualLeaveSystem.Data.Models;
     using System;
     using System.Collections.Generic;
     using System.Linq;
@@ -14,6 +15,14 @@
         {
             this.db = db;
         }
+
+        public Employee GetEmployee(string employeeId)
+        {
+            return this.db.Employees
+                     .Where(e => e.Id == employeeId)
+                     .FirstOrDefault();
+        }
+
         public string GetTeamLeadId(string employeeId)
         {
             var teamLeadId = this.db.Employees

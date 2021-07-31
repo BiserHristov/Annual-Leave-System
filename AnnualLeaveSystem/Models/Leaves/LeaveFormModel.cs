@@ -8,7 +8,8 @@
 
     public class LeaveFormModel
     {
-        [Required]
+        public int Id  { get; init;}
+
         [Display(Name = "Start date")]
         public DateTime StartDate { get; set; }
 
