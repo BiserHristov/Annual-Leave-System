@@ -42,26 +42,36 @@
                 <td>
                     <a asp-controller="Leaves" asp-action="Details" asp-route-leaveId="@leave.Id" class="btn btn-primary">Details</a>
 
-                    @if (this.User.IsAdmin() ||
-                            (leave.RequestEmployeeId == this.User.GetId() &&
-                            !leave.ApprovedBySubstitute &&
-                            ViewBag.IsInMyLeavesPage))
-                    {
-                        <a asp-controller="Leaves" asp-action="Edit" asp-route-leaveId="@leave.Id" class="btn btn-warning">Edit</a>
-                    }
-
-                    @{
-
-                        var statusMatch = leave.Status == Status.Pending.ToString();
-                        var approvedBySubstitute = leave.ApprovedBySubstitute;
-                    }
+           
 
                 </td>
                 <td>
+                    @if (this.User.IsAdmin() ||
+              (leave.RequestEmployeeId == this.User.GetId() &&
+              !leave.ApprovedBySubstitute &&
+              leave.Status== Status.Pending.ToString() &&
+               ViewBag.IsInMyLeavesPage))
+                    {
+                        <a asp-controller="Leaves" asp-action="Edit" asp-route-leaveId="@leave.Id" class="btn btn-warning">Edit</a>
+                    }
+                </td>
+                <td class="align-self-center">
+                    @if (this.User.IsAdmin() ||
+                    (leave.RequestEmployeeId == this.User.GetId() &&
+                    leave.Status == Status.Pending.ToString() &&
+                    ViewBag.IsInMyLeavesPage))
+                    {
+                        <form asp-controller="Leaves" asp-action="Cancel" asp-route-leaveId=@leave.Id method="post">
+                            <button class="btn btn-info" type="submit">Cancel</button>
+                        </form>
+
+                    }
+                </td>
+                <td>
                     @if (ViewBag.IsInForApprovalPage &&
-              leave.Status == Status.Pending.ToString() &&
-                (leave.ApproveEmployeeId == this.User.GetId() ||
-                leave.SubstituteEmployeeId == this.User.GetId()))
+             leave.Status == Status.Pending.ToString() &&
+               (leave.ApproveEmployeeId == this.User.GetId() ||
+               leave.SubstituteEmployeeId == this.User.GetId()))
                     {
 
                         <form asp-controller="Leaves" asp-action="ForApproval" asp-route-leaveId=@leave.Id method="post">

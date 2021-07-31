@@ -194,7 +194,7 @@
                 .Where(l => l.Id == leaveId)
                 .Select(l => new EditLeaveServiceModel
                 {
-                    Id=l.Id,
+                    Id = l.Id,
                     StartDate = l.StartDate,
                     EndDate = l.EndDate,
                     TotalDays = l.TotalDays,
@@ -212,7 +212,7 @@
         public IEnumerable<LeaveServiceModel> LeavesForApproval(string employeeId, bool isTeamLead)
         {
 
-            var leavesQuery = this.db.Leaves.Where(l=>l.LeaveStatus==Status.Pending).AsQueryable();
+            var leavesQuery = this.db.Leaves.Where(l => l.LeaveStatus == Status.Pending).AsQueryable();
 
             if (isTeamLead)
             {
@@ -267,7 +267,19 @@
             this.db.SaveChanges();
         }
 
+        public void Cancel(int leaveId)
+        {
+            var leave = this.db.Leaves.Where(l => l.Id == leaveId).FirstOrDefault();
+            leave.LeaveStatus = Status.Canceled;
 
+            var employeeLeaveType = this.db.EmployeesLeaveTypes
+                    .Where(el => el.EmployeeId == leave.RequestEmployeeId &&
+                                el.LeaveTypeId == leave.LeaveTypeId)
+                    .FirstOrDefault();
+            employeeLeaveType.PendingApprovalDays -= leave.TotalDays;
+
+            this.db.SaveChanges();
+        }
 
         public IEnumerable<DateValidationServiceModel> GetNotFinishedLeaves(string employeeId)
         {

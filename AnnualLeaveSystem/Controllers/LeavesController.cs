@@ -261,7 +261,7 @@
 
             return View(new LeaveFormModel
             {
-                Id= leave.Id,
+                Id = leave.Id,
                 StartDate = leave.StartDate,
                 EndDate = leave.EndDate,
                 TotalDays = leave.TotalDays,
@@ -315,7 +315,7 @@
             }
 
 
-           
+
             var teamId = this.userManager.FindByIdAsync(leaveModel.RequestEmployeeId).GetAwaiter().GetResult().TeamId;
 
             var employeeExist = this.teamService.EmployeeExistInTeam(teamId, this.User.GetId());
@@ -425,6 +425,31 @@
             return RedirectToAction(nameof(All));
 
         }
+
+
+        [HttpPost]
+        public IActionResult Cancel(int leaveId)
+        {
+            var leaveExist = leaveService.Exist(leaveId);
+
+            if (!leaveExist)
+            {
+                return BadRequest();
+            }
+
+            leaveService.Cancel(leaveId);
+
+            if (this.User.IsInRole(UserRoleName))
+            {
+                return RedirectToAction("History", "Statistic");
+            }
+
+            return RedirectToAction(nameof(All));
+
+
+        }
+
+
         public IActionResult ForApproval()
         {
             var leaves = leaveService.LeavesForApproval(this.User.GetId(), this.User.IsTeamLead());

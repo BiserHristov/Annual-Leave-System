@@ -53,11 +53,14 @@
 
         public IEnumerable<LeaveServiceModel> LeavesForApproval(string employeeId, bool isTeamLead);
         public void Approve(int leaveId, bool isUser);
+        public void Cancel(int leaveId);
+
 
         public IEnumerable<DateValidationServiceModel> GetNotFinishedLeaves(string employeeId);
         public IEnumerable<DateValidationServiceModel> GetSubstituteApprovedLeaves(string substituteId);
         public bool Exist(int leaveId);
         public bool IsOwn(int leaveId, string employeeId);
+
 
     }
 }
