@@ -4,6 +4,8 @@
     using AnnualLeaveSystem.Data.Models;
     using AnnualLeaveSystem.Models.Leaves;
     using AnnualLeaveSystem.Services.EmployeeLeaveTypes;
+    using AutoMapper;
+    using AutoMapper.QueryableExtensions;
     using Microsoft.EntityFrameworkCore;
     using System;
     using System.Collections.Generic;
@@ -14,10 +16,12 @@
     public class LeaveService : ILeaveService
     {
         private readonly LeaveSystemDbContext db;
+        private readonly IConfigurationProvider mapper;
 
-        public LeaveService(LeaveSystemDbContext db)
+        public LeaveService(LeaveSystemDbContext db, IMapper mapper)
         {
             this.db = db;
+            this.mapper = mapper.ConfigurationProvider;
         }
 
 
@@ -166,11 +170,7 @@
 
             return this.db.Employees
               .Where(e => e.TeamId == currentEmployeeTeamId && e.Id != currentEmployeeId)
-              .Select(e => new SubstituteEmployeeServiceModel
-              {
-                  Id = e.Id,
-                  Name = $"{e.FirstName} {e.MiddleName} {e.LastName}",
-              })
+              .ProjectTo<SubstituteEmployeeServiceModel>(this.mapper)
               .ToList();
         }
 

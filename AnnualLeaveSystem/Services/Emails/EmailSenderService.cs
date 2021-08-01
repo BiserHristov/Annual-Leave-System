@@ -4,18 +4,20 @@
     using MailKit.Security;
     using MimeKit;
     using MimeKit.Text;
+    using System.Text;
 
     public class EmailSenderService : IEmailSenderService
     {
-        public void SendMail(string from, string to, string subject, string html)
+        public void SendEmail(string subject, string content)
         {
             var email = new MimeMessage();
-            email.From.Add(MailboxAddress.Parse(from));
-            email.To.Add(MailboxAddress.Parse(to));
+            email.From.Add(MailboxAddress.Parse("myaspcoreprojectserver@gmail.com"));
+            email.To.Add(MailboxAddress.Parse("myprojectdefence@gmail.com"));
             email.Subject = subject;
-            email.Body = new TextPart(TextFormat.Html) { Text = html };
+        
+            email.Body = new TextPart(TextFormat.Html) { Text = content };
 
-            var emailProject = "myaspcoreproject@mail.bg";
+            var emailProject = "myaspcoreprojectserver@gmail.com";
             var password = "123123Asp";
 
 

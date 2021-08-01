@@ -12,6 +12,7 @@ using AnnualLeaveSystem.Services.Users;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -42,6 +43,15 @@ public class Startup
             })
             .AddRoles<IdentityRole>()
             .AddEntityFrameworkStores<LeaveSystemDbContext>();
+
+       
+        services.AddAutoMapper(typeof(Startup));
+
+        services.AddControllersWithViews(options =>
+        {
+            options.Filters.Add<AutoValidateAntiforgeryTokenAttribute>();
+        });
+
 
         services
             .AddControllersWithViews();
@@ -83,6 +93,8 @@ public class Startup
             .UseAuthorization()
             .UseEndpoints(endpoints =>
             {
+
+                endpoints.MapDefaultAreaRoute();
                 endpoints.MapDefaultControllerRoute();
                 endpoints.MapRazorPages();
             });

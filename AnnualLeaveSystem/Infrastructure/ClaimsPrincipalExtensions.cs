@@ -1,9 +1,11 @@
-﻿namespace AnnualLeaveSystem.Infrastructure
+﻿using AnnualLeaveSystem.Areas.Admin;
+
+namespace AnnualLeaveSystem.Infrastructure
 {
     using System.Linq;
     using System.Security.Claims;
     using static WebConstants;
-
+    using static AdminConstants;
     public static class ClaimsPrincipalExtensions
     {
         public static string GetId(this ClaimsPrincipal user)

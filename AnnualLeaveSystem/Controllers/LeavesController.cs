@@ -4,11 +4,13 @@
     using AnnualLeaveSystem.Data.Models;
     using AnnualLeaveSystem.Infrastructure;
     using AnnualLeaveSystem.Models.Leaves;
+    using AnnualLeaveSystem.Services.Emails;
     using AnnualLeaveSystem.Services.EmployeeLeaveTypes;
     using AnnualLeaveSystem.Services.Employees;
     using AnnualLeaveSystem.Services.Leaves;
     using AnnualLeaveSystem.Services.LeaveTypes;
     using AnnualLeaveSystem.Services.Teams;
+    using AutoMapper;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Mvc;
@@ -17,6 +19,7 @@
     using System.Collections.Generic;
     using System.Linq;
     using System.Security.Claims;
+    using System.Text;
     using System.Threading.Tasks;
     using static AnnualLeaveSystem.Data.DataConstants.User;
     using static WebConstants;
@@ -24,11 +27,13 @@
     [Authorize]
     public class LeavesController : Controller
     {
-        private readonly ILeaveService leaveService;
-        private readonly ILeaveTypeService leaveTypeService;
-        private readonly ITeamService teamService;
         private readonly IEmployeeLeaveTypesService employeeLeaveTypesService;
+        private readonly IEmailSenderService emailSenderService;
+        private readonly ILeaveTypeService leaveTypeService;
         private readonly IEmployeeService employeeService;
+        private readonly ILeaveService leaveService;
+        private readonly ITeamService teamService;
+        private readonly IMapper mapper;
 
         private readonly UserManager<Employee> userManager;
 
@@ -41,7 +46,9 @@
             ILeaveTypeService leaveTypeService,
             UserManager<Employee> userManager,
             IEmployeeLeaveTypesService employeeLeaveTypesService,
-            IEmployeeService employeeService)
+            IEmployeeService employeeService,
+            IMapper mapper,
+            IEmailSenderService emailSenderService)
         {
             this.leaveService = leaveService;
             this.teamService = teamService;
@@ -49,12 +56,12 @@
             this.userManager = userManager;
             this.employeeLeaveTypesService = employeeLeaveTypesService;
             this.employeeService = employeeService;
+            this.mapper = mapper;
+            this.emailSenderService = emailSenderService;
         }
 
         public IActionResult Add()
         {
-
-
 
             var model = new LeaveFormModel
             {
@@ -100,9 +107,9 @@
                 this.ModelState.AddModelError(nameof(leaveModel.LeaveTypeId), "Leave type does not exist.");
             }
 
-            var teamId = this.userManager.FindByIdAsync(this.User.GetId()).GetAwaiter().GetResult().TeamId;
+            var employee = this.userManager.FindByIdAsync(this.User.GetId()).GetAwaiter().GetResult();
 
-            var employeeExist = this.teamService.EmployeeExistInTeam(teamId, this.User.GetId());
+            var employeeExist = this.teamService.EmployeeExistInTeam(employee.TeamId, this.User.GetId());
             if (!employeeExist) //ToDo: Change it with current user teamId
             {
                 this.ModelState.AddModelError(nameof(leaveModel.SubstituteEmployeeId), "There is no such employee in your team.");
@@ -189,6 +196,20 @@
                 leaveModel.RequestDate
                 );
 
+
+            var model = new EmailServiceModel
+            {
+                StartDate = leaveModel.StartDate.Date.ToString("dd.MM.yyyy"),
+                EndDate = leaveModel.EndDate.Date.ToString("dd.MM.yyyy"),
+                RequestEmployeeName = employee.FirstName + " " + employee.MiddleName + " " + employee.LastName,
+                TotalDays = leaveModel.TotalDays,
+            };
+
+            string message= $"A leave request is waiting for your approval: {model}";
+           
+
+            this.emailSenderService.SendEmail(EmailRequestSubject, message);
+
             if (this.User.IsUser())
             {
                 return RedirectToAction("History", "Statistic");
@@ -259,21 +280,10 @@
             leave.LeaveTypes = this.leaveService.GetLeaveTypes();
             leave.EmployeesInTeam = this.leaveService.GetEmployeesInTeam(leave.RequestEmployeeId);
 
-            return View(new LeaveFormModel
-            {
-                Id = leave.Id,
-                StartDate = leave.StartDate,
-                EndDate = leave.EndDate,
-                TotalDays = leave.TotalDays,
-                RequestEmployeeId = leave.RequestEmployeeId,
-                SubstituteEmployeeId = leave.SubstituteEmployeeId,
-                ApproveEmployeeId = leave.ApproveEmployeeId ?? leave.RequestEmployeeId,
-                Comments = leave.Comments,
-                LeaveTypeId = leave.LeaveTypeId,
-                LeaveTypes = leave.LeaveTypes,
-                EmployeesInTeam = leave.EmployeesInTeam,
+            var leaveForm = this.mapper.Map<LeaveFormModel>(leave);
+            leaveForm.ApproveEmployeeId = leave.ApproveEmployeeId ?? leave.RequestEmployeeId;
 
-            });
+            return View(leaveForm);
         }
 
         [HttpPost]
@@ -439,6 +449,8 @@
 
             leaveService.Cancel(leaveId);
 
+            SendMailStatusChange(Status.Canceled.ToString(), leaveId);
+
             if (this.User.IsInRole(UserRoleName))
             {
                 return RedirectToAction("History", "Statistic");
@@ -448,6 +460,8 @@
 
 
         }
+
+        
 
         [HttpPost]
         public IActionResult Reject(int leaveId)
@@ -460,6 +474,8 @@
             }
 
             leaveService.Reject(leaveId);
+
+            SendMailStatusChange(Status.Rejected.ToString(), leaveId);
 
             if (this.User.IsInRole(UserRoleName))
             {
@@ -486,6 +502,8 @@
             }
 
             leaveService.Approve(leaveId, this.User.IsUser());
+
+            SendMailStatusChange(Status.Approved.ToString(), leaveId);
 
             return RedirectToAction(nameof(ForApproval));
         }
@@ -514,6 +532,28 @@
             return currentDate >= startDate && currentDate <= endDate;
         }
 
+        private void SendMailStatusChange(string status, int leaveId)
+        {
+            string message = GetMessage(status, leaveId);
+
+            this.emailSenderService.SendEmail(EmailStatusChanged, message);
+        }
+
+        private string GetMessage(string status, int leaveId)
+        {
+            var leaveModel = leaveService.GetLeaveById(leaveId);
+
+            var model = new EmailServiceModel
+            {
+                StartDate = leaveModel.StartDate.Date.ToString("dd.MM.yyyy"),
+                EndDate = leaveModel.EndDate.Date.ToString("dd.MM.yyyy"),
+                RequestEmployeeName = leaveModel.RequestEmployeeName,
+                TotalDays = leaveModel.TotalDays,
+            };
+
+            string message = $"Your request is {status}. {model}";
+            return message;
+        }
     }
 
 }

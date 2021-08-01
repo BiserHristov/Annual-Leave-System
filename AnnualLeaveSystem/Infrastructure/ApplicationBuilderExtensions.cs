@@ -1,4 +1,6 @@
-﻿namespace AnnualLeaveSystem.Infrastructure
+﻿using AnnualLeaveSystem.Areas.Admin;
+
+namespace AnnualLeaveSystem.Infrastructure
 {
     using System;
     using System.Collections.Generic;
@@ -10,6 +12,10 @@
     using Microsoft.AspNetCore.Identity;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.DependencyInjection;
+
+
+    using static AdminConstants;
+
 
     using static WebConstants;
 

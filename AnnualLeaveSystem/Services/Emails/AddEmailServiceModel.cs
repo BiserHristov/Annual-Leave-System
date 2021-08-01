@@ -5,8 +5,8 @@
     using System.Linq;
     using System.Threading.Tasks;
 
-    public interface IEmailSenderService
+    public class AddEmailServiceModel : EmailServiceModel
     {
-        void SendEmail(string subject, string content);
+
     }
 }
