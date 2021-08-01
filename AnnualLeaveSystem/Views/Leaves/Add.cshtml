@@ -4,4 +4,8 @@
     ViewBag.Title = "Add new leave request";
 }
 
-<partial name="_LeaveFormPartial" model="@Model"/>
+<partial name="_LeaveFormPartial" model="@Model" />
+
+@section Scripts{
+    <partial name="_ValidationScriptsPartial" />
+}

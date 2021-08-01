@@ -30,6 +30,7 @@
         public string ApproveEmployeeId { get; set; }
 
         [Display(Name = "Total days")]
+        [Range(1, int.MaxValue, ErrorMessage = "Your leave days count should be bigger than 0")]
         public int TotalDays { get; set; }
 
         public string Comments { get; init; }
