@@ -54,6 +54,8 @@
         public IEnumerable<LeaveServiceModel> LeavesForApproval(string employeeId, bool isTeamLead);
         public void Approve(int leaveId, bool isUser);
         public void Cancel(int leaveId);
+        public void Reject(int leaveId);
+
 
 
         public IEnumerable<DateValidationServiceModel> GetNotFinishedLeaves(string employeeId);

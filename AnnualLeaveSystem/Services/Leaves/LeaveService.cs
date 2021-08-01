@@ -249,7 +249,8 @@
         public void Approve(int leaveId, bool isUser)
         {
             var leave = this.db.Leaves.Where(l => l.Id == leaveId).FirstOrDefault();
-            if (isUser)
+
+            if (isUser && leave.RequestEmployeeId != leave.ApproveEmployeeId)
             {
                 leave.ApprovedBySubstitute = true;
             }
@@ -269,16 +270,12 @@
 
         public void Cancel(int leaveId)
         {
-            var leave = this.db.Leaves.Where(l => l.Id == leaveId).FirstOrDefault();
-            leave.LeaveStatus = Status.Canceled;
+            this.ChangeStatus(leaveId, Status.Canceled);
+        }
 
-            var employeeLeaveType = this.db.EmployeesLeaveTypes
-                    .Where(el => el.EmployeeId == leave.RequestEmployeeId &&
-                                el.LeaveTypeId == leave.LeaveTypeId)
-                    .FirstOrDefault();
-            employeeLeaveType.PendingApprovalDays -= leave.TotalDays;
-
-            this.db.SaveChanges();
+        public void Reject(int leaveId)
+        {
+            this.ChangeStatus(leaveId, Status.Rejected);
         }
 
         public IEnumerable<DateValidationServiceModel> GetNotFinishedLeaves(string employeeId)
@@ -333,6 +330,7 @@
                 RequestEmployeeId = requestEmployeeId,
                 SubstituteEmployeeId = substituteEmployeeId,
                 ApproveEmployeeId = approveEmployeeId ?? requestEmployeeId,
+                ApprovedBySubstitute = substituteEmployeeId == approveEmployeeId,
                 Comments = comments,
                 RequestDate = requestDate
             };
@@ -458,6 +456,20 @@
 
             return leave;
 
+        }
+
+        private void ChangeStatus(int leaveId, Status status)
+        {
+            var leave = this.db.Leaves.Where(l => l.Id == leaveId).FirstOrDefault();
+            leave.LeaveStatus = status;
+
+            var employeeLeaveType = this.db.EmployeesLeaveTypes
+                    .Where(el => el.EmployeeId == leave.RequestEmployeeId &&
+                                el.LeaveTypeId == leave.LeaveTypeId)
+                    .FirstOrDefault();
+            employeeLeaveType.PendingApprovalDays -= leave.TotalDays;
+
+            this.db.SaveChanges();
         }
 
 

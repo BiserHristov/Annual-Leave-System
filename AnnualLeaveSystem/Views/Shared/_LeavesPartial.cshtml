@@ -69,13 +69,16 @@
                 </td>
                 <td>
                     @if (ViewBag.IsInForApprovalPage &&
-             leave.Status == Status.Pending.ToString() &&
-               (leave.ApproveEmployeeId == this.User.GetId() ||
-               leave.SubstituteEmployeeId == this.User.GetId()))
+            leave.Status == Status.Pending.ToString() &&
+              (leave.ApproveEmployeeId == this.User.GetId() ||
+              leave.SubstituteEmployeeId == this.User.GetId()))
                     {
 
                         <form asp-controller="Leaves" asp-action="ForApproval" asp-route-leaveId=@leave.Id method="post">
                             <button class="btn btn-danger" type="submit">Approve</button>
+                        </form>
+                        <form asp-controller="Leaves" asp-action="Reject" asp-route-leaveId=@leave.Id method="post">
+                            <button class="btn btn-secondary" type="submit">Reject</button>
                         </form>
                     }
 

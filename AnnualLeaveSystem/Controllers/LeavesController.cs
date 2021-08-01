@@ -449,7 +449,27 @@
 
         }
 
+        [HttpPost]
+        public IActionResult Reject(int leaveId)
+        {
+            var leaveExist = leaveService.Exist(leaveId);
 
+            if (!leaveExist)
+            {
+                return BadRequest();
+            }
+
+            leaveService.Reject(leaveId);
+
+            if (this.User.IsInRole(UserRoleName))
+            {
+                return RedirectToAction("History", "Statistic");
+            }
+
+            return RedirectToAction(nameof(All));
+
+
+        }
         public IActionResult ForApproval()
         {
             var leaves = leaveService.LeavesForApproval(this.User.GetId(), this.User.IsTeamLead());
