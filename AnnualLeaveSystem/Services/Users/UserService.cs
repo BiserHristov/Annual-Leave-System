@@ -2,6 +2,8 @@
 {
     using AnnualLeaveSystem.Data;
     using AnnualLeaveSystem.Data.Models;
+    using AutoMapper;
+    using AutoMapper.QueryableExtensions;
     using Microsoft.EntityFrameworkCore;
     using System.Collections.Generic;
     using System.Linq;
@@ -9,21 +11,24 @@
     public class UserService : IUserService
     {
         private readonly LeaveSystemDbContext db;
+        private readonly IConfigurationProvider mapper;
 
-        public UserService(LeaveSystemDbContext db)
+        public UserService(LeaveSystemDbContext db, IMapper mapper)
         {
             this.db = db;
+            this.mapper = mapper.ConfigurationProvider;
         }
 
         public IEnumerable<RegisterDepartamentViewModel> AllDepartments()
         {
             return this.db.Departments
                 .OrderBy(d => d.Name)
-                .Select(d => new RegisterDepartamentViewModel
-                {
-                    Id = d.Id,
-                    Name = d.Name
-                })
+                .ProjectTo<RegisterDepartamentViewModel>(this.mapper)
+                //.Select(d => new RegisterDepartamentViewModel
+                //{
+                //    Id = d.Id,
+                //    Name = d.Name
+                //})
                 .ToList();
         }
 

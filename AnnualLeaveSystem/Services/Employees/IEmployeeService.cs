@@ -10,6 +10,6 @@
     {
         public string GetTeamLeadId(string employeeId);
 
-        public Employee GetEmployee(string employeeId);
+        //public Employee GetEmployee(string employeeId);
     }
 }

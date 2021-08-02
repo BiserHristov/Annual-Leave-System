@@ -1,6 +1,8 @@
 ﻿namespace AnnualLeaveSystem.Services.EmployeeLeaveTypes
 {
     using AnnualLeaveSystem.Data;
+    using AutoMapper;
+    using AutoMapper.QueryableExtensions;
     using Microsoft.EntityFrameworkCore;
     using System;
     using System.Collections.Generic;
@@ -10,10 +12,12 @@
     public class EmployeeLeaveTypesService : IEmployeeLeaveTypesService
     {
         private readonly LeaveSystemDbContext db;
+        private readonly IConfigurationProvider mapper;
 
-        public EmployeeLeaveTypesService(LeaveSystemDbContext db)
+        public EmployeeLeaveTypesService(LeaveSystemDbContext db, IMapper mapper)
         {
             this.db = db;
+            this.mapper = mapper.ConfigurationProvider;
         }
 
         public EmployeeLeaveTypesServiceModel GetLeaveType(string employeeId, int leaveTypeId)
@@ -22,12 +26,7 @@
               .Include(x => x.LeaveType)
               .Where(el => el.EmployeeId == employeeId &&
                            el.LeaveTypeId == leaveTypeId)
-              .Select(el => new EmployeeLeaveTypesServiceModel
-              {
-                  UsedDays = el.UsedDays,
-                  RemainingDays = el.RemainingDays,
-                  PendingApprovalDays = el.PendingApprovalDays,
-              })
+              .ProjectTo<EmployeeLeaveTypesServiceModel>(this.mapper)
               .FirstOrDefault();
         }
     }

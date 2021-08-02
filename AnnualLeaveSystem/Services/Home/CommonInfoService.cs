@@ -39,7 +39,3 @@
     }
 }
 
-//EmployeesCount = this.db.Employees.Count(),
-//                ApprovedLeaveCount = this.db.Leaves.Count(l => l.LeaveStatus == Status.Approved),
-//                InProgressLeaveCount = this.db.Leaves.Count(l => l.LeaveStatus == Status.Pending),
-//                AllLeavesTotalDays = this.db.Leaves.Sum(l => l.TotalDays),

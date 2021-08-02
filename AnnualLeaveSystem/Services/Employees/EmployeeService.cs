@@ -16,12 +16,12 @@
             this.db = db;
         }
 
-        public Employee GetEmployee(string employeeId)
-        {
-            return this.db.Employees
-                     .Where(e => e.Id == employeeId)
-                     .FirstOrDefault();
-        }
+        //public Employee GetEmployee(string employeeId)
+        //{
+        //    return this.db.Employees
+        //             .Where(e => e.Id == employeeId)
+        //             .FirstOrDefault();
+        //}
 
         public string GetTeamLeadId(string employeeId)
         {

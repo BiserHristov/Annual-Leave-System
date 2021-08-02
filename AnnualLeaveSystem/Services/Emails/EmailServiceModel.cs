@@ -10,7 +10,7 @@
     {
         public string StartDate { get; init; }
         public string EndDate { get; init; }
-        public string RequestEmployeeName { get; init; }
+        public string RequestEmployeeName { get; set; }
         public int TotalDays { get; init; }
         public override string ToString()
         {

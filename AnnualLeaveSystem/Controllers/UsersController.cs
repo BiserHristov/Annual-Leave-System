@@ -104,7 +104,7 @@
 
             userService.AddLeaveTypesToEmployee(registeredUser.Id);
 
-            await userManager.AddClaimAsync(registeredUser, new Claim("TeamId",user.TeamId.ToString()));
+            //await userManager.AddClaimAsync(registeredUser, new Claim("TeamId",user.TeamId.ToString()));
 
             await signInManager.SignInAsync(registeredUser, true);
 

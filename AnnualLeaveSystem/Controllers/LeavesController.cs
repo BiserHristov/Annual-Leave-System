@@ -110,6 +110,7 @@
             var employee = this.userManager.FindByIdAsync(this.User.GetId()).GetAwaiter().GetResult();
 
             var employeeExist = this.teamService.EmployeeExistInTeam(employee.TeamId, this.User.GetId());
+
             if (!employeeExist) //ToDo: Change it with current user teamId
             {
                 this.ModelState.AddModelError(nameof(leaveModel.SubstituteEmployeeId), "There is no such employee in your team.");
@@ -180,7 +181,6 @@
                 return View(leaveModel);
             }
 
-            //employeeLeave.PendingApprovalDays = employeeLeave.PendingApprovalDays + leaveModel.TotalDays;
 
             var approveEmployeeId = this.employeeService.GetTeamLeadId(this.User.GetId());
 
@@ -197,16 +197,12 @@
                 );
 
 
-            var model = new EmailServiceModel
-            {
-                StartDate = leaveModel.StartDate.Date.ToString("dd.MM.yyyy"),
-                EndDate = leaveModel.EndDate.Date.ToString("dd.MM.yyyy"),
-                RequestEmployeeName = employee.FirstName + " " + employee.MiddleName + " " + employee.LastName,
-                TotalDays = leaveModel.TotalDays,
-            };
+            var model = this.mapper.Map<EmailServiceModel>(leaveModel);
 
-            string message= $"A leave request is waiting for your approval: {model}";
-           
+            model.RequestEmployeeName = employee.FirstName + " " + employee.MiddleName + " " + employee.LastName;
+
+            string message = $"A leave request is waiting for your approval: {model}";
+
 
             this.emailSenderService.SendEmail(EmailRequestSubject, message);
 
@@ -461,7 +457,7 @@
 
         }
 
-        
+
 
         [HttpPost]
         public IActionResult Reject(int leaveId)

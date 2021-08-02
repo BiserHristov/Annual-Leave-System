@@ -4,34 +4,30 @@
     using AnnualLeaveSystem.Models;
     using AnnualLeaveSystem.Models.Home;
     using AnnualLeaveSystem.Services.Statistics;
+    using AutoMapper;
     using Microsoft.AspNetCore.Mvc;
     public class HomeController : Controller
     {
         private readonly ICommonInfoService statistics;
+        private readonly IMapper mapper;
 
-        public HomeController(ICommonInfoService statistics)
+        public HomeController(ICommonInfoService statistics, IMapper mapper)
         {
             this.statistics = statistics;
+            this.mapper = mapper;
         }
 
         public IActionResult Index()
         {
             var allStatistics = this.statistics.Get();
 
-            var homeModel = new IndexViewModel
-            {
-                EmployeesCount = allStatistics.EmployeesCount,
-                ApprovedLeaveCount = allStatistics.ApprovedLeaveCount,
-                InProgressLeaveCount = allStatistics.InProgressLeaveCount,
-                AllLeavesTotalDays = allStatistics.AllLeavesTotalDays
-            };
+            var homeModel = this.mapper.Map<IndexViewModel>(allStatistics);
 
             return View(homeModel);
 
         }
 
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error() => View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        public IActionResult Error() => View();
 
     }
 }
