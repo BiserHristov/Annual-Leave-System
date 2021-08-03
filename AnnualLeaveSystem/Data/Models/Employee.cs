@@ -22,6 +22,7 @@
         public string LastName { get; set; }
 
         [Required]
+        [Url]
         public string ImageUrl { get; set; }
 
         [Required]

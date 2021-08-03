@@ -14,5 +14,6 @@
         public const string EmailRequestSubject = "Leave request action required";
         public const string EmailStatusChanged = "Leave request status changed";
 
+
     }
 }

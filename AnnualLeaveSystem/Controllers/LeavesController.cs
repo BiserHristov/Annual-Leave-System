@@ -182,7 +182,7 @@
             }
 
 
-            var approveEmployeeId = this.employeeService.GetTeamLeadId(this.User.GetId());
+            var approveEmployeeId = this.employeeService.TeamLeadId(this.User.GetId());
 
             this.leaveService.Create(
                 leaveModel.StartDate.Date,
@@ -320,9 +320,9 @@
                 this.ModelState.AddModelError(nameof(leaveModel.LeaveTypeId), "Leave type does not exist.");
             }
 
+            var teamId = this.employeeService.TeamId(leaveModel.RequestEmployeeId);
 
-
-            var teamId = this.userManager.FindByIdAsync(leaveModel.RequestEmployeeId).GetAwaiter().GetResult().TeamId;
+            //var teamId = this.userManager.FindByIdAsync(leaveModel.RequestEmployeeId).GetAwaiter().GetResult().TeamId;
 
             var employeeExist = this.teamService.EmployeeExistInTeam(teamId, this.User.GetId());
             if (!this.User.IsAdmin() && !employeeExist) //ToDo: Change it with current user teamId

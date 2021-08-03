@@ -16,6 +16,19 @@
             this.db = db;
         }
 
+        public bool Exist(string employeeId)
+        {
+            return this.db.Employees.Any(e => e.Id == employeeId);
+        }
+
+        public int? TeamId(string employeeId)
+        {
+            return this.db.Employees
+                .Where(e => e.Id == employeeId)
+                .Select(e => e.TeamId)
+                .FirstOrDefault();
+        }
+
         //public Employee GetEmployee(string employeeId)
         //{
         //    return this.db.Employees
@@ -23,7 +36,7 @@
         //             .FirstOrDefault();
         //}
 
-        public string GetTeamLeadId(string employeeId)
+        public string TeamLeadId(string employeeId)
         {
             var teamLeadId = this.db.Employees
                      .Where(e => e.Id == employeeId)
@@ -32,5 +45,8 @@
 
             return teamLeadId;
         }
+
+        
+
     }
 }

@@ -1,0 +1,79 @@
+﻿@model EditEmployeeServiceModel;
+
+@{
+    ViewBag.Title = "Edit user";
+}
+
+<div class="container">
+    <div class="row">
+        <div class="col-sm-12 offset-lg-2 col-lg-8 offset-xl-3 col-xl-6">
+            <h2 class="heading-margin text-center"> @ViewBag.Title:</h2>
+            <form method="post">
+
+                <div class="form-group">
+                    <label asp-for="FirstName"></label>
+                    <input asp-for="FirstName" type='text' class="form-control">
+                    <span asp-validation-for="FirstName" class="small text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="MiddleName"></label>
+                    <input asp-for="MiddleName" type='text' class="form-control" value="@(string.IsNullOrEmpty(Model.MiddleName)? "-" : Model.MiddleName)">
+                    <span asp-validation-for="MiddleName" class="small text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="LastName"></label>
+                    <input asp-for="LastName" type='text' class="form-control">
+                    <span asp-validation-for="LastName" class="small text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="ImageUrl"></label>
+                    <input asp-for="ImageUrl" type='text' class="form-control">
+                    <span asp-validation-for="ImageUrl" class="small text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="JobTitle"></label>
+                    <input asp-for="JobTitle" type='text' class="form-control">
+                    <span asp-validation-for="JobTitle" class="small text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="TeamId"></label>
+                    <select asp-for="TeamId" class="form-control">
+                        @foreach (var teamId in Model.TeamIDs)
+                        {
+                            <option value="@teamId">@teamId</option>
+                        }
+                    </select>
+                    <span asp-validation-for="TeamId" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="DepartmentId"></label>
+                    <select asp-for="DepartmentId" class="form-control">
+                        @foreach (var departmentId in Model.DepartmentIDs)
+                        {
+                            <option value="@departmentId">@departmentId</option>
+                        }
+                    </select>
+                    <span asp-validation-for="DepartmentId" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="HireDate"></label>
+                    <input asp-for="HireDate" type='text' class="form-control" value="@(Model.HireDate.Date.ToString("dd.MM.yyyy"))">
+                    <span asp-validation-for="HireDate" class="small text-danger"></span>
+                </div>
+
+                <input type="submit" class="btn btn-primary float-right" value="Edit" />
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <partial name="_ValidationScriptsPartial" />
+}

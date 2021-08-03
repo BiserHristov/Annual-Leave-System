@@ -1,0 +1,42 @@
+﻿@model IEnumerable<EmployeeServiceModel>;
+
+
+
+<table class="table table-hover">
+
+    <thead>
+        <tr>
+            <th scope="col">First name</th>
+            <th scope="col">Middle name</th>
+            <th scope="col">Last name</th>
+            <th scope="col">Image url</th>
+            <th scope="col">Department</th>
+            <th scope="col">Job Title</th>
+            <th scope="col">Team</th>
+            <th scope="col">Team lead</th>
+            <th scope="col">Hire date</th>
+        </tr>
+    </thead>
+
+    <tbody>
+
+        @foreach (var employee in @Model)
+        {
+            <tr>
+                <td>@employee.FirstName</td>
+                <td>@employee.MiddleName</td>
+                <td>@employee.LastName</td>
+                <td>@employee.ImageUrl</td>
+                <td>@employee.DepartmentName</td>
+                <td>@employee.JobTitle</td>
+                <td>@employee.TeamId</td>
+                <td>@(employee.TeamLeadName??"-")</td>
+                <td>@employee.HireDate.Date.ToString("dd.MM.yyyy")</td>
+                <td>
+                    <a asp-controller="Users" asp-action="Edit" asp-route-Id="@employee.Id" class="btn btn-primary">Edit</a>
+                </td>
+            </tr>
+        }
+
+    </tbody>
+</table>

@@ -1,5 +1,6 @@
 ﻿namespace AnnualLeaveSystem.Infrastructure
 {
+    using AnnualLeaveSystem.Areas.Admin.Services.Employees;
     using AnnualLeaveSystem.Data.Models;
     using AnnualLeaveSystem.Models.Home;
     using AnnualLeaveSystem.Models.Leaves;
@@ -7,6 +8,7 @@
     using AnnualLeaveSystem.Services.EmployeeLeaveTypes;
     using AnnualLeaveSystem.Services.Leaves;
     using AnnualLeaveSystem.Services.Statistics;
+    using AnnualLeaveSystem.Services.Users;
     using AutoMapper;
     using System;
     using System.Collections.Generic;
@@ -17,6 +19,8 @@
     {
         public MappingProfile()
         {
+            this.CreateMap<Department, RegisterDepartamentViewModel>();
+
             this.CreateMap<EditLeaveServiceModel, LeaveFormModel>();
 
             this.CreateMap<Employee, SubstituteEmployeeServiceModel>()
@@ -39,8 +43,11 @@
                        .ForMember(x => x.Status, cfg => cfg.MapFrom(y => y.LeaveStatus.ToString()));
 
             this.CreateMap<LeaveType, LeaveTypeServiceModel>();
+
             this.CreateMap<Leave, EditLeaveServiceModel>();
+
             this.CreateMap<Leave, DateValidationServiceModel>();
+
             this.CreateMap<Leave, LeaveDetailsServiceModel>()
                  .ForMember(x => x.RequestEmployeeName, cfg => cfg.MapFrom(y => y.RequestEmployee.FirstName + " " + y.RequestEmployee.MiddleName + " " + y.RequestEmployee.LastName))
                  .ForMember(x => x.Type, cfg => cfg.MapFrom(y => y.LeaveType.Name))
@@ -49,6 +56,12 @@
                    .ForMember(x => x.SubstituteEmployeeName, cfg => cfg.MapFrom(y => y.SubstituteEmployee.FirstName + " " + y.SubstituteEmployee.MiddleName + " " + y.SubstituteEmployee.LastName));
 
 
+
+            this.CreateMap<Employee, EmployeeServiceModel>()
+                .ForMember(x => x.TeamLeadName, cfg => cfg.MapFrom(e =>                
+                    string.IsNullOrEmpty(e.TeamLeadId) ? "-" : e.TeamLead.FirstName + " " + e.TeamLead.LastName
+                ));
+            this.CreateMap<Employee, EditEmployeeServiceModel>();
 
         }
     }

@@ -9,6 +9,8 @@ using AnnualLeaveSystem.Services.LeaveTypes;
 using AnnualLeaveSystem.Services.Statistics;
 using AnnualLeaveSystem.Services.Teams;
 using AnnualLeaveSystem.Services.Users;
+
+using AdminServices = AnnualLeaveSystem.Areas.Admin.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -61,9 +63,13 @@ public class Startup
         services.AddTransient<IUserService, UserService>();
         services.AddTransient<ITeamService, TeamService>();
         services.AddTransient<IEmployeeService, EmployeeService>();
+      
         services.AddTransient<IEmployeeLeaveTypesService, EmployeeLeaveTypesService>();
 
         services.AddTransient<IEmailSenderService, EmailSenderService>();
+        services.AddTransient<AdminServices.Employees.IEmployeeService, AdminServices.Employees.EmployeeService>();
+        services.AddTransient<AdminServices.Teams.ITeamService, AdminServices.Teams.TeamService>();
+        services.AddTransient<AdminServices.Departments.IDepartmentService, AdminServices.Departments.DepartmentService>();
 
 
 

@@ -8,8 +8,12 @@
 
     public interface IEmployeeService
     {
-        public string GetTeamLeadId(string employeeId);
+        public string TeamLeadId(string employeeId);
 
-        //public Employee GetEmployee(string employeeId);
+        public int? TeamId(string employeeId);
+
+        public bool Exist(string employeeId);
+
+        
     }
 }
