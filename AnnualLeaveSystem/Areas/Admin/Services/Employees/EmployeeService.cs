@@ -1,10 +1,10 @@
 ﻿namespace AnnualLeaveSystem.Areas.Admin.Services.Employees
 {
+    using System.Collections.Generic;
+    using System.Linq;
     using AnnualLeaveSystem.Data;
     using AutoMapper;
     using AutoMapper.QueryableExtensions;
-    using System.Collections.Generic;
-    using System.Linq;
 
     public class EmployeeService : IEmployeeService
     {
@@ -39,7 +39,6 @@
             if (employee == null)
             {
                 return false;
-
             }
 
             employee.FirstName = model.FirstName;
@@ -53,7 +52,6 @@
 
             this.db.SaveChanges();
             return true;
-
         }
 
         public bool Delete(string employeeId)

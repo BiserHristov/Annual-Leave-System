@@ -4,6 +4,7 @@
     using AnnualLeaveSystem.Services.Statistics;
     using AutoMapper;
     using Microsoft.AspNetCore.Mvc;
+
     public class HomeController : Controller
     {
         private readonly ICommonInfoService statistics;
@@ -21,11 +22,9 @@
 
             var homeModel = this.mapper.Map<IndexViewModel>(allStatistics);
 
-            return View(homeModel);
-
+            return this.View(homeModel);
         }
 
         public IActionResult Error() => View();
-
     }
 }

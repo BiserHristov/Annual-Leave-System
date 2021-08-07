@@ -7,6 +7,7 @@
             public const int NameMinLength = 2;
             public const int NameMaxLength = 20;
         }
+
         public class Employee
         {
             public const int PasswordMinLength = 6;
@@ -34,13 +35,5 @@
             public const int NameMinLength = 5;
             public const int NameMaxLength = 20;
         }
-
-
-        public class User
-        {
-            
-            public const int _EmployeeTeamId = 2;
-        }
-
     }
 }

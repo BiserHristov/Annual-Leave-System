@@ -1,5 +1,7 @@
 ﻿namespace AnnualLeaveSystem.Controllers
 {
+    using System.Linq;
+    using System.Threading.Tasks;
     using AnnualLeaveSystem.Data.Models;
     using AnnualLeaveSystem.Infrastructure;
     using AnnualLeaveSystem.Models.Users;
@@ -7,9 +9,6 @@
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Mvc;
-    using System.Linq;
-    using System.Threading.Tasks;
-
 
     public class UsersController : Controller
     {
@@ -27,35 +26,37 @@
             this.userService = userService;
         }
 
-
         public IActionResult Register()
         {
-            if ((this.User.Identity.IsAuthenticated && !this.User.IsAdmin()) ||this.User.Identity.IsAuthenticated )
+            if ((this.User.Identity.IsAuthenticated && !this.User.IsAdmin()) || this.User.Identity.IsAuthenticated)
             {
                 return RedirectToAction("Index", "Home");
             }
 
-
             var model = new EmployeeFormModel();
 
-            AddTeamsAndDepartments(model);
+            this.AddTeamsAndDepartments(model);
 
             return View(model);
         }
 
-
         [HttpPost]
         public async Task<IActionResult> Register(EmployeeFormModel user)
         {
-            if (this.User.Identity.IsAuthenticated )
+            if (this.User.Identity.IsAuthenticated)
             {
                 return RedirectToAction("Index", "Home");
             }
 
             if (user.Password != user.ConfirmPassword)
             {
-                ModelState.AddModelError(nameof(user.Password), "Password and confirm password does not match!");
-                ModelState.AddModelError(nameof(user.ConfirmPassword), "Password and confirm password does not match!");
+                ModelState.AddModelError(nameof(user.Password), "Password and confirm password does not match.");
+                ModelState.AddModelError(nameof(user.ConfirmPassword), "Password and confirm password does not match.");
+            }
+
+            if (this.userService.Exist(user.Email))
+            {
+                ModelState.AddModelError(nameof(user.Email), "Email is already taken.");
             }
 
             if (!ModelState.IsValid)
@@ -79,10 +80,8 @@
                 TeamId = user.TeamId,
                 TeamLeadId = teamLeadId,
                 HireDate = user.HireDate.ToUniversalTime().Date
-
             };
 
-            
             if (string.IsNullOrWhiteSpace(teamLeadId))
             {
                 registeredUser.TeamLeadId = registeredUser.Id;
@@ -96,7 +95,6 @@
                 foreach (var error in errors)
                 {
                     ModelState.AddModelError(string.Empty, error);
-
                 }
 
                 AddTeamsAndDepartments(user);
@@ -106,13 +104,10 @@
 
             userService.AddLeaveTypesToEmployee(registeredUser.Id);
 
-            //await userManager.AddClaimAsync(registeredUser, new Claim("TeamId",user.TeamId.ToString()));
-
             await signInManager.SignInAsync(registeredUser, true);
 
             return RedirectToAction("Index", "Home");
         }
-
 
         public IActionResult Login()
         {
@@ -123,7 +118,6 @@
 
             return View();
         }
-
 
         [HttpPost]
         public async Task<IActionResult> Login(LoginFormModel user)
@@ -159,21 +153,19 @@
 
             return RedirectToAction("Index", "Home");
         }
+
         private void AddTeamsAndDepartments(EmployeeFormModel user)
         {
             user.Teams = this.userService.AllTeams();
             user.Departments = this.userService.AllDepartments();
         }
+
         private IActionResult AddError(LoginFormModel user)
         {
-            const string invalidCredentialsMessage = "Credentials are not valid";
-            ModelState.AddModelError(string.Empty, invalidCredentialsMessage);
+            const string InvalidCredentialsMessage = "Credentials are not valid";
+            ModelState.AddModelError(string.Empty, InvalidCredentialsMessage);
 
             return View(user);
-
         }
-
-
-
     }
 }

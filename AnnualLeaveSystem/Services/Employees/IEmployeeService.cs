@@ -7,7 +7,5 @@
         public int? TeamId(string employeeId);
 
         public bool Exist(string employeeId);
-
-        
     }
 }

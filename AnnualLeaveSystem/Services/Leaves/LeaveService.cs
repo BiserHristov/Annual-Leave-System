@@ -1,14 +1,14 @@
 ﻿namespace AnnualLeaveSystem.Services.Leaves
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
     using AnnualLeaveSystem.Data;
     using AnnualLeaveSystem.Data.Models;
     using AnnualLeaveSystem.Models.Leaves;
     using AutoMapper;
     using AutoMapper.QueryableExtensions;
     using Microsoft.EntityFrameworkCore;
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
 
     public class LeaveService : ILeaveService
     {
@@ -20,7 +20,6 @@
             this.db = db;
             this.mapper = mapper.ConfigurationProvider;
         }
-
 
         public LeaveQueryServiceModel All(
             Status? status,
@@ -48,7 +47,6 @@
             {
                 switch (status)
                 {
-
                     case Status.Approved:
                         leavesQuery = leavesQuery.Where(l => l.LeaveStatus == Status.Approved);
                         break;
@@ -64,12 +62,8 @@
                     case Status.Rejected:
                         leavesQuery = leavesQuery.Where(l => l.LeaveStatus == Status.Rejected);
                         break;
-
-                        //Default case is when "query.Status=null". In that case we do not need any filter by status.
                 }
-
             }
-
 
             if (!string.IsNullOrWhiteSpace(firstName))
             {
@@ -81,10 +75,8 @@
                 leavesQuery = leavesQuery.Where(l => l.RequestEmployee.LastName.ToLower() == lastName.Trim().ToLower());
             }
 
-
             switch (sorting)
             {
-
                 case LeaveSorting.RequestDate:
                     leavesQuery = leavesQuery.OrderByDescending(x => x.RequestDate);
                     break;
@@ -103,7 +95,6 @@
                 default:
                     leavesQuery = leavesQuery.OrderByDescending(x => x.StartDate);
                     break;
-
             }
 
             var totalLeaves = leavesQuery.Count();
@@ -112,8 +103,7 @@
                 .Skip((currentPage - 1) * leavesPerPage)
                 .Take(leavesPerPage);
 
-            var leaves = GetLeaves(leavesQuery);
-
+            var leaves = this.GetLeaves(leavesQuery);
 
             return new LeaveQueryServiceModel
             {
@@ -133,34 +123,11 @@
             var resultQuery = this.db.Leaves
                  .Where(e => e.RequestEmployeeId == employeeId);
 
-            return GetLeaves(resultQuery);
-        }
-
-        private IEnumerable<LeaveServiceModel> GetLeaves(IQueryable<Leave> query)
-        {
-            return query
-                .ProjectTo<LeaveServiceModel>(this.mapper)
-                //.Select(l => new LeaveServiceModel
-                //{
-                //    Id = l.Id,
-                //    RequestEmployeeId = l.RequestEmployeeId,
-                //    FirstName = l.RequestEmployee.FirstName,
-                //    LastName = l.RequestEmployee.LastName,
-                //    StartDate = l.StartDate.ToLocalTime().Date,
-                //    EndDate = l.EndDate.ToLocalTime().Date,
-                //    TotalDays = l.TotalDays,
-                //    ApproveEmployeeId = l.ApproveEmployeeId,
-                //    ApprovedBySubstitute = l.ApprovedBySubstitute,
-                //    SubstituteEmployeeId = l.SubstituteEmployeeId,
-                //    Status = l.LeaveStatus.ToString(),
-                //    RequestDate = l.RequestDate.ToLocalTime().Date,
-                //})
-                .ToList();
+            return this.GetLeaves(resultQuery);
         }
 
         public ICollection<SubstituteEmployeeServiceModel> GetEmployeesInTeam(string currentEmployeeId)
         {
-
             var currentEmployeeTeamId = this.db.Employees
                 .Where(e => e.Id == currentEmployeeId)
                 .Select(e => e.TeamId)
@@ -172,46 +139,23 @@
               .ToList();
         }
 
-
         public IEnumerable<LeaveTypeServiceModel> GetLeaveTypes()
         {
-
             return this.db.LeaveTypes
                 .ProjectTo<LeaveTypeServiceModel>(this.mapper)
-                 //.Select(l => new LeaveTypeServiceModel
-                 //{
-                 //    Id = l.Id,
-                 //    Name = l.Name
-                 //})
-                 .ToList();
+                .ToList();
         }
+
         public EditLeaveServiceModel GetLeave(int leaveId)
         {
-
-
             return this.db.Leaves
-                .Where(l => l.Id == leaveId)
-                 .ProjectTo<EditLeaveServiceModel>(this.mapper)
-                //.Select(l => new EditLeaveServiceModel
-                //{
-                //    Id = l.Id,
-                //    StartDate = l.StartDate,
-                //    EndDate = l.EndDate,
-                //    TotalDays = l.TotalDays,
-                //    RequestEmployeeId = l.RequestEmployeeId,
-                //    SubstituteEmployeeId = l.SubstituteEmployeeId,
-                //    ApprovedBySubstitute = l.ApprovedBySubstitute,
-                //    ApproveEmployeeId = l.ApproveEmployeeId,
-                //    LeaveTypeId = l.LeaveTypeId,
-                //    Comments = l.Comments,
-
-                //})
-                .FirstOrDefault();
+                        .Where(l => l.Id == leaveId)
+                        .ProjectTo<EditLeaveServiceModel>(this.mapper)
+                        .FirstOrDefault();
         }
 
         public IEnumerable<LeaveServiceModel> LeavesForApproval(string employeeId, bool isTeamLead)
         {
-
             var leavesQuery = this.db.Leaves.Where(l => l.LeaveStatus == Status.Pending).AsQueryable();
 
             if (isTeamLead)
@@ -227,22 +171,7 @@
 
             var leaves = leavesQuery
                 .ProjectTo<LeaveServiceModel>(this.mapper)
-            //.Select(l => new LeaveServiceModel
-            //{
-            //    Id = l.Id,
-            //    FirstName = l.RequestEmployee.FirstName,
-            //    LastName = l.RequestEmployee.LastName,
-            //    StartDate = l.StartDate,
-            //    EndDate = l.EndDate,
-            //    TotalDays = l.TotalDays,
-            //    RequestDate = l.RequestDate.ToLocalTime().Date,
-            //    ApprovedBySubstitute = l.ApprovedBySubstitute,
-            //    ApproveEmployeeId = l.ApproveEmployeeId,
-            //    RequestEmployeeId = l.RequestEmployeeId,
-            //    SubstituteEmployeeId = l.SubstituteEmployeeId,
-            //    Status = l.LeaveStatus.ToString()
-            //})
-            .ToList();
+                .ToList();
 
             return leaves;
         }
@@ -286,12 +215,6 @@
                             (l.LeaveStatus == Status.Pending || l.LeaveStatus == Status.Approved) &&
                             l.EndDate >= DateTime.UtcNow.Date)
                 .ProjectTo<DateValidationServiceModel>(this.mapper)
-                //.Select(l => new DateValidationServiceModel
-                //{
-                //    Id = l.Id,
-                //    StartDate = l.StartDate,
-                //    EndDate = l.EndDate
-                //})
                 .ToList();
         }
 
@@ -302,11 +225,6 @@
                            l.LeaveStatus == Status.Approved &&
                            l.EndDate >= DateTime.UtcNow.Date)
                .ProjectTo<DateValidationServiceModel>(this.mapper)
-               //.Select(l => new DateValidationServiceModel
-               //{
-               //    StartDate = l.StartDate,
-               //    EndDate = l.EndDate
-               //})
                .ToList();
         }
 
@@ -365,17 +283,14 @@
            string approveEmployeeId,
            string comments)
         {
-
-
             var leave = this.db.Leaves.Find(leaveId);
 
             if (leave == null)
             {
                 return false;
-
             }
 
-            var employeeLeave = GetEmployeeLeaveType(leave.LeaveTypeId, requestEmployeeId);
+            var employeeLeave = this.GetEmployeeLeaveType(leave.LeaveTypeId, requestEmployeeId);
             employeeLeave.PendingApprovalDays -= leave.TotalDays;
 
             if (leave.LeaveTypeId == leaveTypeId)
@@ -398,15 +313,6 @@
             this.db.SaveChanges();
 
             return true;
-        }
-
-        private EmployeeLeaveType GetEmployeeLeaveType(int leaveTypeId, string reqiestEmployeeId)
-        {
-            return this.db.EmployeesLeaveTypes
-              .Include(x => x.LeaveType)
-              .Where(el => el.EmployeeId == reqiestEmployeeId &&
-                           el.LeaveTypeId == leaveTypeId)
-              .FirstOrDefault();
         }
 
         public bool Exist(int leaveId)
@@ -445,23 +351,9 @@
                 .Include(l => l.SubstituteEmployee)
                 .Where(l => l.Id == leaveId)
                 .ProjectTo<LeaveDetailsServiceModel>(this.mapper)
-                //.Select(l => new LeaveDetailsServiceModel
-                //{
-                //    RequestEmployeeName = l.RequestEmployee.FirstName + " " + l.RequestEmployee.MiddleName + " " + l.RequestEmployee.LastName,
-                //    StartDate = l.StartDate,
-                //    EndDate = l.EndDate,
-                //    TotalDays = l.TotalDays,
-                //    Type = l.LeaveType.Name,
-                //    Status = l.LeaveStatus.ToString(),
-                //    ApproveEmployeeName = l.ApproveEmployee.FirstName + " " + l.ApproveEmployee.MiddleName + " " + l.ApproveEmployee.LastName,
-                //    SubstituteEmployeeName = l.SubstituteEmployee.FirstName + " " + l.SubstituteEmployee.MiddleName + " " + l.SubstituteEmployee.LastName,
-                //    RequestDate = l.RequestDate,
-                //    Comments = l.Comments
-                //})
                 .FirstOrDefault();
 
             return leave;
-
         }
 
         private void ChangeStatus(int leaveId, Status status)
@@ -478,6 +370,20 @@
             this.db.SaveChanges();
         }
 
+        private EmployeeLeaveType GetEmployeeLeaveType(int leaveTypeId, string reqiestEmployeeId)
+        {
+            return this.db.EmployeesLeaveTypes
+              .Include(x => x.LeaveType)
+              .Where(el => el.EmployeeId == reqiestEmployeeId &&
+                           el.LeaveTypeId == leaveTypeId)
+              .FirstOrDefault();
+        }
 
+        private IEnumerable<LeaveServiceModel> GetLeaves(IQueryable<Leave> query)
+        {
+            return query
+                .ProjectTo<LeaveServiceModel>(this.mapper)
+                .ToList();
+        }
     }
 }

@@ -1,7 +1,7 @@
 ﻿namespace AnnualLeaveSystem.Services.LeaveTypes
 {
-    using AnnualLeaveSystem.Data;
     using System.Linq;
+    using AnnualLeaveSystem.Data;
 
     public class LeaveTypeService : ILeaveTypeService
     {

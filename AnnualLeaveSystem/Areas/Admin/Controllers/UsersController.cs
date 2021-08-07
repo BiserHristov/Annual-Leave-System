@@ -1,5 +1,8 @@
 ﻿namespace AnnualLeaveSystem.Areas.Admin.Controllers
 {
+    using System;
+    using System.Linq;
+    using System.Threading.Tasks;
     using AnnualLeaveSystem.Areas.Admin.Services.Departments;
     using AnnualLeaveSystem.Areas.Admin.Services.Employees;
     using AnnualLeaveSystem.Areas.Admin.Services.Teams;
@@ -9,13 +12,6 @@
     using AnnualLeaveSystem.Services.Users;
     using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Mvc;
-    using System;
-    using System.Linq;
-    using System.Threading.Tasks;
-
-    using static AnnualLeaveSystem.WebConstants;
-
-
 
     public class UsersController : BaseAdminController
     {
@@ -26,10 +22,11 @@
         private readonly UserManager<Employee> userManager;
         private readonly RoleManager<IdentityRole> rolemanager;
 
-
-        public UsersController(IEmployeeService employeeService,
+        public UsersController(
+            IEmployeeService employeeService,
             IDepartmentService departmentService,
-            ITeamService teamService, IUserService userService,
+            ITeamService teamService,
+            IUserService userService,
             UserManager<Employee> userManager,
             RoleManager<IdentityRole> rolemanager)
         {
@@ -44,23 +41,23 @@
         public IActionResult All()
         {
             var employees = this.employeeService.AllEmployees();
-            return View(employees);
+            return this.View(employees);
         }
-        public IActionResult Edit(string Id)
+
+        public IActionResult Edit(string id)
         {
-            var employee = this.employeeService.GetEmployee(Id);
+            var employee = this.employeeService.GetEmployee(id);
 
             if (employee == null || !this.User.IsAdmin())
             {
-                return BadRequest();
+                return this.BadRequest();
             }
 
             employee.MiddleName = string.IsNullOrEmpty(employee.MiddleName) ? "-" : employee.MiddleName;
             employee.Departments = this.departmentService.All();
             employee.Teams = this.teamService.All();
 
-            return View(employee);
-
+            return this.View(employee);
         }
 
         [HttpPost]
@@ -68,14 +65,14 @@
         {
             if (!this.User.IsAdmin())
             {
-                return BadRequest();
+                return this.BadRequest();
             }
 
             var employee = this.employeeService.GetEmployee(model.Id);
 
             if (employee == null)
             {
-                return BadRequest();
+                return this.BadRequest();
             }
 
             var teams = this.teamService.All().ToList();
@@ -102,15 +99,13 @@
             {
                 model.Departments = this.departmentService.All();
                 model.Teams = this.teamService.All();
-                return View(model);
+                return this.View(model);
             }
 
             this.employeeService.Edit(model);
 
-
-            return RedirectToAction(nameof(All));
+            return this.RedirectToAction(nameof(All));
         }
-
 
         public IActionResult Add()
         {
@@ -118,7 +113,6 @@
             {
                 return RedirectToAction("Index", "Home");
             }
-
 
             var model = new EmployeeFormModel();
             model.Teams = this.userService.AllTeams();
@@ -163,7 +157,6 @@
                 TeamId = model.TeamId,
                 TeamLeadId = teamLeadId,
                 HireDate = model.HireDate.ToUniversalTime().Date
-
             };
 
             var result = await this.userManager.CreateAsync(registeredUser, model.Password);
@@ -174,7 +167,6 @@
                 foreach (var error in errors)
                 {
                     ModelState.AddModelError(string.Empty, error);
-
                 }
 
                 model.Teams = this.userService.AllTeams();
@@ -186,18 +178,16 @@
             userService.AddLeaveTypesToEmployee(registeredUser.Id);
 
             return RedirectToAction("All", "Users");
-
         }
 
-       
-        public IActionResult Delete (string Id)
+        public IActionResult Delete(string id)
         {
             if (!this.User.IsAdmin())
             {
                 return RedirectToAction("Index", "Home");
             }
 
-            var result = this.employeeService.Delete(Id);
+            var result = this.employeeService.Delete(id);
 
             if (!result)
             {

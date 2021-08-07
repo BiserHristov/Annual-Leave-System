@@ -1,7 +1,7 @@
 ﻿namespace AnnualLeaveSystem.Services.Teams
 {
-    using AnnualLeaveSystem.Data;
     using System.Linq;
+    using AnnualLeaveSystem.Data;
 
     public class TeamService : ITeamService
     {

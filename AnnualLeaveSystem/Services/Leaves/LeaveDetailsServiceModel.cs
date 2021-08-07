@@ -4,7 +4,6 @@
 
     public class LeaveDetailsServiceModel
     {
-
         public DateTime RequestDate { get; set; }
 
         public DateTime StartDate { get; set; }
@@ -14,6 +13,7 @@
         public int TotalDays { get; set; }
 
         public string Type { get; set; }
+
         public string RequestEmployeeName { get; set; }
 
         public string SubstituteEmployeeName { get; set; }

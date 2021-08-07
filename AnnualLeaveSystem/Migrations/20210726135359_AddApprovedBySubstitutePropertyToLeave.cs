@@ -1,7 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
-
-namespace AnnualLeaveSystem.Migrations
+﻿namespace AnnualLeaveSystem.Migrations
 {
+    using Microsoft.EntityFrameworkCore.Migrations;
+
     public partial class AddApprovedBySubstitutePropertyToLeave : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)

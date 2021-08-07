@@ -1,12 +1,12 @@
-﻿using AnnualLeaveSystem.Data;
-using AnnualLeaveSystem.Services.Users;
-using AutoMapper;
-using AutoMapper.QueryableExtensions;
-using System.Collections.Generic;
-using System.Linq;
-
-namespace AnnualLeaveSystem.Areas.Admin.Services.Departments
+﻿namespace AnnualLeaveSystem.Areas.Admin.Services.Departments
 {
+    using System.Collections.Generic;
+    using System.Linq;
+    using AnnualLeaveSystem.Data;
+    using AnnualLeaveSystem.Services.Users;
+    using AutoMapper;
+    using AutoMapper.QueryableExtensions;
+
     public class DepartmentService : IDepartmentService
     {
         private readonly LeaveSystemDbContext db;
@@ -18,11 +18,10 @@ namespace AnnualLeaveSystem.Areas.Admin.Services.Departments
             this.mapper = mapper.ConfigurationProvider;
         }
 
-
         public IEnumerable<RegisterDepartamentServiceModel> All()
         {
             return this.db.Departments
-                .ProjectTo<RegisterDepartamentServiceModel>(mapper)
+                .ProjectTo<RegisterDepartamentServiceModel>(this.mapper)
                 .ToList();
         }
     }

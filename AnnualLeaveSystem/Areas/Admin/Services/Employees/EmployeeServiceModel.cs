@@ -5,6 +5,5 @@
         public string DepartmentName { get; set; }
 
         public string TeamLeadName { get; set; }
-
     }
 }

@@ -1,9 +1,9 @@
-﻿using AnnualLeaveSystem.Data.Models;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore;
-
-namespace AnnualLeaveSystem.Data
+﻿namespace AnnualLeaveSystem.Data
 {
+    using AnnualLeaveSystem.Data.Models;
+    using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+    using Microsoft.EntityFrameworkCore;
+
     public class LeaveSystemDbContext : IdentityDbContext<Employee>
     {
         public LeaveSystemDbContext(DbContextOptions<LeaveSystemDbContext> options)
@@ -22,7 +22,9 @@ namespace AnnualLeaveSystem.Data
         public DbSet<Team> Teams { get; set; }
 
         public DbSet<Project> Projects { get; set; }
+
         public DbSet<OfficialHoliday> OfficialHolidays { get; set; }
+
         public DbSet<EmployeeLeaveType> EmployeesLeaveTypes { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
@@ -40,13 +42,6 @@ namespace AnnualLeaveSystem.Data
              .WithMany(t => t.Employees)
              .HasForeignKey(e => e.TeamId)
              .OnDelete(DeleteBehavior.Restrict);
-
-            //builder
-            // .Entity<Employee>()
-            // .HasOne(e => e.TeamLead)
-            // .WithMany()
-            // .HasForeignKey(e => e.TeamLeadId)
-            // .OnDelete(DeleteBehavior.Restrict);
 
             builder
               .Entity<Leave>()
@@ -87,13 +82,6 @@ namespace AnnualLeaveSystem.Data
                 .Entity<OfficialHoliday>()
                 .Property(p => p.Date)
                 .HasColumnType("date");
-
-            //builder
-            //  .Entity<Employee>()
-            //  .HasMany(e=>e.EmployeesTypes)
-            //  .WithMany(t=>t.LeaveTypes)
-            //  .HasForeignKey(t => t.ProjectId)
-            //  .OnDelete(DeleteBehavior.Restrict); ;
 
             builder.Entity<EmployeeLeaveType>().HasKey(el => new { el.EmployeeId, el.LeaveTypeId });
 

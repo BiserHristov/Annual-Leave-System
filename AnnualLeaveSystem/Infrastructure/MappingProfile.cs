@@ -47,18 +47,14 @@
             this.CreateMap<Leave, LeaveDetailsServiceModel>()
                  .ForMember(x => x.RequestEmployeeName, cfg => cfg.MapFrom(y => y.RequestEmployee.FirstName + " " + y.RequestEmployee.MiddleName + " " + y.RequestEmployee.LastName))
                  .ForMember(x => x.Type, cfg => cfg.MapFrom(y => y.LeaveType.Name))
-                   .ForMember(x => x.Status, cfg => cfg.MapFrom(y => y.LeaveStatus.ToString()))
-                   .ForMember(x => x.ApproveEmployeeName, cfg => cfg.MapFrom(y => y.ApproveEmployee.FirstName + " " + y.ApproveEmployee.MiddleName + " " + y.ApproveEmployee.LastName))
-                   .ForMember(x => x.SubstituteEmployeeName, cfg => cfg.MapFrom(y => y.SubstituteEmployee.FirstName + " " + y.SubstituteEmployee.MiddleName + " " + y.SubstituteEmployee.LastName));
-
-
+                 .ForMember(x => x.Status, cfg => cfg.MapFrom(y => y.LeaveStatus.ToString()))
+                 .ForMember(x => x.ApproveEmployeeName, cfg => cfg.MapFrom(y => y.ApproveEmployee.FirstName + " " + y.ApproveEmployee.MiddleName + " " + y.ApproveEmployee.LastName))
+                 .ForMember(x => x.SubstituteEmployeeName, cfg => cfg.MapFrom(y => y.SubstituteEmployee.FirstName + " " + y.SubstituteEmployee.MiddleName + " " + y.SubstituteEmployee.LastName));
 
             this.CreateMap<Employee, EmployeeServiceModel>()
-                .ForMember(x => x.TeamLeadName, cfg => cfg.MapFrom(e =>                
-                    string.IsNullOrEmpty(e.TeamLeadId) ? "-" : e.TeamLead.FirstName + " " + e.TeamLead.LastName
-                ));
-            this.CreateMap<Employee, EditEmployeeServiceModel>();
+                .ForMember(x => x.TeamLeadName, cfg => cfg.MapFrom(e => string.IsNullOrEmpty(e.TeamLeadId) ? "-" : e.TeamLead.FirstName + " " + e.TeamLead.LastName));
 
+            this.CreateMap<Employee, EditEmployeeServiceModel>();
         }
     }
 }

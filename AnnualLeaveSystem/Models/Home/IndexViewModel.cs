@@ -8,5 +8,7 @@
 
         public int AllLeavesTotalDays { get; init; }
 
+        public int MissingEmployees { get; init; }
+
     }
 }

@@ -9,8 +9,6 @@ using AnnualLeaveSystem.Services.LeaveTypes;
 using AnnualLeaveSystem.Services.Statistics;
 using AnnualLeaveSystem.Services.Teams;
 using AnnualLeaveSystem.Services.Users;
-
-using AdminServices = AnnualLeaveSystem.Areas.Admin.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -19,6 +17,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+
+using AdminServices = AnnualLeaveSystem.Areas.Admin.Services;
 
 public class Startup
 {
@@ -46,14 +46,12 @@ public class Startup
             .AddRoles<IdentityRole>()
             .AddEntityFrameworkStores<LeaveSystemDbContext>();
 
-       
         services.AddAutoMapper(typeof(Startup));
 
         services.AddControllersWithViews(options =>
         {
             options.Filters.Add<AutoValidateAntiforgeryTokenAttribute>();
         });
-
 
         services
             .AddControllersWithViews();
@@ -63,17 +61,13 @@ public class Startup
         services.AddTransient<IUserService, UserService>();
         services.AddTransient<ITeamService, TeamService>();
         services.AddTransient<IEmployeeService, EmployeeService>();
-      
+
         services.AddTransient<IEmployeeLeaveTypesService, EmployeeLeaveTypesService>();
 
         services.AddTransient<IEmailSenderService, EmailSenderService>();
         services.AddTransient<AdminServices.Employees.IEmployeeService, AdminServices.Employees.EmployeeService>();
         services.AddTransient<AdminServices.Teams.ITeamService, AdminServices.Teams.TeamService>();
         services.AddTransient<AdminServices.Departments.IDepartmentService, AdminServices.Departments.DepartmentService>();
-
-
-
-
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -99,7 +93,6 @@ public class Startup
             .UseAuthorization()
             .UseEndpoints(endpoints =>
             {
-
                 endpoints.MapDefaultAreaRoute();
                 endpoints.MapDefaultControllerRoute();
                 endpoints.MapRazorPages();

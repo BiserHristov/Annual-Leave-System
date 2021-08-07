@@ -1,8 +1,8 @@
 ﻿namespace AnnualLeaveSystem.Areas.Admin.Services.Teams
 {
-    using AnnualLeaveSystem.Data;
     using System.Collections.Generic;
     using System.Linq;
+    using AnnualLeaveSystem.Data;
 
     public class TeamService : ITeamService
     {

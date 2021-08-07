@@ -1,10 +1,9 @@
-﻿using AnnualLeaveSystem.Areas.Admin;
-
-namespace AnnualLeaveSystem.Infrastructure
+﻿namespace AnnualLeaveSystem.Infrastructure
 {
     using System.Security.Claims;
-    using static WebConstants;
-    using static AdminConstants;
+    using static AnnualLeaveSystem.Areas.Admin.AdminConstants;
+    using static AnnualLeaveSystem.WebConstants;
+
     public static class ClaimsPrincipalExtensions
     {
         public static string GetId(this ClaimsPrincipal user)
@@ -12,6 +11,7 @@ namespace AnnualLeaveSystem.Infrastructure
 
         public static bool IsAdmin(this ClaimsPrincipal user)
             => user.IsInRole(AdministratorRoleName);
+
         public static bool IsTeamLead(this ClaimsPrincipal user)
             => user.IsInRole(TeamLeadRoleName);
 

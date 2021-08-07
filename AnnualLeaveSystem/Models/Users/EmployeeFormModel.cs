@@ -1,9 +1,6 @@
 ﻿namespace AnnualLeaveSystem.Models.Users
 {
     using AnnualLeaveSystem.Areas.Admin.Services.Employees;
-    using AnnualLeaveSystem.Services.Users;
-    using System;
-    using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
 
     using static AnnualLeaveSystem.Data.DataConstants.Employee;

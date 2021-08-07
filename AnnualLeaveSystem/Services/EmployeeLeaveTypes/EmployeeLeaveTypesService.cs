@@ -1,10 +1,10 @@
 ﻿namespace AnnualLeaveSystem.Services.EmployeeLeaveTypes
 {
+    using System.Linq;
     using AnnualLeaveSystem.Data;
     using AutoMapper;
     using AutoMapper.QueryableExtensions;
     using Microsoft.EntityFrameworkCore;
-    using System.Linq;
 
     public class EmployeeLeaveTypesService : IEmployeeLeaveTypesService
     {

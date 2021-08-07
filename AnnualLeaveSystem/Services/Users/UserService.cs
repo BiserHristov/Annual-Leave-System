@@ -1,12 +1,12 @@
 ﻿namespace AnnualLeaveSystem.Services.Users
 {
+    using System.Collections.Generic;
+    using System.Linq;
     using AnnualLeaveSystem.Data;
     using AnnualLeaveSystem.Data.Models;
     using AutoMapper;
     using AutoMapper.QueryableExtensions;
     using Microsoft.EntityFrameworkCore;
-    using System.Collections.Generic;
-    using System.Linq;
 
     public class UserService : IUserService
     {
@@ -70,9 +70,11 @@
             }
 
             this.db.SaveChanges();
-
         }
 
-
+        public bool Exist(string email)
+        {
+            return this.db.Employees.Any(e => e.Email == email);
+        }
     }
 }

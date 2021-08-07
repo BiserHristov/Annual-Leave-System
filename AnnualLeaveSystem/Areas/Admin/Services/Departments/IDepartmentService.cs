@@ -1,7 +1,7 @@
 ﻿namespace AnnualLeaveSystem.Areas.Admin.Services.Departments
 {
-    using AnnualLeaveSystem.Services.Users;
     using System.Collections.Generic;
+    using AnnualLeaveSystem.Services.Users;
 
     public interface IDepartmentService
     {

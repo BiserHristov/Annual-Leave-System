@@ -4,6 +4,7 @@
     using System.ComponentModel.DataAnnotations;
 
     using static AnnualLeaveSystem.Data.DataConstants.Employee;
+
     public abstract class BaseEmployeeServiceModel
     {
         public string Id { get; set; }
@@ -27,7 +28,6 @@
         [Display(Name = "Image URL")]
         public string ImageUrl { get; set; }
 
-
         [Required]
         [StringLength(JobTitleMaxLength, MinimumLength = JobTitleMinLength)]
         [Display(Name = "Job title")]
@@ -41,6 +41,4 @@
         [DataType(DataType.Date)]
         public DateTime HireDate { get; set; }
     }
-
 }
-

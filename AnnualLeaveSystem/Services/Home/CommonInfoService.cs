@@ -1,8 +1,9 @@
 ﻿namespace AnnualLeaveSystem.Services.Statistics
 {
+    using System;
+    using System.Linq;
     using AnnualLeaveSystem.Data;
     using AnnualLeaveSystem.Data.Models;
-    using System.Linq;
 
     public class CommonInfoService : ICommonInfoService
     {
@@ -17,15 +18,18 @@
         {
             var employeesCount = this.db.Employees.Count();
 
-            var approvedLeavesCount = this.db
-                .Leaves
+            var approvedLeavesCount = this.db.Leaves
                 .Count(l => l.LeaveStatus == Status.Approved);
-            var inProgressLeavesCount = this.db
-                .Leaves
+
+            var inProgressLeavesCount = this.db.Leaves
                 .Count(l => l.LeaveStatus == Status.Pending);
-            var allLeavesTotalDays = this.db
-                .Leaves
+
+            var allLeavesTotalDays = this.db.Leaves
                 .Sum(l => l.TotalDays);
+
+            var missingEmployees = this.db.Leaves
+                .Count(l => l.LeaveStatus == Status.Approved &&
+                (l.StartDate <= DateTime.Now.Date && DateTime.Now.Date <= l.EndDate));
 
             return new CommonInfoServiceModel
             {
@@ -33,9 +37,8 @@
                 ApprovedLeaveCount = approvedLeavesCount,
                 InProgressLeaveCount = inProgressLeavesCount,
                 AllLeavesTotalDays = allLeavesTotalDays,
+                MissingEmployees = missingEmployees,
             };
-
         }
     }
 }
-
