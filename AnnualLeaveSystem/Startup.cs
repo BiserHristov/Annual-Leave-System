@@ -4,6 +4,7 @@ using AnnualLeaveSystem.Infrastructure;
 using AnnualLeaveSystem.Services.Emails;
 using AnnualLeaveSystem.Services.EmployeeLeaveTypes;
 using AnnualLeaveSystem.Services.Employees;
+using AnnualLeaveSystem.Services.Holidays;
 using AnnualLeaveSystem.Services.Leaves;
 using AnnualLeaveSystem.Services.LeaveTypes;
 using AnnualLeaveSystem.Services.Statistics;
@@ -61,6 +62,8 @@ public class Startup
         services.AddTransient<IUserService, UserService>();
         services.AddTransient<ITeamService, TeamService>();
         services.AddTransient<IEmployeeService, EmployeeService>();
+        services.AddTransient<IHolidayService, HolidayService>();
+
 
         services.AddTransient<IEmployeeLeaveTypesService, EmployeeLeaveTypesService>();
 

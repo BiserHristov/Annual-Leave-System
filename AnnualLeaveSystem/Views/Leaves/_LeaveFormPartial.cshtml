@@ -11,7 +11,7 @@
                 <div class="form-group date datepicker" id="startDate">
                     <label asp-for="StartDate"></label>
                     <input asp-for="StartDate" type="text" id="StartDateInput" class="form-control" value="@(Model.StartDate.Year<=1000?DateTime.Now.ToLocalTime().ToString("dd/MM/yyyy") : Model.StartDate.ToString("dd/MM/yyyy"))">
-                    <span asp-validation-for="StartDate" class="small text-danger"></span>
+                    <span asp-validation-for="StartDate" id="startDateSpanMessage" class="small text-danger"></span>
                     <div class="input-group-addon">
                         <span class="glyphicon glyphicon-th"></span>
                     </div>
@@ -20,7 +20,7 @@
                 <div class="form-group date datepicker" id="endDate">
                     <label asp-for="EndDate"></label>
                     <input asp-for="EndDate" type="text" class="form-control" id="EndDateInput" value="@(Model.EndDate.Year<=1000?DateTime.Now.ToLocalTime().ToString("dd/MM/yyyy") : Model.EndDate.ToString("dd/MM/yyyy"))">
-                    <span asp-validation-for="EndDate" class="small text-danger"></span>
+                    <span asp-validation-for="EndDate" id="endDateSpanMessage" class="small text-danger"></span>
                     <div class="input-group-addon">
                         <span class="glyphicon glyphicon-th"></span>
                     </div>
@@ -60,7 +60,7 @@
                     <textarea asp-for="Comments" class="form-control datepicker" rows=4 placeholder="Comments..."></textarea>
                     <span asp-validation-for="Comments" class="text-danger"></span>
                 </div>
-                <input type="submit" class="btn btn-primary float-right" asp-route-RequestEmployeeId=@Model.RequestEmployeeId asp-route-leaveId=@Model.Id value="Submit" />
+                <input type="submit" id="submitBtn" class="btn btn-primary float-right" asp-route-RequestEmployeeId=@Model.RequestEmployeeId asp-route-leaveId=@Model.Id value="Submit" />
                 @*<a class="btn btn-primary float-left" asp-area="" asp-controller="Home" asp-action="Index">Home</a>*@
 
             </form>

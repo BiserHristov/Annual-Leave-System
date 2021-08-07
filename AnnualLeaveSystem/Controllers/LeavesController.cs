@@ -1,6 +1,7 @@
 ﻿namespace AnnualLeaveSystem.Controllers
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq;
     using AnnualLeaveSystem.Data.Models;
     using AnnualLeaveSystem.Infrastructure;
@@ -8,6 +9,7 @@
     using AnnualLeaveSystem.Services.Emails;
     using AnnualLeaveSystem.Services.EmployeeLeaveTypes;
     using AnnualLeaveSystem.Services.Employees;
+    using AnnualLeaveSystem.Services.Holidays;
     using AnnualLeaveSystem.Services.Leaves;
     using AnnualLeaveSystem.Services.LeaveTypes;
     using AnnualLeaveSystem.Services.Teams;
@@ -15,9 +17,10 @@
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Mvc;
+
     using static WebConstants;
 
-    [Authorize]
+    //[Authorize]
     public class LeavesController : Controller
     {
         private readonly IEmployeeLeaveTypesService employeeLeaveTypesService;
@@ -26,6 +29,7 @@
         private readonly IEmployeeService employeeService;
         private readonly ILeaveService leaveService;
         private readonly ITeamService teamService;
+        private readonly IHolidayService holidayService;
         private readonly IMapper mapper;
 
         private readonly UserManager<Employee> userManager;
@@ -38,7 +42,8 @@
             IEmployeeLeaveTypesService employeeLeaveTypesService,
             IEmployeeService employeeService,
             IMapper mapper,
-            IEmailSenderService emailSenderService)
+            IEmailSenderService emailSenderService,
+            IHolidayService holidayService)
         {
             this.leaveService = leaveService;
             this.teamService = teamService;
@@ -48,6 +53,7 @@
             this.employeeService = employeeService;
             this.mapper = mapper;
             this.emailSenderService = emailSenderService;
+            this.holidayService = holidayService;
         }
 
         public IActionResult Add()
@@ -81,7 +87,22 @@
                 this.ModelState.AddModelError(nameof(leaveModel.EndDate), "End date should be after or equal to todays' date.");
             }
 
-            var businessDaysCount = GetBusinessDays(leaveModel.StartDate, leaveModel.EndDate);
+            var (isHoliday, name) = this.holidayService.IsHoliday(leaveModel.StartDate);
+
+            if (isHoliday)
+            {
+                this.ModelState.AddModelError(nameof(leaveModel.StartDate), $"This date is official holiday ({name})");
+            }
+
+            (isHoliday, name) = this.holidayService.IsHoliday(leaveModel.EndDate);
+
+            if (isHoliday)
+            {
+                this.ModelState.AddModelError(nameof(leaveModel.EndDate), $"This date is official holiday ({name})");
+            }
+
+            var holidays = this.holidayService.AllDates();
+            var businessDaysCount = GetBusinessDays(leaveModel.StartDate, leaveModel.EndDate, holidays);
 
             if (leaveModel.TotalDays != businessDaysCount || leaveModel.TotalDays == 0)
             {
@@ -282,7 +303,21 @@
                 this.ModelState.AddModelError(nameof(leaveModel.EndDate), "End date should be after or equal to todays' date.");
             }
 
-            var businessDaysCount = GetBusinessDays(leaveModel.StartDate, leaveModel.EndDate);
+            var (isHoliday, name) = this.holidayService.IsHoliday(leaveModel.StartDate);
+
+            if (isHoliday)
+            {
+                this.ModelState.AddModelError(nameof(leaveModel.StartDate), $"This date is official holiday ({name})");
+            }
+
+            (isHoliday, name) = this.holidayService.IsHoliday(leaveModel.EndDate);
+
+            if (isHoliday)
+            {
+                this.ModelState.AddModelError(nameof(leaveModel.EndDate), $"This date is official holiday ({name})");
+            }
+            var holidays = this.holidayService.AllDates();
+            var businessDaysCount = GetBusinessDays(leaveModel.StartDate, leaveModel.EndDate, holidays);
 
             if (leaveModel.TotalDays != businessDaysCount || leaveModel.TotalDays == 0)
             {
@@ -462,7 +497,7 @@
             return RedirectToAction(nameof(ForApproval));
         }
 
-        private static double GetBusinessDays(DateTime startDate, DateTime endDate)
+        private static double GetBusinessDays(DateTime startDate, DateTime endDate, IEnumerable<string> holidays)
         {
             double calcBusinessDays = 1 + ((endDate - startDate).TotalDays * 5 - (startDate.DayOfWeek - endDate.DayOfWeek) * 2) / 7;
 
@@ -476,6 +511,17 @@
                 calcBusinessDays--;
             }
 
+            while (startDate <= endDate)
+            {
+                if (holidays.Contains(startDate.ToLocalTime().Date.ToString("dd.MM.yyy")) &&
+                    startDate.DayOfWeek != DayOfWeek.Saturday &&
+                    startDate.DayOfWeek != DayOfWeek.Sunday)
+                {
+                    calcBusinessDays--;
+                }
+
+                startDate=startDate.AddDays(1);
+            }
             return calcBusinessDays;
         }
 

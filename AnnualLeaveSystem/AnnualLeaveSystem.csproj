@@ -28,6 +28,7 @@
 
   <ItemGroup>
     <Folder Include="Areas\Admin\Models\" />
+    <Folder Include="Controllers\Api\Models\" />
   </ItemGroup>
 
 </Project>
