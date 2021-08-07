@@ -10,16 +10,12 @@
     using AnnualLeaveSystem.Services.Statistics;
     using AnnualLeaveSystem.Services.Users;
     using AutoMapper;
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Threading.Tasks;
 
     public class MappingProfile : Profile
     {
         public MappingProfile()
         {
-            this.CreateMap<Department, RegisterDepartamentViewModel>();
+            this.CreateMap<Department, RegisterDepartamentServiceModel>();
 
             this.CreateMap<EditLeaveServiceModel, LeaveFormModel>();
 

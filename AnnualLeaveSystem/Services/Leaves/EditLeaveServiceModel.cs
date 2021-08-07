@@ -1,10 +1,6 @@
 ﻿namespace AnnualLeaveSystem.Services.Leaves
 {
-    using AnnualLeaveSystem.Services.Leaves;
-    using System;
     using System.Collections.Generic;
-    using System.Linq;
-    using System.Threading.Tasks;
 
     public class EditLeaveServiceModel : BaseServiceModel
     {

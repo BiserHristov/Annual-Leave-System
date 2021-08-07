@@ -199,7 +199,7 @@ namespace AnnualLeaveSystem.Infrastructure
 
         private static void SeedEmployees(IServiceProvider serviceProvider)
         {
-            var data = serviceProvider.GetRequiredService<LeaveSystemDbContext>();
+            //var data = serviceProvider.GetRequiredService<LeaveSystemDbContext>();
 
             var userManager = serviceProvider.GetRequiredService<UserManager<Employee>>();
             var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
@@ -370,32 +370,37 @@ namespace AnnualLeaveSystem.Infrastructure
                     var role = new IdentityRole { Name = AdministratorRoleName };
                     await roleManager.CreateAsync(role);
 
-                    var admins = new List<Employee>() {
-                        new Employee
-                        {
-                            FirstName = "Ivan",
-                            MiddleName = "Stamenov",
-                            LastName = "Petrov",
-                            UserName = "admin.ivan.petrov@gmail.com",
-                            Email = "admin.ivan.petrov@gmail.com",
-                            ImageUrl = "https://data.whicdn.com/images/312637959/original.jpg",
-                            JobTitle = "Senior Specialist",
-                            HireDate = new DateTime(2010, 02, 20).ToUniversalTime().Date,
-                            DepartmentId = 1,
-                        },
-                        new Employee
-                        {
-                            FirstName = "Petkan",
-                            MiddleName = "Petkanov",
-                            LastName = "Petkanov",
-                            UserName = "admin.petkan.petkanov@gmail.com",
-                            Email = "admin.petkan.petkanov@gmail.com",
-                            ImageUrl = "https://data.whicdn.com/images/312637959/original.jpg",
-                            JobTitle = "Senior Specialist",
-                            HireDate = new DateTime(2010, 02, 20).ToUniversalTime().Date,
-                            DepartmentId = 1,
-                        }
+                    var admins = new List<Employee>();
+
+                    var adminTeamLead = new Employee
+                    {
+                        FirstName = "Ivan",
+                        MiddleName = "Stamenov",
+                        LastName = "Petrov",
+                        UserName = "admin.ivan.petrov@gmail.com",
+                        Email = "admin.ivan.petrov@gmail.com",
+                        ImageUrl = "https://data.whicdn.com/images/312637959/original.jpg",
+                        JobTitle = "Senior Specialist",
+                        HireDate = new DateTime(2010, 02, 20).ToUniversalTime().Date,
+                        DepartmentId = 1
                     };
+
+                    var adminEmployee = new Employee
+                    {
+                        FirstName = "Petkan",
+                        MiddleName = "Petkanov",
+                        LastName = "Petkanov",
+                        UserName = "admin.petkan.petkanov@gmail.com",
+                        Email = "admin.petkan.petkanov@gmail.com",
+                        ImageUrl = "https://data.whicdn.com/images/312637959/original.jpg",
+                        JobTitle = "Senior Specialist",
+                        HireDate = new DateTime(2010, 02, 20).ToUniversalTime().Date,
+                        DepartmentId = 1,
+                        TeamLeadId = adminTeamLead.Id
+                    };
+
+                    admins.Add(adminTeamLead);
+                    admins.Add(adminEmployee);
 
                     foreach (var admin in admins)
                     {
@@ -403,7 +408,7 @@ namespace AnnualLeaveSystem.Infrastructure
 
                         await userManager.AddToRoleAsync(admin, role.Name);
                     }
-                    
+
                 })
                 .GetAwaiter()
                 .GetResult();

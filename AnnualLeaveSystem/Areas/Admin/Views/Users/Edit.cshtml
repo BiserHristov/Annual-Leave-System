@@ -18,7 +18,7 @@
 
                 <div class="form-group">
                     <label asp-for="MiddleName"></label>
-                    <input asp-for="MiddleName" type='text' class="form-control" value="@(string.IsNullOrEmpty(Model.MiddleName)? "-" : Model.MiddleName)">
+                    <input asp-for="MiddleName" type='text' class="form-control" >
                     <span asp-validation-for="MiddleName" class="small text-danger"></span>
                 </div>
 
@@ -43,7 +43,7 @@
                 <div class="form-group">
                     <label asp-for="TeamId"></label>
                     <select asp-for="TeamId" class="form-control">
-                        @foreach (var teamId in Model.TeamIDs)
+                        @foreach (var teamId in Model.Teams)
                         {
                             <option value="@teamId">@teamId</option>
                         }
@@ -54,9 +54,9 @@
                 <div class="form-group">
                     <label asp-for="DepartmentId"></label>
                     <select asp-for="DepartmentId" class="form-control">
-                        @foreach (var departmentId in Model.DepartmentIDs)
+                        @foreach (var department in Model.Departments)
                         {
-                            <option value="@departmentId">@departmentId</option>
+                            <option value="@department.Id">@department.Name</option>
                         }
                     </select>
                     <span asp-validation-for="DepartmentId" class="text-danger"></span>

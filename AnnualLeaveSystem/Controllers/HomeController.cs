@@ -1,7 +1,5 @@
 ﻿namespace AnnualLeaveSystem.Controllers
 {
-    using System.Diagnostics;
-    using AnnualLeaveSystem.Models;
     using AnnualLeaveSystem.Models.Home;
     using AnnualLeaveSystem.Services.Statistics;
     using AutoMapper;

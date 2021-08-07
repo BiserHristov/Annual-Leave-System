@@ -4,7 +4,6 @@
     using MailKit.Security;
     using MimeKit;
     using MimeKit.Text;
-    using System.Text;
 
     public class EmailSenderService : IEmailSenderService
     {

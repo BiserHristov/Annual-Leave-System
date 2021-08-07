@@ -3,10 +3,8 @@
     using AnnualLeaveSystem.Data;
     using AutoMapper;
     using AutoMapper.QueryableExtensions;
-    using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Threading.Tasks;
 
     public class EmployeeService : IEmployeeService
     {
@@ -56,6 +54,21 @@
             this.db.SaveChanges();
             return true;
 
+        }
+
+        public bool Delete(string employeeId)
+        {
+            var employee = this.db.Employees.Find(employeeId);
+
+            if (employee == null)
+            {
+                return false;
+            }
+
+            this.db.Employees.Remove(employee);
+            this.db.SaveChanges();
+
+            return true;
         }
     }
 }

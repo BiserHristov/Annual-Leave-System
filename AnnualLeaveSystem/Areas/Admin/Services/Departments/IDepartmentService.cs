@@ -1,12 +1,10 @@
 ﻿namespace AnnualLeaveSystem.Areas.Admin.Services.Departments
 {
-    using System;
+    using AnnualLeaveSystem.Services.Users;
     using System.Collections.Generic;
-    using System.Linq;
-    using System.Threading.Tasks;
 
     public interface IDepartmentService
     {
-        public IEnumerable<int> All();
+        public IEnumerable<RegisterDepartamentServiceModel> All();
     }
 }

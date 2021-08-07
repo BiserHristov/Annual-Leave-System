@@ -2,7 +2,6 @@
 
 namespace AnnualLeaveSystem.Infrastructure
 {
-    using System.Linq;
     using System.Security.Claims;
     using static WebConstants;
     using static AdminConstants;

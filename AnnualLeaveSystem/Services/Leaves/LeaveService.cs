@@ -3,15 +3,12 @@
     using AnnualLeaveSystem.Data;
     using AnnualLeaveSystem.Data.Models;
     using AnnualLeaveSystem.Models.Leaves;
-    using AnnualLeaveSystem.Services.EmployeeLeaveTypes;
     using AutoMapper;
     using AutoMapper.QueryableExtensions;
     using Microsoft.EntityFrameworkCore;
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Threading.Tasks;
-    using static AnnualLeaveSystem.Data.DataConstants.User;
 
     public class LeaveService : ILeaveService
     {

@@ -19,16 +19,11 @@
             this.mapper = mapper.ConfigurationProvider;
         }
 
-        public IEnumerable<RegisterDepartamentViewModel> AllDepartments()
+        public IEnumerable<RegisterDepartamentServiceModel> AllDepartments()
         {
             return this.db.Departments
                 .OrderBy(d => d.Name)
-                .ProjectTo<RegisterDepartamentViewModel>(this.mapper)
-                //.Select(d => new RegisterDepartamentViewModel
-                //{
-                //    Id = d.Id,
-                //    Name = d.Name
-                //})
+                .ProjectTo<RegisterDepartamentServiceModel>(this.mapper)
                 .ToList();
         }
 
@@ -40,7 +35,7 @@
                 .ToList();
         }
 
-        public string GetTeamLeadId(int teamId)
+        public string GetTeamLeadId(int? teamId)
         {
             var teamLeadId = this.db.Employees
                 .Include(e => e.Team)

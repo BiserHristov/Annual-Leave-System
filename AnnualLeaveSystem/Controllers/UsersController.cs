@@ -1,13 +1,13 @@
 ﻿namespace AnnualLeaveSystem.Controllers
 {
     using AnnualLeaveSystem.Data.Models;
+    using AnnualLeaveSystem.Infrastructure;
     using AnnualLeaveSystem.Models.Users;
     using AnnualLeaveSystem.Services.Users;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Mvc;
     using System.Linq;
-    using System.Security.Claims;
     using System.Threading.Tasks;
 
 
@@ -30,12 +30,13 @@
 
         public IActionResult Register()
         {
-            if (this.User.Identity.IsAuthenticated)
+            if ((this.User.Identity.IsAuthenticated && !this.User.IsAdmin()) ||this.User.Identity.IsAuthenticated )
             {
                 return RedirectToAction("Index", "Home");
             }
 
-            var model = new RegisterFormModel();
+
+            var model = new EmployeeFormModel();
 
             AddTeamsAndDepartments(model);
 
@@ -44,9 +45,9 @@
 
 
         [HttpPost]
-        public async Task<IActionResult> Register(RegisterFormModel user)
+        public async Task<IActionResult> Register(EmployeeFormModel user)
         {
-            if (this.User.Identity.IsAuthenticated)
+            if (this.User.Identity.IsAuthenticated )
             {
                 return RedirectToAction("Index", "Home");
             }
@@ -62,6 +63,7 @@
                 AddTeamsAndDepartments(user);
                 return View(user);
             }
+
             var teamLeadId = userService.GetTeamLeadId(user.TeamId);
 
             var registeredUser = new Employee
@@ -157,7 +159,7 @@
 
             return RedirectToAction("Index", "Home");
         }
-        private void AddTeamsAndDepartments(RegisterFormModel user)
+        private void AddTeamsAndDepartments(EmployeeFormModel user)
         {
             user.Teams = this.userService.AllTeams();
             user.Departments = this.userService.AllDepartments();
