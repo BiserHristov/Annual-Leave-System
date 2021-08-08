@@ -102,7 +102,12 @@
                 return this.View(model);
             }
 
-            this.employeeService.Edit(model);
+            var result = this.employeeService.Edit(model);
+
+            if (!result)
+            {
+                return BadRequest();
+            }
 
             return this.RedirectToAction(nameof(All));
         }

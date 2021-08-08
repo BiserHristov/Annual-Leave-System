@@ -208,7 +208,7 @@
 
             if (this.User.IsUser())
             {
-                return RedirectToAction("History", "Statistic");
+                return RedirectToAction("History", "Statistics");
             }
 
             return RedirectToAction(nameof(All));
@@ -425,7 +425,7 @@
 
             if (this.User.IsInRole(UserRoleName))
             {
-                return RedirectToAction("History", "Statistic");
+                return RedirectToAction("History", "Statistics");
             }
 
             return RedirectToAction(nameof(All));
@@ -447,7 +447,7 @@
 
             if (this.User.IsInRole(UserRoleName))
             {
-                return RedirectToAction("History", "Statistic");
+                return RedirectToAction("History", "Statistics");
             }
 
             return RedirectToAction(nameof(All));
@@ -469,7 +469,7 @@
 
             if (this.User.IsInRole(UserRoleName))
             {
-                return RedirectToAction("History", "Statistic");
+                return RedirectToAction("History", "Statistics");
             }
 
             return RedirectToAction(nameof(All));

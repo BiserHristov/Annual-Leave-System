@@ -1,3 +1,4 @@
+using AnnualLeaveSystem.Areas.Admin.Services.Holidays;
 using AnnualLeaveSystem.Data;
 using AnnualLeaveSystem.Data.Models;
 using AnnualLeaveSystem.Infrastructure;
@@ -63,6 +64,8 @@ public class Startup
         services.AddTransient<ITeamService, TeamService>();
         services.AddTransient<IEmployeeService, EmployeeService>();
         services.AddTransient<IHolidayService, HolidayService>();
+        services.AddTransient<IHolidayServiceAdmin, HolidayServiceAdmin>();
+
 
 
         services.AddTransient<IEmployeeLeaveTypesService, EmployeeLeaveTypesService>();

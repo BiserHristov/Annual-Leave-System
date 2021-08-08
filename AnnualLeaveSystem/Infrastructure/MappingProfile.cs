@@ -57,8 +57,7 @@
 
             this.CreateMap<Employee, EditEmployeeServiceModel>();
 
-            this.CreateMap<OfficialHoliday, HolidayServiceModel>()
-                .ForMember(x => x.Date, cfg => cfg.MapFrom(y => y.Date.ToLocalTime().Date.ToString("dd.MM.yyyy")));
+            this.CreateMap<OfficialHoliday, HolidayServiceModel>();
         }
     }
 }

@@ -9,5 +9,6 @@
     [Authorize(Roles = AdministratorRoleName)]
     public class BaseAdminController : Controller
     {
+
     }
 }

@@ -8,9 +8,9 @@
         public int Id { get; init; }
 
         [Column(TypeName = "date")]
-        public DateTime Date { get; init; }
+        public DateTime Date { get; set; }
 
-        public string Name { get; init; }
+        public string Name { get; set; }
 
     }
 }

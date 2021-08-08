@@ -35,5 +35,11 @@
             public const int NameMinLength = 5;
             public const int NameMaxLength = 20;
         }
+
+        public class Holiday
+        {
+            public const int NameMinLength = 2;
+            public const int NameMaxLength = 40;
+        }
     }
 }

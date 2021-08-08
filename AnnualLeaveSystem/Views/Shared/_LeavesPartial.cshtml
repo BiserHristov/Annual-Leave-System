@@ -41,9 +41,6 @@
                 <td>@leave.RequestDate.ToShortDateString()</td>
                 <td>
                     <a asp-controller="Leaves" asp-action="Details" asp-route-leaveId="@leave.Id" class="btn btn-primary">Details</a>
-
-           
-
                 </td>
                 <td>
                     @if (this.User.IsAdmin() ||

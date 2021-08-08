@@ -1,0 +1,84 @@
+﻿@model IEnumerable<HolidayServiceModel>
+
+@{
+    ViewBag.Tite = "All holidays";
+}
+
+<div class="container">
+    <div class="row">
+        <div class="col-sm-12 offset-lg-2 col-lg-8 offset-xl-3 col-xl-6">
+            <table class="table table-hover">
+
+                <thead>
+                    <tr>
+                        <th scope="col">Date</th>
+                        <th scope="col">Name</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+
+                    @if (Model.Count() == 0)
+                    {
+                        <tr>
+                            <td class="text-danger">No records!</td>
+                        </tr>
+                    }
+
+                    @foreach (var holiday in Model)
+                    {
+                        <tr>
+                            <td>@holiday.Date.ToLocalTime().ToString("dd.MM.yyyy")</td>
+                            <td>@holiday.Name</td>
+                            <td>
+                                <a asp-area="Admin" asp-controller="Holidays" asp-action="Edit" asp-route-Id="@holiday.Id" class="btn btn-warning">Edit</a>
+                                <a asp-area="Admin" asp-controller="Holidays" asp-action="Delete" asp-route-Id="@holiday.Id" class="btn btn-danger">Delete</a>
+                            </td>
+                            @*<td>
+                                           @if (this.User.IsAdmin() ||
+                                  (leave.RequestEmployeeId == this.User.GetId() &&
+                                  !leave.ApprovedBySubstitute &&
+                                  leave.Status == Status.Pending.ToString() &&
+                                   ViewBag.IsInMyLeavesPage))
+                                           {
+                                               <a asp-controller="Leaves" asp-action="Edit" asp-route-leaveId="@leave.Id" class="btn btn-warning">Edit</a>
+                                           }
+                                       </td>
+                                       <td class="align-self-center">
+                                           @if (this.User.IsAdmin() ||
+                                        (leave.RequestEmployeeId == this.User.GetId() &&
+                                        leave.Status == Status.Pending.ToString() &&
+                                        ViewBag.IsInMyLeavesPage))
+                                           {
+                                               <form asp-controller="Leaves" asp-action="Cancel" asp-route-leaveId=@leave.Id method="post">
+                                                   <button class="btn btn-info" type="submit">Cancel</button>
+                                               </form>
+
+                                           }
+                                       </td>
+                                       <td>
+                                           @if (ViewBag.IsInForApprovalPage &&
+                                leave.Status == Status.Pending.ToString() &&
+                                  (leave.ApproveEmployeeId == this.User.GetId() ||
+                                  leave.SubstituteEmployeeId == this.User.GetId()))
+                                           {
+
+                                               <form asp-controller="Leaves" asp-action="ForApproval" asp-route-leaveId=@leave.Id method="post">
+                                                   <button class="btn btn-danger" type="submit">Approve</button>
+                                               </form>
+                                               <form asp-controller="Leaves" asp-action="Reject" asp-route-leaveId=@leave.Id method="post">
+                                                   <button class="btn btn-secondary" type="submit">Reject</button>
+                                               </form>
+                                           }
+
+
+                                       </td>*@
+                        </tr>
+                    }
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

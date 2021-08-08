@@ -22,6 +22,7 @@
         public IEnumerable<HolidayServiceModel> All()
         {
             return this.db.OfficialHolidays
+                 .OrderBy(h => h.Date)
                  .ProjectTo<HolidayServiceModel>(this.mapper)
                  .ToList();
         }
@@ -29,8 +30,9 @@
         public IEnumerable<string> AllDates()
         {
             return this.db.OfficialHolidays
-                  .Select(h => h.Date.ToLocalTime().Date.ToString("dd.MM.yyyy"))
-                  .ToList();
+                .OrderBy(h => h.Date)
+                .Select(h => h.Date.ToLocalTime().Date.ToString("dd.MM.yyyy"))
+                .ToList();
         }
 
         public (bool, string) IsHoliday(DateTime date)

@@ -1,0 +1,23 @@
+﻿@model HolidayServiceModel
+
+@{
+    ViewBag.Title = "Add holiday";
+}
+
+<partial name="_HolidayPartial" model=@Model />
+
+
+@section Scripts{
+
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+
+        $('#date').datepicker({
+            format: 'dd.mm.yyyy',
+            //date: moment(),
+            autoclose: true
+        })
+
+    </script>
+}

@@ -5,11 +5,11 @@
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
 
-    public class StatisticController : Controller
+    public class StatisticsController : Controller
     {
         private readonly ILeaveService leaveService;
 
-        public StatisticController(ILeaveService leaveService)
+        public StatisticsController(ILeaveService leaveService)
         {
             this.leaveService = leaveService;
         }
