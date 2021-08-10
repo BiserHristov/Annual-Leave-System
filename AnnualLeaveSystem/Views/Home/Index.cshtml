@@ -4,14 +4,24 @@
     ViewBag.Title = "Wellcome!";
 }
 
-<div class="text-center heading-margin">
-    <h1 class="font-italic">Welcome to Annual Leave System!</h1>
 
-</div>
 
 @if (!this.User.Identity.IsAuthenticated)
 {
+    <div class="text-center heading-margin">
+        <h1 class="font-italic">Welcome to Annual Leave System!</h1>
+        <div>
+            <div>
+                Please
+                <a asp-area="" asp-controller="Users" asp-action="Register">Register</a>.
+            </div>
+            <div>
+                If you have already an account, please
+                <a asp-area="" asp-controller="Users" asp-action="Login">Login</a>.
+            </div>
+        </div>
 
+    </div>
 
     <div class="container">
         <div class="col-md-8 px-0 offset-md-2">
