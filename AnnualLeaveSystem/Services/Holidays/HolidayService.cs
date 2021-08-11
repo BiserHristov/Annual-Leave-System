@@ -3,6 +3,7 @@
     using AnnualLeaveSystem.Data;
     using AutoMapper;
     using AutoMapper.QueryableExtensions;
+    using Microsoft.Extensions.Caching.Memory;
     using System;
     using System.Collections.Generic;
     using System.Linq;
@@ -12,27 +13,67 @@
     {
         private readonly LeaveSystemDbContext db;
         private readonly IConfigurationProvider mapper;
-
-        public HolidayService(LeaveSystemDbContext db, IMapper mapper)
+        private readonly IMemoryCache cache;
+        private const string AllHolidayDatesCacheKey = "AllHolidayDates";
+        private const string AllHolidaysCacheKey = "AllHolidays";
+        public HolidayService(LeaveSystemDbContext db, IMapper mapper, IMemoryCache cache)
         {
             this.db = db;
             this.mapper = mapper.ConfigurationProvider;
+            this.cache = cache;
         }
+        //const string AllHolidayDatesCacheKey = "AllHolidayDates";
 
+        //var allHolidays = this.cache.Get<IEnumerable<string>>(AllHolidayDatesCacheKey);
+
+        //    if (allHolidays == null)
+        //    {
+        //        allHolidays = this.holidayService.AllDates();
+        //        var cacheOptions = new MemoryCacheEntryOptions()
+        //            .SetAbsoluteExpiration(TimeSpan.FromMinutes(15));
+
+        //        this.cache.Set(AllHolidayDatesCacheKey, allHolidays, cacheOptions);
+        //    }
         public IEnumerable<HolidayServiceModel> All()
         {
-            return this.db.OfficialHolidays
+            var allHolidays = this.cache.Get<IEnumerable<HolidayServiceModel>>(AllHolidaysCacheKey);
+
+            if (allHolidays == null)
+            {
+                allHolidays = this.db.OfficialHolidays
                  .OrderBy(h => h.Date)
                  .ProjectTo<HolidayServiceModel>(this.mapper)
                  .ToList();
+
+                var cacheOptions = new MemoryCacheEntryOptions()
+                    .SetAbsoluteExpiration(TimeSpan.FromMinutes(15));
+
+                this.cache.Set(AllHolidaysCacheKey, allHolidays, cacheOptions);
+
+            }
+
+            return allHolidays;
         }
 
         public IEnumerable<string> AllDates()
         {
-            return this.db.OfficialHolidays
-                .OrderBy(h => h.Date)
-                .Select(h => h.Date.ToLocalTime().Date.ToString("dd.MM.yyyy"))
-                .ToList();
+            var allHolidayDates = this.cache.Get<IEnumerable<string>>(AllHolidayDatesCacheKey);
+
+            if (allHolidayDates == null)
+            {
+                allHolidayDates = this.db.OfficialHolidays
+                 .OrderBy(h => h.Date)
+                 .Select(h => h.Date.ToLocalTime().Date.ToString("dd.MM.yyyy"))
+                 .ToList();
+
+                var cacheOptions = new MemoryCacheEntryOptions()
+                    .SetAbsoluteExpiration(TimeSpan.FromMinutes(15));
+
+                this.cache.Set(AllHolidayDatesCacheKey, allHolidayDates, cacheOptions);
+
+            }
+
+            return allHolidayDates;
         }
 
         public (bool, string) IsHoliday(DateTime date)

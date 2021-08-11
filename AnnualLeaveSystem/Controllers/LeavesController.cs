@@ -17,7 +17,7 @@
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Mvc;
-
+    using Microsoft.Extensions.Caching.Memory;
     using static WebConstants;
 
     //[Authorize]
@@ -31,6 +31,7 @@
         private readonly ITeamService teamService;
         private readonly IHolidayService holidayService;
         private readonly IMapper mapper;
+        private readonly IMemoryCache cache;
 
         private readonly UserManager<Employee> userManager;
 
@@ -43,7 +44,8 @@
             IEmployeeService employeeService,
             IMapper mapper,
             IEmailSenderService emailSenderService,
-            IHolidayService holidayService)
+            IHolidayService holidayService, 
+            IMemoryCache cache)
         {
             this.leaveService = leaveService;
             this.teamService = teamService;
@@ -54,6 +56,7 @@
             this.mapper = mapper;
             this.emailSenderService = emailSenderService;
             this.holidayService = holidayService;
+            this.cache = cache;
         }
 
         public IActionResult Add()
@@ -101,8 +104,9 @@
                 this.ModelState.AddModelError(nameof(leaveModel.EndDate), $"This date is official holiday ({name})");
             }
 
-            var holidays = this.holidayService.AllDates();
-            var businessDaysCount = GetBusinessDays(leaveModel.StartDate, leaveModel.EndDate, holidays);
+            var allHolidays = this.holidayService.AllDates();
+            
+            var businessDaysCount = GetBusinessDays(leaveModel.StartDate, leaveModel.EndDate, allHolidays);
 
             if (leaveModel.TotalDays != businessDaysCount || leaveModel.TotalDays == 0)
             {
@@ -316,8 +320,11 @@
             {
                 this.ModelState.AddModelError(nameof(leaveModel.EndDate), $"This date is official holiday ({name})");
             }
-            var holidays = this.holidayService.AllDates();
-            var businessDaysCount = GetBusinessDays(leaveModel.StartDate, leaveModel.EndDate, holidays);
+
+
+            var allHolidays = this.holidayService.AllDates();
+
+            var businessDaysCount = GetBusinessDays(leaveModel.StartDate, leaveModel.EndDate, allHolidays);
 
             if (leaveModel.TotalDays != businessDaysCount || leaveModel.TotalDays == 0)
             {

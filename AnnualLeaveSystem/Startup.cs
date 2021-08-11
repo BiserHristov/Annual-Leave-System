@@ -49,6 +49,7 @@ public class Startup
             .AddEntityFrameworkStores<LeaveSystemDbContext>();
 
         services.AddAutoMapper(typeof(Startup));
+        services.AddMemoryCache();
 
         services.AddControllersWithViews(options =>
         {
