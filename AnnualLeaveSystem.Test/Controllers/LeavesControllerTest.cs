@@ -12,6 +12,7 @@
     using System;
     using AnnualLeaveSystem.Data.Models;
     using System.Linq;
+    using Microsoft.AspNetCore.Identity;
 
     public class LeavesControllerTest
     {
@@ -19,22 +20,23 @@
         public void GetAddShouldBeForAuthoriedUsersAndReturnView()
             => MyController<LeavesController>
             .Instance()
+            .WithUser()
+            .WithData(GetUser())
             .Calling(c => c.Add())
             .ShouldHave()
             .ActionAttributes(attributes => attributes
                 .RestrictingForAuthorizedRequests())
             .AndAlso()
             .ShouldReturn()
-            .View(With.Any<LeaveFormModel>());
+            .View();
 
         [Theory]
         [InlineData("11.08.2021", "11.08.2021", 1)]
         public void PostAddShouldBeForAuthoriedUsersAndReturnView(string startDate, string endDate, int leaveType)
               => MyController<LeavesController>
-                      .Instance(instance => instance
-                          .WithUser(user=> user
-                            .WithUsername("Dimitrichka.Petkova@abv.bg")
-                          .WithIdentifier("0868d674-9200-4d63-be56-5b60498de4af")))
+            .Instance()
+            .WithUser()
+            .WithData(GetUser())
                       .Calling(c => c.Add(new LeaveFormModel
                       {
                           StartDate = DateTime.Parse(startDate),
@@ -57,12 +59,8 @@
             .AndAlso()
                 .ShouldReturn()
                 .Redirect(redirect => redirect
-                    .To<StatisticsController>(c => c.History()))
-            .AndAlso()
-            .ShouldPassForThe<LeavesController>(c=>
-            {
-                var smtg = c.ModelState.IsValid;
-            });
+                    .To<StatisticsController>(c => c.History()));
+
 
         //.ActionAttributes(attributes => attributes
         //    .RestrictingForHttpMethod(HttpMethod.Post)
@@ -70,6 +68,15 @@
         //.ValidModelState();
 
 
+
+        private Employee GetUser()
+          => new Employee()
+          {
+              Id = "ba795dfd-d305-4c52-a3e1-3fcd7ea12116",
+              UserName = "Dimitrichka.Petkova@abv.bg",
+              Email = "Dimitrichka.Petkova@abv.bg",
+              PasswordHash = "AQAAAAEAACcQAAAAEN8/lF7jbkEiIKlSgZScynMTJV5QhMo2shtnLhlIRz0XhPJblUKVm4vJgVIYDQo2WA==",
+          };
 
 
 
