@@ -2,6 +2,7 @@
 {
     using System.Linq;
     using AnnualLeaveSystem.Data;
+    using AnnualLeaveSystem.Data.Models;
 
     public class EmployeeService : IEmployeeService
     {
@@ -15,6 +16,13 @@
         public bool Exist(string employeeId)
         {
             return this.db.Employees.Any(e => e.Id == employeeId);
+        }
+
+        public Employee Get(string employeeId)
+        {
+            return this.db.Employees
+                .Where(e => e.Id == employeeId)
+                .FirstOrDefault();
         }
 
         public int? TeamId(string employeeId)

@@ -24,7 +24,7 @@
         {
             var holiday = new OfficialHoliday
             {
-                Date = model.Date,
+                Date = DateTime.Parse(model.Date).ToUniversalTime(),
                 Name = model.Name
             };
 
@@ -64,7 +64,7 @@
                 return false;
             }
 
-            holiday.Date = model.Date;
+            holiday.Date = DateTime.Parse(model.Date).ToUniversalTime();
             holiday.Name = model.Name;
 
             this.db.SaveChanges();

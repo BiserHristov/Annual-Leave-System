@@ -14,10 +14,10 @@
         }
         endDate = parseDate($('#EndDateInput').val());
 
-        
+
 
         $.get('api/holidays', (data) => {
-            ValidateDate(ev, data, 'startDateSpanMessage');
+            ValidateDate(ev.target.children[1].value, data, 'startDateSpanMessage');
             $('#TotalDays').val(getBusinessDatesCount(startDate, endDate, data));
         });
     });
@@ -39,7 +39,7 @@
 
 
         $.get('api/holidays', (data) => {
-            ValidateDate(ev, data, 'endDateSpanMessage');
+            ValidateDate(ev.target.children[1].value, data, 'endDateSpanMessage');
             $('#TotalDays').val(getBusinessDatesCount(startDate, endDate, data));
         });
 
@@ -47,23 +47,29 @@
     });
 
 
-    var startDate = parseDate($('#StartDateInput').val());
-    var endDate = parseDate($('#EndDateInput').val());
-    //$('#TotalDays').val(getBusinessDatesCount(startDate, endDate));
+    $.get('api/holidays', (data) => {
+        var startDate = parseDate($('#StartDateInput').val());
+        var endDate = parseDate($('#EndDateInput').val());
+        ValidateDate(startDate, data, 'endDateSpanMessage');
+        ValidateDate(endDate, data, 'endDateSpanMessage');
+        $('#TotalDays').val(getBusinessDatesCount(startDate, endDate, data));
+    
+    });
+
 
 
 
 
 });
 
-function ValidateDate(ev, data, span) {
-    var startDate = ev.target.children[1].value;
+function ValidateDate(date, data, span) {
+    //var startDate = ev.target.children[1].value;
     var isValid = true;
 
     for (var i = 0; i < data.length; i++) {
         var currentDate = data[i];
 
-        if (currentDate.date == startDate) {
+        if (currentDate.date == date) {
             $('#' + span).text("This date is official holiday (" + currentDate.name + ").")
             $('#submitBtn').attr('disabled', true);
             isValid = false;

@@ -123,7 +123,7 @@
                 this.ModelState.AddModelError(nameof(leaveModel.LeaveTypeId), "Leave type does not exist.");
             }
             var id = this.User.GetId();
-            var employee = this.userManager.FindByIdAsync(this.User.GetId()).GetAwaiter().GetResult();
+            var employee = this.employeeService.Get(this.User.GetId());
 
             var employeeExist = this.teamService.EmployeeExistInTeam(employee.TeamId, this.User.GetId());
 

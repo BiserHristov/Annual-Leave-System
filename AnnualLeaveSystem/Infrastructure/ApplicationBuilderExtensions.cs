@@ -427,67 +427,67 @@ namespace AnnualLeaveSystem.Infrastructure
 
             var holidays = new[]  {
             new OfficialHoliday{
-                Date= new DateTime(2021, 01, 01).Date,
+                Date= new DateTime(2021, 01, 01).ToUniversalTime().Date,
                 Name= "New Year`s Day",
             },
             new OfficialHoliday{
-                Date= new DateTime(2021, 03, 03).Date,
+                Date= new DateTime(2021, 03, 03).ToUniversalTime().Date,
                 Name= "Liberation Day",
             },
             new OfficialHoliday{
-                Date= new DateTime(2021, 04, 30).Date,
+                Date= new DateTime(2021, 04, 30).ToUniversalTime().Date,
                 Name= "Good Friday",
             },
             new OfficialHoliday{
-                Date= new DateTime(2021, 05, 01).Date,
+                Date= new DateTime(2021, 05, 01).ToUniversalTime().Date,
                 Name= "International Workers Day",
             },
             new OfficialHoliday{
-                Date= new DateTime(2021, 05, 02).Date,
+                Date= new DateTime(2021, 05, 02).ToUniversalTime().Date,
                 Name= "Easter",
             },
             new OfficialHoliday{
-                Date= new DateTime(2021, 05, 03).Date,
+                Date= new DateTime(2021, 05, 03).ToUniversalTime().Date,
                 Name= "Easter",
             },
             new OfficialHoliday{
-                Date= new DateTime(2021, 05, 04).Date,
+                Date= new DateTime(2021, 05, 04).ToUniversalTime().Date,
                 Name= "Easter",
             },
             new OfficialHoliday{
-                Date= new DateTime(2021, 05, 06).Date,
+                Date= new DateTime(2021, 05, 06).ToUniversalTime().Date,
                 Name= "St George`s Day",
             },
             new OfficialHoliday{
-                Date= new DateTime(2021, 05, 24).Date,
+                Date= new DateTime(2021, 05, 24).ToUniversalTime().Date,
                 Name= "Sts Cyril and Methodius Day",
             },
             new OfficialHoliday{
-                Date= new DateTime(2021, 09, 06).Date,
+                Date= new DateTime(2021, 09, 06).ToUniversalTime().Date,
                 Name= "Unification Day",
             },
             new OfficialHoliday{
-                Date= new DateTime(2021, 09, 22).Date,
+                Date= new DateTime(2021, 09, 22).ToUniversalTime().Date,
                 Name= "Independence Day",
             },
             new OfficialHoliday{
-                Date= new DateTime(2021, 12, 24).Date,
+                Date= new DateTime(2021, 12, 24).ToUniversalTime().Date,
                 Name= "Christmas",
             },
             new OfficialHoliday{
-                Date= new DateTime(2021, 12, 25).Date,
+                Date= new DateTime(2021, 12, 25).ToUniversalTime().Date,
                 Name= "Christmas",
             },
             new OfficialHoliday{
-                Date= new DateTime(2021, 12, 26).Date,
+                Date= new DateTime(2021, 12, 26).ToUniversalTime().Date,
                 Name= "Christmas",
             },
             new OfficialHoliday{
-                Date= new DateTime(2021, 12, 27).Date,
+                Date= new DateTime(2021, 12, 27).ToUniversalTime().Date,
                 Name= "Christmas",
             },
             new OfficialHoliday{
-                Date= new DateTime(2021, 12, 28).Date,
+                Date= new DateTime(2021, 12, 28).ToUniversalTime().Date,
                 Name= "Christmas",
             }};
 

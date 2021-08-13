@@ -24,7 +24,9 @@
         [HttpGet]
         public IEnumerable<HolidayServiceModel> GetHolidays()
         {
-            return this.holidayService.All();
+            var result = this.holidayService.All();
+             return result;
+
         }
     }
 }

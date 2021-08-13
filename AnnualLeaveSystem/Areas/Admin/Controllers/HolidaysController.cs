@@ -41,13 +41,13 @@
             }
 
             var nextYear = DateTime.Now.Year + 1;
-
-            if (model.Date.Year != nextYear)
+            var modelYear = int.Parse(model.Date.Split('.')[2]);
+            if (modelYear != nextYear)
             {
                 ModelState.AddModelError(nameof(model.Date), "The date is not for the next year.");
             }
 
-            var exist = this.holidayServiceAdmin.Exist(model.Date);
+            var exist = this.holidayServiceAdmin.Exist(DateTime.Parse(model.Date));
 
             if (exist)
             {
@@ -92,13 +92,13 @@
             }
 
             var nextYear = DateTime.Now.Year + 1;
-
-            if (model.Date.Year != nextYear)
+            var modelYear = int.Parse(model.Date.Split('.')[2]);
+            if (modelYear != nextYear)
             {
                 ModelState.AddModelError(nameof(model.Date), "The date is not for the next year.");
             }
 
-            var exist = this.holidayServiceAdmin.Exist(model.Date, model.Id);
+            var exist = this.holidayServiceAdmin.Exist(DateTime.Parse(model.Date), model.Id);
 
             if (exist)
             {

@@ -13,8 +13,8 @@
         public int Id { get; init; }
 
         [Required]
-        [DataType(DataType.Date)]
-        public DateTime Date { get; init; }
+        //[DataType(DataType.Date)]
+        public string Date { get; init; }
 
         [Required]
         [StringLength(NameMaxLength, MinimumLength = NameMinLength)]

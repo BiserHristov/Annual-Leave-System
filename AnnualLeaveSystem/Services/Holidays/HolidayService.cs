@@ -23,37 +23,26 @@
             this.mapper = mapper.ConfigurationProvider;
             this.cache = cache;
         }
-        //const string AllHolidayDatesCacheKey = "AllHolidayDates";
-
-        //var allHolidays = this.cache.Get<IEnumerable<string>>(AllHolidayDatesCacheKey);
-
-        //    if (allHolidays == null)
-        //    {
-        //        allHolidays = this.holidayService.AllDates();
-        //        var cacheOptions = new MemoryCacheEntryOptions()
-        //            .SetAbsoluteExpiration(TimeSpan.FromMinutes(15));
-
-        //        this.cache.Set(AllHolidayDatesCacheKey, allHolidays, cacheOptions);
-        //    }
         public IEnumerable<HolidayServiceModel> All()
         {
             var allHolidays = this.cache.Get<IEnumerable<HolidayServiceModel>>(AllHolidaysCacheKey);
 
             if (allHolidays == null)
             {
-                allHolidays = this.db.OfficialHolidays
+                 allHolidays = this.db.OfficialHolidays
                  .OrderBy(h => h.Date)
                  .ProjectTo<HolidayServiceModel>(this.mapper)
                  .ToList();
 
                 var cacheOptions = new MemoryCacheEntryOptions()
-                    .SetAbsoluteExpiration(TimeSpan.FromMinutes(15));
+                    .SetAbsoluteExpiration(TimeSpan.FromMinutes(1));
 
                 this.cache.Set(AllHolidaysCacheKey, allHolidays, cacheOptions);
 
             }
 
             return allHolidays;
+           
         }
 
         public IEnumerable<string> AllDates()
