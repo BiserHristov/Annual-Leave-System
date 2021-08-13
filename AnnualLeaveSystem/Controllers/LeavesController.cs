@@ -20,7 +20,7 @@
     using Microsoft.Extensions.Caching.Memory;
     using static WebConstants;
 
-    //[Authorize]
+
     public class LeavesController : Controller
     {
         private readonly IEmployeeLeaveTypesService employeeLeaveTypesService;
@@ -44,7 +44,7 @@
             IEmployeeService employeeService,
             IMapper mapper,
             IEmailSenderService emailSenderService,
-            IHolidayService holidayService, 
+            IHolidayService holidayService,
             IMemoryCache cache)
         {
             this.leaveService = leaveService;
@@ -59,6 +59,8 @@
             this.cache = cache;
         }
 
+
+        [Authorize]
         public IActionResult Add()
         {
             var model = new LeaveFormModel
@@ -72,6 +74,7 @@
         }
 
         [HttpPost]
+        [Authorize]
         public IActionResult Add(LeaveFormModel leaveModel)
         {
             if (leaveModel.StartDate > leaveModel.EndDate)
@@ -105,7 +108,7 @@
             }
 
             var allHolidays = this.holidayService.AllDates();
-            
+
             var businessDaysCount = GetBusinessDays(leaveModel.StartDate, leaveModel.EndDate, allHolidays);
 
             if (leaveModel.TotalDays != businessDaysCount || leaveModel.TotalDays == 0)
@@ -119,7 +122,7 @@
             {
                 this.ModelState.AddModelError(nameof(leaveModel.LeaveTypeId), "Leave type does not exist.");
             }
-
+            var id = this.User.GetId();
             var employee = this.userManager.FindByIdAsync(this.User.GetId()).GetAwaiter().GetResult();
 
             var employeeExist = this.teamService.EmployeeExistInTeam(employee.TeamId, this.User.GetId());
@@ -218,6 +221,7 @@
             return RedirectToAction(nameof(All));
         }
 
+        [Authorize]
         public IActionResult All([FromQuery] AllLeavesQueryModel query)
         {
             var queryResult = this.leaveService.All(
@@ -243,6 +247,7 @@
             return View(query);
         }
 
+        [Authorize]
         public IActionResult Details(int leaveId)
         {
             if (leaveId == 0)
@@ -260,6 +265,7 @@
             return View(leave);
         }
 
+        [Authorize]
         public IActionResult Edit(int leaveId)
         {
             if (!this.leaveService.Exist(leaveId))
@@ -284,6 +290,7 @@
         }
 
         [HttpPost]
+        [Authorize]
         public IActionResult Edit(int leaveId, LeaveFormModel leaveModel)
         {
             if (!this.User.IsAdmin() && !this.leaveService.IsOwn(leaveId, this.User.GetId()))
@@ -439,6 +446,7 @@
         }
 
         [HttpPost]
+        [Authorize]
         public IActionResult Cancel(int leaveId)
         {
             var leaveExist = leaveService.Exist(leaveId);
@@ -461,6 +469,7 @@
         }
 
         [HttpPost]
+        [Authorize]
         public IActionResult Reject(int leaveId)
         {
             var leaveExist = leaveService.Exist(leaveId);
@@ -482,6 +491,7 @@
             return RedirectToAction(nameof(All));
         }
 
+        [Authorize]
         public IActionResult ForApproval()
         {
             var leaves = leaveService.LeavesForApproval(this.User.GetId(), this.User.IsTeamLead());
@@ -490,6 +500,7 @@
         }
 
         [HttpPost]
+        [Authorize]
         public IActionResult ForApproval(int leaveId)
         {
             if (!this.leaveService.Exist(leaveId))
@@ -527,7 +538,7 @@
                     calcBusinessDays--;
                 }
 
-                startDate=startDate.AddDays(1);
+                startDate = startDate.AddDays(1);
             }
             return calcBusinessDays;
         }

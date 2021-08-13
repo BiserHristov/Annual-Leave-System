@@ -10,6 +10,7 @@
     {
         public int Id  { get; init;}
 
+        [Required]
         [Display(Name = "Start date")]
         public DateTime StartDate { get; set; }
 

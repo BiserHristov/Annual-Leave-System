@@ -9,13 +9,14 @@
     using System.Linq;
     using System.Threading.Tasks;
 
+    using static WebConstants.Cache;
+
     public class HolidayService : IHolidayService
     {
         private readonly LeaveSystemDbContext db;
         private readonly IConfigurationProvider mapper;
         private readonly IMemoryCache cache;
-        private const string AllHolidayDatesCacheKey = "AllHolidayDates";
-        private const string AllHolidaysCacheKey = "AllHolidays";
+
         public HolidayService(LeaveSystemDbContext db, IMapper mapper, IMemoryCache cache)
         {
             this.db = db;
