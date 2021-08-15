@@ -34,7 +34,7 @@
         public string JobTitle { get; set; }
 
         [Display(Name = "Team ID")]
-        public int? TeamId { get; set; }
+        public int TeamId { get; set; }
 
         [Required]
         [Display(Name = "Hire date")]

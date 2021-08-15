@@ -12,7 +12,7 @@
             this.db = db;
         }
 
-        public bool EmployeeExistInTeam(int? teamId, string employeeId)
+        public bool EmployeeExistInTeam(int teamId, string employeeId)
         {
             return this.db.Teams
                 .Any(t => t.Id == teamId &&

@@ -5,9 +5,8 @@
     using AnnualLeaveSystem.Services.Holidays;
     using Microsoft.AspNetCore.Mvc;
     using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Threading.Tasks;
+
+    using static AdminConstants.Holidays;
 
     public class HolidaysController : BaseAdminController
     {
@@ -44,14 +43,14 @@
             var modelYear = int.Parse(model.Date.Split('.')[2]);
             if (modelYear != nextYear)
             {
-                ModelState.AddModelError(nameof(model.Date), "The date is not for the next year.");
+                ModelState.AddModelError(nameof(model.Date), NotNextYearMessage);
             }
 
             var exist = this.holidayServiceAdmin.Exist(DateTime.Parse(model.Date));
 
             if (exist)
             {
-                ModelState.AddModelError(nameof(model.Date), "The date already exist.");
+                ModelState.AddModelError(nameof(model.Date), AlreadyExistMessage);
             }
 
             if (!ModelState.IsValid)
@@ -95,14 +94,14 @@
             var modelYear = int.Parse(model.Date.Split('.')[2]);
             if (modelYear != nextYear)
             {
-                ModelState.AddModelError(nameof(model.Date), "The date is not for the next year.");
+                ModelState.AddModelError(nameof(model.Date),NotNextYearMessage);
             }
 
             var exist = this.holidayServiceAdmin.Exist(DateTime.Parse(model.Date), model.Id);
 
             if (exist)
             {
-                ModelState.AddModelError(nameof(model.Date), "The date already exist.");
+                ModelState.AddModelError(nameof(model.Date), AlreadyExistMessage);
             }
 
             if (!ModelState.IsValid)
@@ -149,8 +148,5 @@
             var holidays = this.holidayService.All();
             return View(holidays);
         }
-
-       
-
     }
 }

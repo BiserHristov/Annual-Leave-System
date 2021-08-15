@@ -18,19 +18,15 @@
         }
 
         public IEnumerable<EmployeeServiceModel> AllEmployees()
-        {
-            return this.db.Employees
+            => this.db.Employees
                 .ProjectTo<EmployeeServiceModel>(this.mapper)
                 .ToList();
-        }
 
         public EditEmployeeServiceModel GetEmployee(string employeeId)
-        {
-            return this.db.Employees
+            => this.db.Employees
                 .Where(e => e.Id == employeeId)
                 .ProjectTo<EditEmployeeServiceModel>(this.mapper)
                 .FirstOrDefault();
-        }
 
         public bool Edit(EditEmployeeServiceModel model)
         {

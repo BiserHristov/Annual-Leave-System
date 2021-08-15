@@ -12,6 +12,8 @@
     using AnnualLeaveSystem.Services.Users;
     using AutoMapper;
 
+    using static WebConstants;
+
     public class MappingProfile : Profile
     {
         public MappingProfile()
@@ -26,8 +28,8 @@
             this.CreateMap<CommonInfoServiceModel, IndexViewModel>();
 
             this.CreateMap<LeaveFormModel, EmailServiceModel>()
-                .ForMember(x => x.StartDate, cfg => cfg.MapFrom(y => y.StartDate.ToString("dd.MM.yyyy")))
-                .ForMember(x => x.EndDate, cfg => cfg.MapFrom(y => y.EndDate.ToString("dd.MM.yyyy")));
+                .ForMember(x => x.StartDate, cfg => cfg.MapFrom(y => y.StartDate.ToString(DateFormat)))
+                .ForMember(x => x.EndDate, cfg => cfg.MapFrom(y => y.EndDate.ToString(DateFormat)));
 
             this.CreateMap<EmployeeLeaveType, EmployeeLeaveTypesServiceModel>();
 
@@ -60,7 +62,7 @@
             //this.CreateMap<OfficialHoliday, HolidayServiceModel>();
 
             this.CreateMap<OfficialHoliday, HolidayServiceModel>()
-                .ForMember(x => x.Date, cfg => cfg.MapFrom(y => y.Date.ToLocalTime().Date.ToString("dd.MM.yyyy")));
+                .ForMember(x => x.Date, cfg => cfg.MapFrom(y => y.Date.ToLocalTime().Date.ToString(DateFormat)));
         }
     }
 }

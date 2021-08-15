@@ -5,10 +5,9 @@
 
     using static AnnualLeaveSystem.Areas.Admin.AdminConstants;
 
-    [Area(AdminConstants.AreaName)]
+    [Area(AreaName)]
     [Authorize(Roles = AdministratorRoleName)]
     public class BaseAdminController : Controller
     {
-
     }
 }

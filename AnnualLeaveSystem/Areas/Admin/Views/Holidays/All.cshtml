@@ -30,7 +30,6 @@
                     {
                 <tr>
                     <td>@holiday.Date</td>
-                    @*<td>@holiday.Date.ToLocalTime().ToString("dd.MM.yyyy")</td>*@
                     <td>@holiday.Name</td>
                     <td>
                         <a asp-area="Admin" asp-controller="Holidays" asp-action="Edit" asp-route-Id="@holiday.Id" class="btn btn-warning">Edit</a>

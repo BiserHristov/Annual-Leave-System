@@ -35,7 +35,7 @@
                 .ToList();
         }
 
-        public string GetTeamLeadId(int? teamId)
+        public string GetTeamLeadId(int teamId)
         {
             var teamLeadId = this.db.Employees
                 .Include(e => e.Team)

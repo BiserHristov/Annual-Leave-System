@@ -17,8 +17,11 @@
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Mvc;
+    using Microsoft.AspNetCore.Mvc.ModelBinding;
     using Microsoft.Extensions.Caching.Memory;
     using static WebConstants;
+    using static WebConstants.Leaves;
+
 
 
     public class LeavesController : Controller
@@ -77,115 +80,129 @@
         [Authorize]
         public IActionResult Add(LeaveFormModel leaveModel)
         {
-            if (leaveModel.StartDate > leaveModel.EndDate)
-            {
-                this.ModelState.AddModelError(nameof(leaveModel.StartDate), "Start date should be before end date.");
-                this.ModelState.AddModelError(nameof(leaveModel.EndDate), "End date should be after start date.");
-            }
+            //if (leaveModel.StartDate > leaveModel.EndDate)
+            //{
+            //    this.ModelState.AddModelError(nameof(leaveModel.StartDate), "Start date should be before end date.");
+            //    this.ModelState.AddModelError(nameof(leaveModel.EndDate), "End date should be after start date.");
+            //}
 
-            if (leaveModel.StartDate < DateTime.UtcNow.Date)
-            {
-                this.ModelState.AddModelError(nameof(leaveModel.StartDate), "Start date should be after or equal to todays' date.");
-            }
+            //if (leaveModel.StartDate < DateTime.UtcNow.Date)
+            //{
+            //    this.ModelState.AddModelError(nameof(leaveModel.StartDate), "Start date should be after or equal to todays' date.");
+            //}
 
-            if (leaveModel.EndDate < DateTime.UtcNow.Date)
-            {
-                this.ModelState.AddModelError(nameof(leaveModel.EndDate), "End date should be after or equal to todays' date.");
-            }
+            //if (leaveModel.EndDate < DateTime.UtcNow.Date)
+            //{
+            //    this.ModelState.AddModelError(nameof(leaveModel.EndDate), "End date should be after or equal to todays' date.");
+            //}
 
-            var (isHoliday, name) = this.holidayService.IsHoliday(leaveModel.StartDate);
+            //var (isHoliday, name) = this.holidayService.IsHoliday(leaveModel.StartDate);
 
-            if (isHoliday)
-            {
-                this.ModelState.AddModelError(nameof(leaveModel.StartDate), $"This date is official holiday ({name})");
-            }
+            //if (isHoliday)
+            //{
+            //    this.ModelState.AddModelError(nameof(leaveModel.StartDate), string.Format(OfficialHolidayMessage, name));
+            //}
 
-            (isHoliday, name) = this.holidayService.IsHoliday(leaveModel.EndDate);
+            //(isHoliday, name) = this.holidayService.IsHoliday(leaveModel.EndDate);
 
-            if (isHoliday)
-            {
-                this.ModelState.AddModelError(nameof(leaveModel.EndDate), $"This date is official holiday ({name})");
-            }
+            //if (isHoliday)
+            //{
+            //    this.ModelState.AddModelError(nameof(leaveModel.EndDate), $"This date is official holiday ({name})");
+            //}
 
-            var allHolidays = this.holidayService.AllDates();
+            //var allHolidays = this.holidayService.AllDates();
 
-            var businessDaysCount = GetBusinessDays(leaveModel.StartDate, leaveModel.EndDate, allHolidays);
+            //var businessDaysCount = GetBusinessDays(leaveModel.StartDate, leaveModel.EndDate, allHolidays);
 
-            if (leaveModel.TotalDays != businessDaysCount || leaveModel.TotalDays == 0)
-            {
-                this.ModelState.AddModelError(nameof(leaveModel.TotalDays), "Count of days is not correct or it is equal to zero.");
-            }
+            //if (leaveModel.TotalDays != businessDaysCount || leaveModel.TotalDays == 0)
+            //{
+            //    this.ModelState.AddModelError(nameof(leaveModel.TotalDays), "Count of days is not correct or it is equal to zero.");
+            //}
 
-            var leaveTypeExist = this.leaveTypeService.TypeExist(leaveModel.LeaveTypeId);
+            //var leaveTypeExist = this.leaveTypeService.TypeExist(leaveModel.LeaveTypeId);
 
-            if (!leaveTypeExist)
-            {
-                this.ModelState.AddModelError(nameof(leaveModel.LeaveTypeId), "Leave type does not exist.");
-            }
-            var id = this.User.GetId();
-            var employee = this.employeeService.Get(this.User.GetId());
+            //if (!leaveTypeExist)
+            //{
+            //    this.ModelState.AddModelError(nameof(leaveModel.LeaveTypeId), "Leave type does not exist.");
+            //}
 
-            var employeeExist = this.teamService.EmployeeExistInTeam(employee.TeamId, this.User.GetId());
+            //var employee = this.employeeService.Get(this.User.GetId());
 
-            if (!employeeExist)
-            {
-                this.ModelState.AddModelError(nameof(leaveModel.SubstituteEmployeeId), "There is no such employee in your team.");
-            }
+            //var employeeExist = this.teamService.EmployeeExistInTeam(employee.TeamId, this.User.GetId());
 
-            var employeeLeave = employeeLeaveTypesService.GetLeaveType(this.User.GetId(), leaveModel.LeaveTypeId);
+            //if (!employeeExist)
+            //{
+            //    this.ModelState.AddModelError(nameof(leaveModel.SubstituteEmployeeId), "There is no such employee in your team.");
+            //}
 
-            if (employeeLeave.RemainingDays == 0 || employeeLeave.RemainingDays - employeeLeave.PendingApprovalDays < leaveModel.TotalDays)
-            {
-                this.ModelState.AddModelError(nameof(leaveModel.TotalDays), "You do no have enough days left from the selected leave type option.");
-            }
+            //var employeeLeave = employeeLeaveTypesService.GetLeaveType(this.User.GetId(), leaveModel.LeaveTypeId);
 
-            var leaves = this.leaveService.GetNotFinishedLeaves(this.User.GetId());
+            //if (employeeLeave.RemainingDays == 0 || employeeLeave.RemainingDays - employeeLeave.PendingApprovalDays < leaveModel.TotalDays)
+            //{
+            //    this.ModelState.AddModelError(nameof(leaveModel.TotalDays), "You do no have enough days left from the selected leave type option.");
+            //}
 
-            foreach (var currentLeave in leaves)
-            {
-                var isStartDateTaken = IsInRange(leaveModel.StartDate, currentLeave.StartDate, currentLeave.EndDate);
-                var isEndDateTaken = IsInRange(leaveModel.EndDate, currentLeave.StartDate, currentLeave.EndDate);
+            //var leaves = this.leaveService.GetNotFinishedLeaves(this.User.GetId());
 
-                if (isStartDateTaken)
-                {
-                    this.ModelState.AddModelError(nameof(leaveModel.StartDate), "You already have Leave Request for this date.");
-                }
+            //foreach (var currentLeave in leaves)
+            //{
+            //    var isStartDateTaken = IsInRange(leaveModel.StartDate, currentLeave.StartDate, currentLeave.EndDate);
+            //    var isEndDateTaken = IsInRange(leaveModel.EndDate, currentLeave.StartDate, currentLeave.EndDate);
 
-                if (isEndDateTaken)
-                {
-                    this.ModelState.AddModelError(nameof(leaveModel.EndDate), "You already have Leave Request for this date.");
-                }
+            //    if (isStartDateTaken)
+            //    {
+            //        this.ModelState.AddModelError(nameof(leaveModel.StartDate), "You already have Leave Request for this date.");
+            //    }
 
-                if (isStartDateTaken || isEndDateTaken)
-                {
-                    break;
-                }
-            }
+            //    if (isEndDateTaken)
+            //    {
+            //        this.ModelState.AddModelError(nameof(leaveModel.EndDate), "You already have Leave Request for this date.");
+            //    }
 
-            var substituteLeaves = this.leaveService.GetSubstituteApprovedLeaves(this.User.GetId());
+            //    if (isStartDateTaken || isEndDateTaken)
+            //    {
+            //        break;
+            //    }
+            //}
 
-            foreach (var currentLeave in substituteLeaves)
-            {
-                var isStartDateTaken = IsInRange(leaveModel.StartDate, currentLeave.StartDate, currentLeave.EndDate);
-                var isEndDateTaken = IsInRange(leaveModel.EndDate, currentLeave.StartDate, currentLeave.EndDate);
+            //var substituteLeaves = this.leaveService.GetSubstituteApprovedLeaves(this.User.GetId());
 
-                if (isStartDateTaken)
-                {
-                    this.ModelState.AddModelError(nameof(leaveModel.StartDate), "You are substitute for this date.");
-                }
+            //foreach (var currentLeave in substituteLeaves)
+            //{
+            //    var isStartDateTaken = IsInRange(leaveModel.StartDate, currentLeave.StartDate, currentLeave.EndDate);
+            //    var isEndDateTaken = IsInRange(leaveModel.EndDate, currentLeave.StartDate, currentLeave.EndDate);
 
-                if (isEndDateTaken)
-                {
-                    this.ModelState.AddModelError(nameof(leaveModel.EndDate), "You are substitute for this date.");
-                }
+            //    if (isStartDateTaken)
+            //    {
+            //        this.ModelState.AddModelError(nameof(leaveModel.StartDate), "You are substitute for this date.");
+            //    }
 
-                if (isStartDateTaken || isEndDateTaken)
-                {
-                    break;
-                }
-            }
+            //    if (isEndDateTaken)
+            //    {
+            //        this.ModelState.AddModelError(nameof(leaveModel.EndDate), "You are substitute for this date.");
+            //    }
 
-            if (!ModelState.IsValid)
+            //    if (isStartDateTaken || isEndDateTaken)
+            //    {
+            //        break;
+            //    }
+            //}
+
+            ValidateLeave(
+                leaveModel,
+                this.ModelState,
+                holidayService,
+                leaveTypeService,
+                employeeService,
+                employeeLeaveTypesService,
+                leaveService,
+                teamService,
+                this.User.GetId(),
+                0,
+                false,
+                this.User.IsAdmin());
+
+            if (!this.ModelState.IsValid)
             {
                 leaveModel.LeaveTypes = this.leaveService.GetLeaveTypes();
                 leaveModel.EmployeesInTeam = this.leaveService.GetEmployeesInTeam(this.User.GetId());
@@ -207,7 +224,7 @@
 
             var model = this.mapper.Map<EmailServiceModel>(leaveModel);
 
-            model.RequestEmployeeName = employee.FirstName + " " + employee.MiddleName + " " + employee.LastName;
+            model.RequestEmployeeName = employeeService.FullName(this.User.GetId());
 
             string message = $"A leave request is waiting for your approval: {model}";
 
@@ -298,126 +315,140 @@
                 return BadRequest();
             }
 
-            if (leaveModel.StartDate > leaveModel.EndDate)
-            {
-                this.ModelState.AddModelError(nameof(leaveModel.StartDate), "Start date should be before end date.");
-                this.ModelState.AddModelError(nameof(leaveModel.EndDate), "End date should be after start date.");
-            }
+            //if (leaveModel.StartDate > leaveModel.EndDate)
+            //{
+            //    this.ModelState.AddModelError(nameof(leaveModel.StartDate), "Start date should be before end date.");
+            //    this.ModelState.AddModelError(nameof(leaveModel.EndDate), "End date should be after start date.");
+            //}
 
-            if (leaveModel.StartDate < DateTime.UtcNow.Date)
-            {
-                this.ModelState.AddModelError(nameof(leaveModel.StartDate), "Start date should be after or equal to todays' date.");
-            }
+            //if (leaveModel.StartDate < DateTime.UtcNow.Date)
+            //{
+            //    this.ModelState.AddModelError(nameof(leaveModel.StartDate), "Start date should be after or equal to todays' date.");
+            //}
 
-            if (leaveModel.EndDate < DateTime.UtcNow.Date)
-            {
-                this.ModelState.AddModelError(nameof(leaveModel.EndDate), "End date should be after or equal to todays' date.");
-            }
+            //if (leaveModel.EndDate < DateTime.UtcNow.Date)
+            //{
+            //    this.ModelState.AddModelError(nameof(leaveModel.EndDate), "End date should be after or equal to todays' date.");
+            //}
 
-            var (isHoliday, name) = this.holidayService.IsHoliday(leaveModel.StartDate);
+            //var (isHoliday, name) = this.holidayService.IsHoliday(leaveModel.StartDate);
 
-            if (isHoliday)
-            {
-                this.ModelState.AddModelError(nameof(leaveModel.StartDate), $"This date is official holiday ({name})");
-            }
+            //if (isHoliday)
+            //{
+            //    this.ModelState.AddModelError(nameof(leaveModel.StartDate), string.Format(OfficialHolidayMessage, name));
+            //}
 
-            (isHoliday, name) = this.holidayService.IsHoliday(leaveModel.EndDate);
+            //(isHoliday, name) = this.holidayService.IsHoliday(leaveModel.EndDate);
 
-            if (isHoliday)
-            {
-                this.ModelState.AddModelError(nameof(leaveModel.EndDate), $"This date is official holiday ({name})");
-            }
+            //if (isHoliday)
+            //{
+            //    this.ModelState.AddModelError(nameof(leaveModel.EndDate), $"This date is official holiday ({name})");
+            //}
 
 
-            var allHolidays = this.holidayService.AllDates();
+            //var allHolidays = this.holidayService.AllDates();
 
-            var businessDaysCount = GetBusinessDays(leaveModel.StartDate, leaveModel.EndDate, allHolidays);
+            //var businessDaysCount = GetBusinessDays(leaveModel.StartDate, leaveModel.EndDate, allHolidays);
 
-            if (leaveModel.TotalDays != businessDaysCount || leaveModel.TotalDays == 0)
-            {
-                this.ModelState.AddModelError(nameof(leaveModel.TotalDays), "Count of days is not correct or it is equal to zero.");
-            }
+            //if (leaveModel.TotalDays != businessDaysCount || leaveModel.TotalDays == 0)
+            //{
+            //    this.ModelState.AddModelError(nameof(leaveModel.TotalDays), "Count of days is not correct or it is equal to zero.");
+            //}
 
-            var leaveTypeExist = this.leaveTypeService.TypeExist(leaveModel.LeaveTypeId);
+            //var leaveTypeExist = this.leaveTypeService.TypeExist(leaveModel.LeaveTypeId);
 
-            if (!leaveTypeExist)
-            {
-                this.ModelState.AddModelError(nameof(leaveModel.LeaveTypeId), "Leave type does not exist.");
-            }
+            //if (!leaveTypeExist)
+            //{
+            //    this.ModelState.AddModelError(nameof(leaveModel.LeaveTypeId), "Leave type does not exist.");
+            //}
 
-            var teamId = this.employeeService.TeamId(leaveModel.RequestEmployeeId);
+            //var teamId = this.employeeService.TeamId(leaveModel.RequestEmployeeId);
 
-            var employeeExist = this.teamService.EmployeeExistInTeam(teamId, this.User.GetId());
+            //var employeeExist = this.teamService.EmployeeExistInTeam(teamId, this.User.GetId());
 
-            if (!this.User.IsAdmin() && !employeeExist)
-            {
-                this.ModelState.AddModelError(nameof(leaveModel.SubstituteEmployeeId), "There is no such employee in your team.");
-            }
+            //if (!this.User.IsAdmin() && !employeeExist)
+            //{
+            //    this.ModelState.AddModelError(nameof(leaveModel.SubstituteEmployeeId), "There is no such employee in your team.");
+            //}
 
-            var employeeLeave = this.employeeLeaveTypesService.GetLeaveType(leaveModel.RequestEmployeeId, leaveModel.LeaveTypeId);
-            var previousLeaveTypeId = this.leaveService.GetLeaveTypeId(leaveId);
-            var previousLeaveTotalDays = this.leaveService.GetLeaveTotalDays(leaveId);
+            //var employeeLeave = this.employeeLeaveTypesService.GetLeaveType(leaveModel.RequestEmployeeId, leaveModel.LeaveTypeId);
+            //var previousLeaveTypeId = this.leaveService.GetLeaveTypeId(leaveId);
+            //var previousLeaveTotalDays = this.leaveService.GetLeaveTotalDays(leaveId);
 
-            if (leaveModel.LeaveTypeId == previousLeaveTypeId)
-            {
-                if (employeeLeave.RemainingDays == 0 || employeeLeave.RemainingDays - (employeeLeave.PendingApprovalDays - previousLeaveTotalDays) < leaveModel.TotalDays)
-                {
-                    this.ModelState.AddModelError(nameof(leaveModel.TotalDays), "You do no have enough days left from the selected leave type option.");
-                }
-            }
-            else
-            {
-                if (employeeLeave.RemainingDays == 0 || employeeLeave.RemainingDays - employeeLeave.PendingApprovalDays < leaveModel.TotalDays)
-                {
-                    this.ModelState.AddModelError(nameof(leaveModel.TotalDays), "You do no have enough days left from the selected leave type option.");
-                }
-            }
+            //if (leaveModel.LeaveTypeId == previousLeaveTypeId)
+            //{
+            //    if (employeeLeave.RemainingDays == 0 || employeeLeave.RemainingDays - (employeeLeave.PendingApprovalDays - previousLeaveTotalDays) < leaveModel.TotalDays)
+            //    {
+            //        this.ModelState.AddModelError(nameof(leaveModel.TotalDays), "You do no have enough days left from the selected leave type option.");
+            //    }
+            //}
+            //else
+            //{
+            //    if (employeeLeave.RemainingDays == 0 || employeeLeave.RemainingDays - employeeLeave.PendingApprovalDays < leaveModel.TotalDays)
+            //    {
+            //        this.ModelState.AddModelError(nameof(leaveModel.TotalDays), "You do no have enough days left from the selected leave type option.");
+            //    }
+            //}
 
-            var leaves = this.leaveService.GetNotFinishedLeaves(leaveModel.RequestEmployeeId);
+            //var leaves = this.leaveService.GetNotFinishedLeaves(leaveModel.RequestEmployeeId);
 
-            foreach (var currentLeave in leaves)
-            {
-                var isStartDateTaken = IsInRange(leaveModel.StartDate, currentLeave.StartDate, currentLeave.EndDate) && currentLeave.Id != leaveId;
-                var isEndDateTaken = IsInRange(leaveModel.EndDate, currentLeave.StartDate, currentLeave.EndDate) && currentLeave.Id != leaveId;
+            //foreach (var currentLeave in leaves)
+            //{
+            //    var isStartDateTaken = IsInRange(leaveModel.StartDate, currentLeave.StartDate, currentLeave.EndDate) && currentLeave.Id != leaveId;
+            //    var isEndDateTaken = IsInRange(leaveModel.EndDate, currentLeave.StartDate, currentLeave.EndDate) && currentLeave.Id != leaveId;
 
-                if (isStartDateTaken)
-                {
-                    this.ModelState.AddModelError(nameof(leaveModel.StartDate), "You already have Leave Request for this date.");
-                }
+            //    if (isStartDateTaken)
+            //    {
+            //        this.ModelState.AddModelError(nameof(leaveModel.StartDate), "You already have Leave Request for this date.");
+            //    }
 
-                if (isEndDateTaken)
-                {
-                    this.ModelState.AddModelError(nameof(leaveModel.EndDate), "You already have Leave Request for this date.");
-                }
+            //    if (isEndDateTaken)
+            //    {
+            //        this.ModelState.AddModelError(nameof(leaveModel.EndDate), "You already have Leave Request for this date.");
+            //    }
 
-                if (isStartDateTaken || isEndDateTaken)
-                {
-                    break;
-                }
-            }
+            //    if (isStartDateTaken || isEndDateTaken)
+            //    {
+            //        break;
+            //    }
+            //}
 
-            var substituteLeaves = this.leaveService.GetSubstituteApprovedLeaves(leaveModel.RequestEmployeeId);
+            //var substituteLeaves = this.leaveService.GetSubstituteApprovedLeaves(leaveModel.RequestEmployeeId);
 
-            foreach (var currentLeave in substituteLeaves)
-            {
-                var isStartDateTaken = IsInRange(leaveModel.StartDate, currentLeave.StartDate, currentLeave.EndDate);
-                var isEndDateTaken = IsInRange(leaveModel.EndDate, currentLeave.StartDate, currentLeave.EndDate);
+            //foreach (var currentLeave in substituteLeaves)
+            //{
+            //    var isStartDateTaken = IsInRange(leaveModel.StartDate, currentLeave.StartDate, currentLeave.EndDate);
+            //    var isEndDateTaken = IsInRange(leaveModel.EndDate, currentLeave.StartDate, currentLeave.EndDate);
 
-                if (isStartDateTaken)
-                {
-                    this.ModelState.AddModelError(nameof(leaveModel.StartDate), "You are substitute for this date.");
-                }
+            //    if (isStartDateTaken)
+            //    {
+            //        this.ModelState.AddModelError(nameof(leaveModel.StartDate), "You are substitute for this date.");
+            //    }
 
-                if (isEndDateTaken)
-                {
-                    this.ModelState.AddModelError(nameof(leaveModel.EndDate), "You are substitute for this date.");
-                }
+            //    if (isEndDateTaken)
+            //    {
+            //        this.ModelState.AddModelError(nameof(leaveModel.EndDate), "You are substitute for this date.");
+            //    }
 
-                if (isStartDateTaken || isEndDateTaken)
-                {
-                    break;
-                }
-            }
+            //    if (isStartDateTaken || isEndDateTaken)
+            //    {
+            //        break;
+            //    }
+            //}
+
+            ValidateLeave(
+             leaveModel,
+             this.ModelState,
+             holidayService,
+             leaveTypeService,
+             employeeService,
+             employeeLeaveTypesService,
+             leaveService,
+             teamService,
+             leaveModel.RequestEmployeeId,
+             leaveId,
+             true,
+             this.User.IsAdmin());
 
             if (!ModelState.IsValid)
             {
@@ -515,6 +546,203 @@
             return RedirectToAction(nameof(ForApproval));
         }
 
+        private static void ValidateLeave(
+            LeaveFormModel leaveModel,
+            ModelStateDictionary ModelState,
+            IHolidayService holidayService,
+            ILeaveTypeService leaveTypeService,
+            IEmployeeService employeeService,
+            IEmployeeLeaveTypesService employeeLeaveTypesService,
+            ILeaveService leaveService,
+            ITeamService teamService,
+            string employeeId,
+            int leaveId,
+            bool isInEdit,
+            bool isAdmin)
+        {
+            if (leaveModel.StartDate > leaveModel.EndDate)
+            {
+                ModelState.AddModelError(nameof(leaveModel.StartDate), "Start date should be before end date.");
+                ModelState.AddModelError(nameof(leaveModel.EndDate), "End date should be after start date.");
+            }
+
+            if (leaveModel.StartDate < DateTime.UtcNow.Date)
+            {
+                ModelState.AddModelError(nameof(leaveModel.StartDate), "Start date should be after or equal to todays' date.");
+            }
+
+            if (leaveModel.EndDate < DateTime.UtcNow.Date)
+            {
+                ModelState.AddModelError(nameof(leaveModel.EndDate), "End date should be after or equal to todays' date.");
+            }
+
+            var (isHoliday, name) = holidayService.IsHoliday(leaveModel.StartDate);
+
+            if (isHoliday)
+            {
+                ModelState.AddModelError(nameof(leaveModel.StartDate), string.Format(OfficialHolidayMessage, name));
+            }
+
+            (isHoliday, name) = holidayService.IsHoliday(leaveModel.EndDate);
+
+            if (isHoliday)
+            {
+                ModelState.AddModelError(nameof(leaveModel.EndDate), $"This date is official holiday ({name})");
+            }
+
+            var allHolidays = holidayService.AllDates();
+
+            var businessDaysCount = GetBusinessDays(leaveModel.StartDate, leaveModel.EndDate, allHolidays);
+
+            if (leaveModel.TotalDays != businessDaysCount || leaveModel.TotalDays == 0)
+            {
+                ModelState.AddModelError(nameof(leaveModel.TotalDays), "Count of days is not correct or it is equal to zero.");
+            }
+
+            var leaveTypeExist = leaveTypeService.TypeExist(leaveModel.LeaveTypeId);
+
+            if (!leaveTypeExist)
+            {
+                ModelState.AddModelError(nameof(leaveModel.LeaveTypeId), "Leave type does not exist.");
+            }
+
+            var teamId = employeeService.TeamId(employeeId);
+
+            var employeeExist = teamService.EmployeeExistInTeam(teamId, employeeId);
+
+
+            var employeeLeave = employeeLeaveTypesService.GetLeaveType(employeeId, leaveModel.LeaveTypeId);
+
+            if (isInEdit)
+            {
+                if (!isAdmin && !employeeExist)
+                {
+                    ModelState.AddModelError(nameof(leaveModel.SubstituteEmployeeId), "There is no such employee in your team.");
+                }
+
+                var previousLeaveTypeId = leaveService.GetLeaveTypeId(leaveId);
+                var previousLeaveTotalDays = leaveService.GetLeaveTotalDays(leaveId);
+
+
+                if (leaveModel.LeaveTypeId == previousLeaveTypeId)
+                {
+                    if (employeeLeave.RemainingDays == 0 || employeeLeave.RemainingDays - (employeeLeave.PendingApprovalDays - previousLeaveTotalDays) < leaveModel.TotalDays)
+                    {
+                        ModelState.AddModelError(nameof(leaveModel.TotalDays), "You do no have enough days left from the selected leave type option.");
+                    }
+                }
+                else
+                {
+                    if (employeeLeave.RemainingDays == 0 || employeeLeave.RemainingDays - employeeLeave.PendingApprovalDays < leaveModel.TotalDays)
+                    {
+                        ModelState.AddModelError(nameof(leaveModel.TotalDays), "You do no have enough days left from the selected leave type option.");
+                    }
+                }
+
+            }
+            else
+            {
+                if (!employeeExist)
+                {
+                    ModelState.AddModelError(nameof(leaveModel.SubstituteEmployeeId), "There is no such employee in your team.");
+                }
+
+                if (employeeLeave.RemainingDays == 0 || employeeLeave.RemainingDays - employeeLeave.PendingApprovalDays < leaveModel.TotalDays)
+                {
+                    ModelState.AddModelError(nameof(leaveModel.TotalDays), "You do no have enough days left from the selected leave type option.");
+                }
+            }
+
+
+
+
+            //var previousLeaveTypeId = leaveService.GetLeaveTypeId(leaveId);
+            //var previousLeaveTotalDays = leaveService.GetLeaveTotalDays(leaveId);
+
+            //if (leaveModel.LeaveTypeId == previousLeaveTypeId)
+            //{
+            //    if (employeeLeave.RemainingDays == 0 || employeeLeave.RemainingDays - (employeeLeave.PendingApprovalDays - previousLeaveTotalDays) < leaveModel.TotalDays)
+            //    {
+            //        ModelState.AddModelError(nameof(leaveModel.TotalDays), "You do no have enough days left from the selected leave type option.");
+            //    }
+            //}
+            //else
+            //{
+            //    if (employeeLeave.RemainingDays == 0 || employeeLeave.RemainingDays - employeeLeave.PendingApprovalDays < leaveModel.TotalDays)
+            //    {
+            //        ModelState.AddModelError(nameof(leaveModel.TotalDays), "You do no have enough days left from the selected leave type option.");
+            //    }
+            //}
+
+            var leaves = leaveService.GetNotFinishedLeaves(employeeId);
+
+            foreach (var currentLeave in leaves)
+            {
+                bool isStartDateTaken;
+                bool isEndDateTaken;
+
+                if (isInEdit)
+                {
+
+                    isStartDateTaken = IsInRange(leaveModel.StartDate, currentLeave.StartDate, currentLeave.EndDate) && currentLeave.Id != leaveId;
+                    isEndDateTaken = IsInRange(leaveModel.EndDate, currentLeave.StartDate, currentLeave.EndDate) && currentLeave.Id != leaveId;
+                }
+                else
+                {
+                    isStartDateTaken = IsInRange(leaveModel.StartDate, currentLeave.StartDate, currentLeave.EndDate);
+                    isEndDateTaken = IsInRange(leaveModel.EndDate, currentLeave.StartDate, currentLeave.EndDate);
+                }
+
+                var existingDateinPeriod = IsInRange(currentLeave.StartDate, leaveModel.StartDate, leaveModel.EndDate) ||
+                                       IsInRange(currentLeave.EndDate, leaveModel.StartDate, leaveModel.EndDate);
+
+                if (existingDateinPeriod)
+                {
+                    ModelState.AddModelError(nameof(leaveModel.StartDate), "You have already Leave Request inside the given period.");
+                    ModelState.AddModelError(nameof(leaveModel.EndDate), "You have already Leave Request inside the given period.");
+                }
+
+                if (isStartDateTaken)
+                {
+                    ModelState.AddModelError(nameof(leaveModel.StartDate), "You already have Leave Request for this Start date.");
+                }
+
+                if (isEndDateTaken)
+                {
+                    ModelState.AddModelError(nameof(leaveModel.EndDate), "You already have Leave Request for this End date.");
+                }
+
+                if (isStartDateTaken || isEndDateTaken || existingDateinPeriod)
+                {
+                    break;
+                }
+            }
+
+            var substituteLeaves = leaveService.GetSubstituteApprovedLeaves(employeeId);
+
+            foreach (var currentLeave in substituteLeaves)
+            {
+                var isStartDateTaken = IsInRange(leaveModel.StartDate, currentLeave.StartDate, currentLeave.EndDate);
+                var isEndDateTaken = IsInRange(leaveModel.EndDate, currentLeave.StartDate, currentLeave.EndDate);
+
+                if (isStartDateTaken)
+                {
+                    ModelState.AddModelError(nameof(leaveModel.StartDate), "You are substitute for this date.");
+                }
+
+                if (isEndDateTaken)
+                {
+                    ModelState.AddModelError(nameof(leaveModel.EndDate), "You are substitute for this date.");
+                }
+
+                if (isStartDateTaken || isEndDateTaken)
+                {
+                    break;
+                }
+            }
+
+        }
+
         private static double GetBusinessDays(DateTime startDate, DateTime endDate, IEnumerable<string> holidays)
         {
             double calcBusinessDays = 1 + ((endDate - startDate).TotalDays * 5 - (startDate.DayOfWeek - endDate.DayOfWeek) * 2) / 7;
@@ -531,7 +759,7 @@
 
             while (startDate <= endDate)
             {
-                if (holidays.Contains(startDate.ToLocalTime().Date.ToString("dd.MM.yyy")) &&
+                if (holidays.Contains(startDate.ToLocalTime().Date.ToString(DateFormat)) &&
                     startDate.DayOfWeek != DayOfWeek.Saturday &&
                     startDate.DayOfWeek != DayOfWeek.Sunday)
                 {
@@ -544,9 +772,8 @@
         }
 
         private static bool IsInRange(DateTime currentDate, DateTime startDate, DateTime endDate)
-        {
-            return currentDate >= startDate && currentDate <= endDate;
-        }
+            => currentDate >= startDate && currentDate <= endDate;
+
 
         private void SendMailStatusChange(string status, int leaveId)
         {
@@ -561,8 +788,8 @@
 
             var model = new EmailServiceModel
             {
-                StartDate = leaveModel.StartDate.Date.ToString("dd.MM.yyyy"),
-                EndDate = leaveModel.EndDate.Date.ToString("dd.MM.yyyy"),
+                StartDate = leaveModel.StartDate.Date.ToString(DateFormat),
+                EndDate = leaveModel.EndDate.Date.ToString(DateFormat),
                 RequestEmployeeName = leaveModel.RequestEmployeeName,
                 TotalDays = leaveModel.TotalDays,
             };

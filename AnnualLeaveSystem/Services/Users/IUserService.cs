@@ -8,7 +8,7 @@
 
         public IEnumerable<int> AllTeams();
 
-        public string GetTeamLeadId(int? teamId);
+        public string GetTeamLeadId(int teamId);
 
         public void AddLeaveTypesToEmployee(string employeeId);
 

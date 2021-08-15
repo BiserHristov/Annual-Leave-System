@@ -13,6 +13,7 @@
     using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Mvc;
 
+    using static AdminConstants.Users;
     public class UsersController : BaseAdminController
     {
         private readonly IEmployeeService employeeService;
@@ -77,22 +78,22 @@
 
             var teams = this.teamService.All().ToList();
 
-            if (model.TeamId != null && !teams.Contains(model.TeamId ?? -1))
+            if (!teams.Contains(model.TeamId))
             {
-                ModelState.AddModelError(nameof(model.TeamId), "Team Id is not valid.");
+                ModelState.AddModelError(nameof(model.TeamId), InvalidTeamIdMessage);
             }
 
             var departments = this.departmentService.All().ToList();
 
             if (!departments.Any(d => d.Id == model.DepartmentId))
             {
-                ModelState.AddModelError(nameof(model.DepartmentId), "Department Id is not valid.");
+                ModelState.AddModelError(nameof(model.DepartmentId), InvalidDepartmentIdMessage);
             }
 
             if (model.HireDate.Year < DateTime.Now.AddYears(-100).Year ||
                 model.HireDate > DateTime.Now)
             {
-                ModelState.AddModelError(nameof(model.HireDate), "Date is not valid.");
+                ModelState.AddModelError(nameof(model.HireDate), InvalidDateMessage);
             }
 
             if (!ModelState.IsValid)
@@ -136,8 +137,8 @@
 
             if (model.Password != model.ConfirmPassword)
             {
-                ModelState.AddModelError(nameof(model.Password), "Password and confirm password does not match!");
-                ModelState.AddModelError(nameof(model.ConfirmPassword), "Password and confirm password does not match!");
+                ModelState.AddModelError(nameof(model.Password), InvalidPasswordsMatchMessage);
+                ModelState.AddModelError(nameof(model.ConfirmPassword), InvalidPasswordsMatchMessage);
             }
 
             if (!ModelState.IsValid)
@@ -182,7 +183,7 @@
 
             userService.AddLeaveTypesToEmployee(registeredUser.Id);
 
-            return RedirectToAction("All", "Users");
+            return RedirectToAction(nameof(All));
         }
 
         public IActionResult Delete(string id)
@@ -199,7 +200,7 @@
                 return BadRequest();
             }
 
-            return RedirectToAction("All", "Users");
+            return RedirectToAction(nameof(All));
         }
     }
 }

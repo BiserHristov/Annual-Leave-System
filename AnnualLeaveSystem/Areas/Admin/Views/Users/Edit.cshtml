@@ -2,6 +2,7 @@
 
 @{
     ViewBag.Title = "Edit user";
+    const string DateFormat = "dd.MM.yyyy";
 }
 
 <div class="container">
@@ -21,7 +22,7 @@
 
                 <div class="form-group">
                     <label asp-for="MiddleName"></label>
-                    <input asp-for="MiddleName" type='text' class="form-control" >
+                    <input asp-for="MiddleName" type='text' class="form-control">
                     <span asp-validation-for="MiddleName" class="small text-danger"></span>
                 </div>
 
@@ -67,7 +68,7 @@
 
                 <div class="form-group">
                     <label asp-for="HireDate"></label>
-                    <input asp-for="HireDate" type='text' class="form-control" value="@(Model.HireDate.Date.ToString("dd.MM.yyyy"))">
+                    <input asp-for="HireDate" type='text' class="form-control" value="@(Model.HireDate.Date.ToString(DateFormat))">
                     <span asp-validation-for="HireDate" class="small text-danger"></span>
                 </div>
 

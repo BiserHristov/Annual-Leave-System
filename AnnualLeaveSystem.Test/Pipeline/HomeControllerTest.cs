@@ -13,7 +13,7 @@
     using System.Threading.Tasks;
     using Xunit;
 
-    using static Data.Leaves;
+    using static Data.LeaveTestData;
 
     public class HomeControllerTest
     {

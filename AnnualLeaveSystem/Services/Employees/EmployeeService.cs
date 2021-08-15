@@ -18,6 +18,16 @@
             return this.db.Employees.Any(e => e.Id == employeeId);
         }
 
+        public string FullName(string employeeId)
+        {
+            return this.db.Employees
+                .Where(e => e.Id == employeeId)
+                .Select(e =>
+                    e.FirstName + ' ' +
+                    (e.MiddleName == null ? string.Empty : e.MiddleName + ' ') + e.LastName)
+                .FirstOrDefault();
+        }
+
         public Employee Get(string employeeId)
         {
             return this.db.Employees
@@ -25,7 +35,7 @@
                 .FirstOrDefault();
         }
 
-        public int? TeamId(string employeeId)
+        public int TeamId(string employeeId)
         {
             return this.db.Employees
                 .Where(e => e.Id == employeeId)

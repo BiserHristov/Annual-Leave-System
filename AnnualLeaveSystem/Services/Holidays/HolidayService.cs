@@ -9,6 +9,8 @@
     using System.Linq;
     using System.Threading.Tasks;
 
+    using static WebConstants;
+
     using static WebConstants.Cache;
 
     public class HolidayService : IHolidayService
@@ -35,7 +37,7 @@
                  .ToList();
 
                 var cacheOptions = new MemoryCacheEntryOptions()
-                    .SetAbsoluteExpiration(TimeSpan.FromMinutes(1));
+                    .SetAbsoluteExpiration(TimeSpan.FromMinutes(5));
 
                 this.cache.Set(AllHolidaysCacheKey, allHolidays, cacheOptions);
 
@@ -53,11 +55,11 @@
             {
                 allHolidayDates = this.db.OfficialHolidays
                  .OrderBy(h => h.Date)
-                 .Select(h => h.Date.ToLocalTime().Date.ToString("dd.MM.yyyy"))
+                 .Select(h => h.Date.ToLocalTime().Date.ToString(DateFormat))
                  .ToList();
 
                 var cacheOptions = new MemoryCacheEntryOptions()
-                    .SetAbsoluteExpiration(TimeSpan.FromMinutes(15));
+                    .SetAbsoluteExpiration(TimeSpan.FromMinutes(5));
 
                 this.cache.Set(AllHolidayDatesCacheKey, allHolidayDates, cacheOptions);
 

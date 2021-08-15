@@ -53,10 +53,10 @@
                     }
                 </td>
                 <td class="align-self-center">
-                    @if (this.User.IsAdmin() ||
-                    (leave.RequestEmployeeId == this.User.GetId() &&
-                    leave.Status == Status.Pending.ToString() &&
-                    ViewBag.IsInMyLeavesPage))
+                    @if ((this.User.IsAdmin() && leave.Status == Status.Pending.ToString())||
+                   (leave.RequestEmployeeId == this.User.GetId() &&
+                   leave.Status == Status.Pending.ToString() &&
+                   ViewBag.IsInMyLeavesPage))
                     {
                         <form asp-controller="Leaves" asp-action="Cancel" asp-route-leaveId=@leave.Id method="post">
                             <button class="btn btn-info" type="submit">Cancel</button>
