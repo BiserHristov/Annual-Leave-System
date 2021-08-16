@@ -24,7 +24,7 @@
                 .Where(e => e.Id == employeeId)
                 .Select(e =>
                     e.FirstName + ' ' +
-                    (e.MiddleName == null ? string.Empty : e.MiddleName + ' ') + e.LastName)
+                    (string.IsNullOrEmpty(e.MiddleName) ? string.Empty : e.MiddleName + ' ') + e.LastName)
                 .FirstOrDefault();
         }
 

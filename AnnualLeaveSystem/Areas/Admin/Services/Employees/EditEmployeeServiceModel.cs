@@ -8,7 +8,6 @@
     {
         [Required]
         [Display(Name = "Department")]
-
         public int DepartmentId { get; set; }
 
         public IEnumerable<RegisterDepartamentServiceModel> Departments { get; set; } = new HashSet<RegisterDepartamentServiceModel>();

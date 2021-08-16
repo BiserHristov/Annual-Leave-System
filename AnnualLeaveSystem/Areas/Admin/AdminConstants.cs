@@ -8,6 +8,7 @@
         {
             public const string NotNextYearMessage = "The date is not for the next year.";
             public const string AlreadyExistMessage = "The date already exist.";
+            public const string NotValidDateMessage = "This date is not valid.";
         }
 
         public class Users

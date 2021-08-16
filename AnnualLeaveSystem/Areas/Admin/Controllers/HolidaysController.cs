@@ -4,6 +4,7 @@
     using AnnualLeaveSystem.Infrastructure;
     using AnnualLeaveSystem.Services.Holidays;
     using Microsoft.AspNetCore.Mvc;
+    using Microsoft.AspNetCore.Mvc.ModelBinding;
     using System;
 
     using static AdminConstants.Holidays;
@@ -39,19 +40,7 @@
                 return Unauthorized();
             }
 
-            var nextYear = DateTime.Now.Year + 1;
-            var modelYear = int.Parse(model.Date.Split('.')[2]);
-            if (modelYear != nextYear)
-            {
-                ModelState.AddModelError(nameof(model.Date), NotNextYearMessage);
-            }
-
-            var exist = this.holidayServiceAdmin.Exist(DateTime.Parse(model.Date));
-
-            if (exist)
-            {
-                ModelState.AddModelError(nameof(model.Date), AlreadyExistMessage);
-            }
+            ValidateHoliday(model, this.ModelState, holidayServiceAdmin);
 
             if (!ModelState.IsValid)
             {
@@ -72,7 +61,6 @@
             }
 
             var holiday = this.holidayServiceAdmin.ById(id);
-
             if (holiday == null)
             {
                 return BadRequest();
@@ -90,19 +78,7 @@
                 return Unauthorized();
             }
 
-            var nextYear = DateTime.Now.Year + 1;
-            var modelYear = int.Parse(model.Date.Split('.')[2]);
-            if (modelYear != nextYear)
-            {
-                ModelState.AddModelError(nameof(model.Date),NotNextYearMessage);
-            }
-
-            var exist = this.holidayServiceAdmin.Exist(DateTime.Parse(model.Date), model.Id);
-
-            if (exist)
-            {
-                ModelState.AddModelError(nameof(model.Date), AlreadyExistMessage);
-            }
+            ValidateHoliday(model, this.ModelState, holidayServiceAdmin, model.Id);
 
             if (!ModelState.IsValid)
             {
@@ -111,7 +87,6 @@
 
 
             var result = this.holidayServiceAdmin.Edit(model);
-
             if (!result)
             {
                 return BadRequest();
@@ -129,7 +104,6 @@
             }
 
             var result = this.holidayServiceAdmin.Delete(id);
-
             if (!result)
             {
                 return BadRequest();
@@ -147,6 +121,37 @@
 
             var holidays = this.holidayService.All();
             return View(holidays);
+        }
+
+        private static void ValidateHoliday(
+            HolidayServiceModel model,
+            ModelStateDictionary ModelState,
+            IHolidayServiceAdmin holidayServiceAdmin,
+            int id = 0)
+        {
+
+            if (!DateTime.TryParse(model.Date, out DateTime date))
+            {
+                ModelState.AddModelError(nameof(model.Date), NotValidDateMessage);
+            }
+            else
+            {
+                var modelYear = date.Year;
+                var nextYear = date.Year + 1;
+
+                if (modelYear != nextYear)
+                {
+                    ModelState.AddModelError(nameof(model.Date), NotNextYearMessage);
+                }
+
+                var exist = holidayServiceAdmin.Exist(DateTime.Parse(model.Date), id);
+                if (exist)
+                {
+                    ModelState.AddModelError(nameof(model.Date), AlreadyExistMessage);
+                }
+            }
+
+
         }
     }
 }

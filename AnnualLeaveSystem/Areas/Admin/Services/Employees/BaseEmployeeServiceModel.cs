@@ -34,6 +34,7 @@
         public string JobTitle { get; set; }
 
         [Display(Name = "Team ID")]
+        [Required]
         public int TeamId { get; set; }
 
         [Required]
