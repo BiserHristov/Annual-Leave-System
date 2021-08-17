@@ -20,32 +20,24 @@
         }
 
         public IEnumerable<RegisterDepartamentServiceModel> AllDepartments()
-        {
-            return this.db.Departments
+            => this.db.Departments
                 .OrderBy(d => d.Name)
                 .ProjectTo<RegisterDepartamentServiceModel>(this.mapper)
                 .ToList();
-        }
 
         public IEnumerable<int> AllTeams()
-        {
-            return this.db.Teams
+            => this.db.Teams
                 .OrderBy(t => t.Id)
                 .Select(t => t.Id)
                 .ToList();
-        }
 
         public string GetTeamLeadId(int teamId)
-        {
-            var teamLeadId = this.db.Employees
+            => this.db.Employees
                 .Include(e => e.Team)
                 .Where(e => e.TeamId == teamId &&
                             e.TeamLeadId != null)
                 .Select(e => e.TeamLeadId)
                 .FirstOrDefault();
-
-            return teamLeadId;
-        }
 
         public void AddLeaveTypesToEmployee(string employeeId)
         {
@@ -73,8 +65,6 @@
         }
 
         public bool Exist(string email)
-        {
-            return this.db.Employees.Any(e => e.Email == email);
-        }
+            => this.db.Employees.Any(e => e.Email == email);
     }
 }

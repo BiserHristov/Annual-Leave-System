@@ -19,7 +19,6 @@
             var emailProject = "myaspcoreprojectserver@gmail.com";
             var password = "123123Asp";
 
-
             using var smtp = new SmtpClient();
             smtp.Connect("smtp.gmail.com", 587, SecureSocketOptions.StartTls);
             smtp.Authenticate(emailProject, password);

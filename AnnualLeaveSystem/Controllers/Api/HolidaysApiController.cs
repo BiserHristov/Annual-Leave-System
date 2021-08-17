@@ -1,14 +1,8 @@
 ﻿namespace AnnualLeaveSystem.Controllers.Api
 {
-    using AnnualLeaveSystem.Services.Holidays;
-    using AnnualLeaveSystem.Data;
-    using AutoMapper;
-    using AutoMapper.QueryableExtensions;
-    using Microsoft.AspNetCore.Mvc;
-    using System;
     using System.Collections.Generic;
-    using System.Linq;
-    using System.Threading.Tasks;
+    using Microsoft.AspNetCore.Mvc;
+    using AnnualLeaveSystem.Services.Holidays;
 
     [ApiController]
     [Route("Leaves/api/holidays")]
@@ -24,6 +18,5 @@
         [HttpGet]
         public IEnumerable<HolidayServiceModel> GetHolidays()
             => this.holidayService.All();
-
     }
 }

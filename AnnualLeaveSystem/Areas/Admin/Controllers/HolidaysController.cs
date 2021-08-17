@@ -1,11 +1,11 @@
 ﻿namespace AnnualLeaveSystem.Areas.Admin.Controllers
 {
+    using System;
+    using Microsoft.AspNetCore.Mvc;
+    using Microsoft.AspNetCore.Mvc.ModelBinding;
     using AnnualLeaveSystem.Areas.Admin.Services.Holidays;
     using AnnualLeaveSystem.Infrastructure;
     using AnnualLeaveSystem.Services.Holidays;
-    using Microsoft.AspNetCore.Mvc;
-    using Microsoft.AspNetCore.Mvc.ModelBinding;
-    using System;
 
     using static AdminConstants.Holidays;
 
@@ -13,7 +13,6 @@
     {
         private readonly IHolidayService holidayService;
         private readonly IHolidayServiceAdmin holidayServiceAdmin;
-
 
         public HolidaysController(IHolidayService holidayService, IHolidayServiceAdmin holidayServiceAdmin)
         {
@@ -30,7 +29,6 @@
 
             return View();
         }
-
 
         [HttpPost]
         public IActionResult Add(HolidayServiceModel model)
@@ -50,7 +48,6 @@
             this.holidayServiceAdmin.Add(model);
 
             return RedirectToAction(nameof(All));
-
         }
 
         public IActionResult Edit(int id)
@@ -72,7 +69,6 @@
         [HttpPost]
         public IActionResult Edit(HolidayServiceModel model)
         {
-
             if (!this.User.IsAdmin())
             {
                 return Unauthorized();
@@ -84,7 +80,6 @@
             {
                 return View(model);
             }
-
 
             var result = this.holidayServiceAdmin.Edit(model);
             if (!result)
@@ -125,14 +120,13 @@
 
         private static void ValidateHoliday(
             HolidayServiceModel model,
-            ModelStateDictionary ModelState,
+            ModelStateDictionary modelState,
             IHolidayServiceAdmin holidayServiceAdmin,
             int id = 0)
         {
-
             if (!DateTime.TryParse(model.Date, out DateTime date))
             {
-                ModelState.AddModelError(nameof(model.Date), NotValidDateMessage);
+                modelState.AddModelError(nameof(model.Date), NotValidDateMessage);
             }
             else
             {
@@ -141,17 +135,15 @@
 
                 if (modelYear != nextYear)
                 {
-                    ModelState.AddModelError(nameof(model.Date), NotNextYearMessage);
+                    modelState.AddModelError(nameof(model.Date), NotNextYearMessage);
                 }
 
                 var exist = holidayServiceAdmin.Exist(DateTime.Parse(model.Date), id);
                 if (exist)
                 {
-                    ModelState.AddModelError(nameof(model.Date), AlreadyExistMessage);
+                    modelState.AddModelError(nameof(model.Date), AlreadyExistMessage);
                 }
             }
-
-
         }
     }
 }

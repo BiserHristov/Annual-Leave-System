@@ -3,7 +3,6 @@
     var collection = ViewBag.LeavesAreNestedCollection ? Model.Leaves : Model;
 }
 <table class="table table-hover">
-
     <thead>
         <tr>
             <th scope="col">First name</th>
@@ -16,10 +15,7 @@
             <th scope="col"></th>
         </tr>
     </thead>
-
     <tbody>
-
-
         @if (collection.Count == 0)
         {
             <tr>
@@ -27,7 +23,6 @@
             </tr>
 
         }
-
 
         @foreach (var leave in collection)
         {
@@ -79,11 +74,9 @@
                         </form>
                     }
 
-
                 </td>
             </tr>
         }
-
 
     </tbody>
 </table>

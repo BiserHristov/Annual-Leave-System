@@ -8,15 +8,16 @@
     {
         public int Id { get; init; }
 
-        [Column(TypeName = "date")]
+        [Required]
+        [Column(TypeName = "Date")]
         public DateTime RequestDate { get; set; }
 
         [Required]
-        [Column(TypeName = "date")]
+        [Column(TypeName = "Date")]
         public DateTime StartDate { get; set; }
 
         [Required]
-        [Column(TypeName = "date")]
+        [Column(TypeName = "Date")]
         public DateTime EndDate { get; set; }
 
         public int TotalDays { get; set; }

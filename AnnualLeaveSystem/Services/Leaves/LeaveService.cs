@@ -140,45 +140,29 @@
         }
 
         public IEnumerable<LeaveTypeServiceModel> GetLeaveTypes()
-        {
-            return this.db.LeaveTypes
+            => this.db.LeaveTypes
                 .ProjectTo<LeaveTypeServiceModel>(this.mapper)
                 .ToList();
-        }
 
         public EditLeaveServiceModel GetLeave(int leaveId)
-        {
-            return this.db.Leaves
-                        .Where(l => l.Id == leaveId)
-                        .ProjectTo<EditLeaveServiceModel>(this.mapper)
-                        .FirstOrDefault();
-        }
+            => this.db.Leaves
+                .Where(l => l.Id == leaveId)
+                .ProjectTo<EditLeaveServiceModel>(this.mapper)
+                .FirstOrDefault();
 
         public IEnumerable<LeaveServiceModel> LeavesForApproval(string employeeId, bool isTeamLead)
-        {
-            var leavesQuery = this.db.Leaves.Where(l => l.LeaveStatus == Status.Pending).AsQueryable();
-
-            if (isTeamLead)
-            {
-                leavesQuery = leavesQuery.Where(l => l.ApproveEmployeeId == employeeId &&
-                  l.ApprovedBySubstitute == true);
-            }
-            else
-            {
-                leavesQuery = leavesQuery.Where(l => l.SubstituteEmployeeId == employeeId &&
-                  l.ApprovedBySubstitute == false);
-            }
-
-            var leaves = leavesQuery
+            => this.db.Leaves
+                .Where(l => l.LeaveStatus == Status.Pending)
+                .Where(l => l.ApproveEmployeeId == employeeId &&
+                            l.ApprovedBySubstitute == isTeamLead)
                 .ProjectTo<LeaveServiceModel>(this.mapper)
                 .ToList();
 
-            return leaves;
-        }
-
         public void Approve(int leaveId, bool isUser)
         {
-            var leave = this.db.Leaves.Where(l => l.Id == leaveId).FirstOrDefault();
+            var leave = this.db.Leaves
+                .Where(l => l.Id == leaveId)
+                .FirstOrDefault();
 
             if (isUser && leave.RequestEmployeeId != leave.ApproveEmployeeId)
             {
@@ -187,10 +171,12 @@
             else
             {
                 leave.LeaveStatus = Status.Approved;
+
                 var employeeLeaveType = this.db.EmployeesLeaveTypes
                     .Where(el => el.EmployeeId == leave.RequestEmployeeId &&
-                                el.LeaveTypeId == leave.LeaveTypeId)
+                                 el.LeaveTypeId == leave.LeaveTypeId)
                     .FirstOrDefault();
+
                 employeeLeaveType.PendingApprovalDays -= leave.TotalDays;
                 employeeLeaveType.UsedDays += leave.TotalDays;
             }
@@ -199,39 +185,29 @@
         }
 
         public void Cancel(int leaveId)
-        {
-            this.ChangeStatus(leaveId, Status.Canceled);
-        }
+            => this.ChangeStatus(leaveId, Status.Canceled);
 
         public void Reject(int leaveId)
-        {
-            this.ChangeStatus(leaveId, Status.Rejected);
-        }
+            => this.ChangeStatus(leaveId, Status.Rejected);
 
         public IEnumerable<DateValidationServiceModel> GetNotFinishedLeaves(string employeeId)
-        {
-            return this.db.Leaves
+            => this.db.Leaves
                 .Where(l => l.RequestEmployeeId == employeeId &&
                             (l.LeaveStatus == Status.Pending || l.LeaveStatus == Status.Approved) &&
                             l.EndDate >= DateTime.UtcNow.Date)
                 .ProjectTo<DateValidationServiceModel>(this.mapper)
                 .ToList();
-        }
 
         public IEnumerable<DateValidationServiceModel> GetSubstituteApprovedLeaves(string employeeId)
-        {
-            return this.db.Leaves
+            => this.db.Leaves
                .Where(l => l.SubstituteEmployeeId == employeeId &&
                            l.LeaveStatus == Status.Approved &&
                            l.EndDate >= DateTime.UtcNow.Date)
                .ProjectTo<DateValidationServiceModel>(this.mapper)
                .ToList();
-        }
 
         public IEnumerable<OfficialHoliday> GetHolidays()
-        {
-            return this.db.OfficialHolidays.ToList();
-        }
+            => this.db.OfficialHolidays.ToList();
 
         public int Create(
             DateTime startDate,
@@ -299,7 +275,7 @@
             }
             else
             {
-                var currentEmployeeLeave = GetEmployeeLeaveType(leaveTypeId, requestEmployeeId);
+                var currentEmployeeLeave = this.GetEmployeeLeaveType(leaveTypeId, requestEmployeeId);
                 currentEmployeeLeave.PendingApprovalDays += totalDays;
             }
 
@@ -316,49 +292,40 @@
         }
 
         public bool Exist(int leaveId)
-        {
-            return this.db.Leaves.Any(l => l.Id == leaveId);
-        }
+            => this.db.Leaves.Any(l => l.Id == leaveId);
 
         public int GetLeaveTypeId(int leaveId)
-        {
-            return this.db.Leaves
+            => this.db.Leaves
                 .Where(l => l.Id == leaveId)
                 .Select(l => l.LeaveTypeId)
                 .FirstOrDefault();
-        }
 
         public int GetLeaveTotalDays(int leaveId)
-        {
-            return this.db.Leaves
+            => this.db.Leaves
              .Where(l => l.Id == leaveId)
              .Select(l => l.TotalDays)
              .FirstOrDefault();
-        }
 
         public bool IsOwn(int leaveId, string employeeId)
-        {
-            return this.db.Leaves
+            => this.db.Leaves
                 .Any(l => l.Id == leaveId && l.RequestEmployeeId == employeeId);
-        }
 
         public LeaveDetailsServiceModel GetLeaveById(int leaveId)
-        {
-            var leave = this.db.Leaves
+            => this.db.Leaves
                  .Include(l => l.LeaveType)
                  .Include(l => l.RequestEmployee)
-                .Include(l => l.ApproveEmployee)
-                .Include(l => l.SubstituteEmployee)
-                .Where(l => l.Id == leaveId)
-                .ProjectTo<LeaveDetailsServiceModel>(this.mapper)
-                .FirstOrDefault();
-
-            return leave;
-        }
+                 .Include(l => l.ApproveEmployee)
+                 .Include(l => l.SubstituteEmployee)
+                 .Where(l => l.Id == leaveId)
+                 .ProjectTo<LeaveDetailsServiceModel>(this.mapper)
+                 .FirstOrDefault();
 
         private void ChangeStatus(int leaveId, Status status)
         {
-            var leave = this.db.Leaves.Where(l => l.Id == leaveId).FirstOrDefault();
+            var leave = this.db.Leaves
+                .Where(l => l.Id == leaveId)
+                .FirstOrDefault();
+
             leave.LeaveStatus = status;
 
             var employeeLeaveType = this.db.EmployeesLeaveTypes
@@ -371,19 +338,15 @@
         }
 
         private EmployeeLeaveType GetEmployeeLeaveType(int leaveTypeId, string reqiestEmployeeId)
-        {
-            return this.db.EmployeesLeaveTypes
+            => this.db.EmployeesLeaveTypes
               .Include(x => x.LeaveType)
               .Where(el => el.EmployeeId == reqiestEmployeeId &&
                            el.LeaveTypeId == leaveTypeId)
               .FirstOrDefault();
-        }
 
         private IEnumerable<LeaveServiceModel> GetLeaves(IQueryable<Leave> query)
-        {
-            return query
+            => query
                 .ProjectTo<LeaveServiceModel>(this.mapper)
                 .ToList();
-        }
     }
 }

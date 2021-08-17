@@ -66,11 +66,7 @@ public class Startup
         services.AddTransient<IEmployeeService, EmployeeService>();
         services.AddTransient<IHolidayService, HolidayService>();
         services.AddTransient<IHolidayServiceAdmin, HolidayServiceAdmin>();
-
-
-
         services.AddTransient<IEmployeeLeaveTypesService, EmployeeLeaveTypesService>();
-
         services.AddTransient<IEmailSenderService, EmailSenderService>();
         services.AddTransient<AdminServices.Employees.IEmployeeService, AdminServices.Employees.EmployeeService>();
         services.AddTransient<AdminServices.Teams.ITeamService, AdminServices.Teams.TeamService>();

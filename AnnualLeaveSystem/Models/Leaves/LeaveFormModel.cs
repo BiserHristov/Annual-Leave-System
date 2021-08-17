@@ -12,16 +12,19 @@
 
         [Required]
         [Display(Name = "Start date")]
+        [DataType(DataType.Date)]
         public DateTime StartDate { get; set; }
 
         [Required]
         [Display(Name = "End date")]
+        [DataType(DataType.Date)]
         public DateTime EndDate { get; set; }
 
         [Required]
         [Display(Name = "Leave type")]
         public int LeaveTypeId { get; init; }
 
+        [Required]
         public string RequestEmployeeId { get; init; }
 
         [Required]
@@ -36,6 +39,9 @@
 
         public string Comments { get; init; }
 
+        [Required]
+        [Display(Name = "Request date")]
+        [DataType(DataType.Date)]
         public DateTime RequestDate { get; set; } = DateTime.UtcNow.Date;
 
         public IEnumerable<LeaveTypeServiceModel> LeaveTypes { get; set; }

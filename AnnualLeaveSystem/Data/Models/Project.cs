@@ -16,18 +16,15 @@
         public string Name { get; set; }
 
         [Required]
+        [MaxLength(DescriptionMaxLength)]
         public string Description { get; set; }
 
-        //public int TeamId { get; set; }
-
-        //public Team Team { get; set; }
-
         [Required]
-        [Column(TypeName = "date")]
+        [Column(TypeName = "Date")]
         public DateTime StartDate { get; set; }
 
         [Required]
-        [Column(TypeName = "date")]
+        [Column(TypeName = "Date")]
         public DateTime EndDate { get; set; }
 
         public ICollection<Team> Teams { get; init; } = new HashSet<Team>();

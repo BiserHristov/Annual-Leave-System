@@ -10,6 +10,8 @@
     using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Mvc;
 
+    using static AnnualLeaveSystem.Areas.Admin.AdminConstants.Users;
+
     public class UsersController : Controller
     {
         private readonly IUserService userService;
@@ -50,13 +52,13 @@
 
             if (user.Password != user.ConfirmPassword)
             {
-                ModelState.AddModelError(nameof(user.Password), "Password and confirm password does not match.");
-                ModelState.AddModelError(nameof(user.ConfirmPassword), "Password and confirm password does not match.");
+                ModelState.AddModelError(nameof(user.Password), InvalidPasswordsMatchMessage);
+                ModelState.AddModelError(nameof(user.ConfirmPassword), InvalidPasswordsMatchMessage);
             }
 
             if (this.userService.Exist(user.Email))
             {
-                ModelState.AddModelError(nameof(user.Email), "Email is already taken.");
+                ModelState.AddModelError(nameof(user.Email), ExistingEmailMessage);
             }
 
             if (!ModelState.IsValid)
@@ -162,7 +164,6 @@
 
         private IActionResult AddError(LoginFormModel user)
         {
-            const string InvalidCredentialsMessage = "Credentials are not valid";
             ModelState.AddModelError(string.Empty, InvalidCredentialsMessage);
 
             return View(user);

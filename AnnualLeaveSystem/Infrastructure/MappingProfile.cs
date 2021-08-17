@@ -1,12 +1,12 @@
 ﻿namespace AnnualLeaveSystem.Infrastructure
 {
     using AnnualLeaveSystem.Areas.Admin.Services.Employees;
-    using AnnualLeaveSystem.Services.Holidays;
     using AnnualLeaveSystem.Data.Models;
     using AnnualLeaveSystem.Models.Home;
     using AnnualLeaveSystem.Models.Leaves;
     using AnnualLeaveSystem.Services.Emails;
     using AnnualLeaveSystem.Services.EmployeeLeaveTypes;
+    using AnnualLeaveSystem.Services.Holidays;
     using AnnualLeaveSystem.Services.Leaves;
     using AnnualLeaveSystem.Services.Statistics;
     using AnnualLeaveSystem.Services.Users;
@@ -58,8 +58,6 @@
                 .ForMember(x => x.TeamLeadName, cfg => cfg.MapFrom(e => string.IsNullOrEmpty(e.TeamLeadId) ? "-" : e.TeamLead.FirstName + " " + e.TeamLead.LastName));
 
             this.CreateMap<Employee, EditEmployeeServiceModel>();
-
-            //this.CreateMap<OfficialHoliday, HolidayServiceModel>();
 
             this.CreateMap<OfficialHoliday, HolidayServiceModel>()
                 .ForMember(x => x.Date, cfg => cfg.MapFrom(y => y.Date.ToLocalTime().Date.ToString(DateFormat)));

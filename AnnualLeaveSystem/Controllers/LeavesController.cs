@@ -23,8 +23,6 @@
     using static WebConstants.Email;
     using static WebConstants.Leaves;
 
-
-
     public class LeavesController : Controller
     {
         private readonly IEmployeeLeaveTypesService employeeLeaveTypesService;
@@ -62,7 +60,6 @@
             this.holidayService = holidayService;
             this.cache = cache;
         }
-
 
         [Authorize]
         public IActionResult Add()
@@ -320,7 +317,7 @@
 
         private static void ValidateLeave(
             LeaveFormModel leaveModel,
-            ModelStateDictionary ModelState,
+            ModelStateDictionary modelState,
             IHolidayService holidayService,
             ILeaveTypeService leaveTypeService,
             IEmployeeService employeeService,
@@ -334,32 +331,32 @@
         {
             if (leaveModel.StartDate > leaveModel.EndDate)
             {
-                ModelState.AddModelError(nameof(leaveModel.StartDate), StartBeforeEndDateMessage);
-                ModelState.AddModelError(nameof(leaveModel.EndDate), EndAfterStartDateMessage);
+                modelState.AddModelError(nameof(leaveModel.StartDate), StartBeforeEndDateMessage);
+                modelState.AddModelError(nameof(leaveModel.EndDate), EndAfterStartDateMessage);
             }
 
             if (IsBeforeToday(leaveModel.StartDate))
             {
-                ModelState.AddModelError(nameof(leaveModel.StartDate), "Start date" + AfterOrEqualTodayMessage);
+                modelState.AddModelError(nameof(leaveModel.StartDate), "Start date" + AfterOrEqualTodayMessage);
             }
 
             if (IsBeforeToday(leaveModel.EndDate))
             {
-                ModelState.AddModelError(nameof(leaveModel.EndDate), "End date" + AfterOrEqualTodayMessage);
+                modelState.AddModelError(nameof(leaveModel.EndDate), "End date" + AfterOrEqualTodayMessage);
             }
 
             var (isHoliday, name) = holidayService.IsHoliday(leaveModel.StartDate);
 
             if (isHoliday)
             {
-                ModelState.AddModelError(nameof(leaveModel.StartDate), string.Format(OfficialHolidayMessage, name));
+                modelState.AddModelError(nameof(leaveModel.StartDate), string.Format(OfficialHolidayMessage, name));
             }
 
             (isHoliday, name) = holidayService.IsHoliday(leaveModel.EndDate);
 
             if (isHoliday)
             {
-                ModelState.AddModelError(nameof(leaveModel.EndDate), string.Format(OfficialHolidayMessage, name));
+                modelState.AddModelError(nameof(leaveModel.EndDate), string.Format(OfficialHolidayMessage, name));
             }
 
             var allHolidays = holidayService.AllDates();
@@ -368,20 +365,19 @@
 
             if (leaveModel.TotalDays != businessDaysCount || leaveModel.TotalDays == 0)
             {
-                ModelState.AddModelError(nameof(leaveModel.TotalDays), IncorrectTotalDaysMessage);
+                modelState.AddModelError(nameof(leaveModel.TotalDays), IncorrectTotalDaysMessage);
             }
 
             var leaveTypeExist = leaveTypeService.TypeExist(leaveModel.LeaveTypeId);
 
             if (!leaveTypeExist)
             {
-                ModelState.AddModelError(nameof(leaveModel.LeaveTypeId), IncorrectLeaveTypeMessage);
+                modelState.AddModelError(nameof(leaveModel.LeaveTypeId), IncorrectLeaveTypeMessage);
             }
 
             var teamId = employeeService.TeamId(employeeId);
 
             var employeeExist = teamService.EmployeeExistInTeam(teamId, employeeId);
-
 
             var employeeLeave = employeeLeaveTypesService.GetLeaveType(employeeId, leaveModel.LeaveTypeId);
 
@@ -389,39 +385,37 @@
             {
                 if (!isAdmin && !employeeExist)
                 {
-                    ModelState.AddModelError(nameof(leaveModel.SubstituteEmployeeId), NotExistingEmployeeInTeamMessage);
+                    modelState.AddModelError(nameof(leaveModel.SubstituteEmployeeId), NotExistingEmployeeInTeamMessage);
                 }
 
                 var previousLeaveTypeId = leaveService.GetLeaveTypeId(leaveId);
                 var previousLeaveTotalDays = leaveService.GetLeaveTotalDays(leaveId);
 
-
                 if (leaveModel.LeaveTypeId == previousLeaveTypeId)
                 {
                     if (employeeLeave.RemainingDays == 0 || employeeLeave.RemainingDays - (employeeLeave.PendingApprovalDays - previousLeaveTotalDays) < leaveModel.TotalDays)
                     {
-                        AddTotalDaysModelError(ModelState, leaveModel);
+                        AddTotalDaysModelError(modelState, leaveModel);
                     }
                 }
                 else
                 {
                     if (employeeLeave.RemainingDays == 0 || employeeLeave.RemainingDays - employeeLeave.PendingApprovalDays < leaveModel.TotalDays)
                     {
-                        AddTotalDaysModelError(ModelState, leaveModel);
+                        AddTotalDaysModelError(modelState, leaveModel);
                     }
                 }
-
             }
             else
             {
                 if (!employeeExist)
                 {
-                    ModelState.AddModelError(nameof(leaveModel.SubstituteEmployeeId), NotExistingEmployeeInTeamMessage);
+                    modelState.AddModelError(nameof(leaveModel.SubstituteEmployeeId), NotExistingEmployeeInTeamMessage);
                 }
 
                 if (employeeLeave.RemainingDays == 0 || employeeLeave.RemainingDays - employeeLeave.PendingApprovalDays < leaveModel.TotalDays)
                 {
-                    AddTotalDaysModelError(ModelState, leaveModel);
+                    AddTotalDaysModelError(modelState, leaveModel);
                 }
             }
 
@@ -434,7 +428,6 @@
 
                 if (isInEdit)
                 {
-
                     isStartDateTaken = IsInRange(leaveModel.StartDate, currentLeave.StartDate, currentLeave.EndDate) && currentLeave.Id != leaveId;
                     isEndDateTaken = IsInRange(leaveModel.EndDate, currentLeave.StartDate, currentLeave.EndDate) && currentLeave.Id != leaveId;
                 }
@@ -449,18 +442,18 @@
 
                 if (existingDateInPeriod)
                 {
-                    ModelState.AddModelError(nameof(leaveModel.StartDate), ExistingRequestInsidePeriodMessage);
-                    ModelState.AddModelError(nameof(leaveModel.EndDate), ExistingRequestInsidePeriodMessage);
+                    modelState.AddModelError(nameof(leaveModel.StartDate), ExistingRequestInsidePeriodMessage);
+                    modelState.AddModelError(nameof(leaveModel.EndDate), ExistingRequestInsidePeriodMessage);
                 }
 
                 if (isStartDateTaken)
                 {
-                    ModelState.AddModelError(nameof(leaveModel.StartDate), ExistingRequestForDateMessage);
+                    modelState.AddModelError(nameof(leaveModel.StartDate), ExistingRequestForDateMessage);
                 }
 
                 if (isEndDateTaken)
                 {
-                    ModelState.AddModelError(nameof(leaveModel.EndDate), ExistingRequestForDateMessage);
+                    modelState.AddModelError(nameof(leaveModel.EndDate), ExistingRequestForDateMessage);
                 }
 
                 if (isStartDateTaken || isEndDateTaken || existingDateInPeriod)
@@ -478,12 +471,12 @@
 
                 if (isStartDateTaken)
                 {
-                    ModelState.AddModelError(nameof(leaveModel.StartDate), AlreadySubstituteForDateMessage);
+                    modelState.AddModelError(nameof(leaveModel.StartDate), AlreadySubstituteForDateMessage);
                 }
 
                 if (isEndDateTaken)
                 {
-                    ModelState.AddModelError(nameof(leaveModel.EndDate), AlreadySubstituteForDateMessage);
+                    modelState.AddModelError(nameof(leaveModel.EndDate), AlreadySubstituteForDateMessage);
                 }
 
                 if (isStartDateTaken || isEndDateTaken)
@@ -491,7 +484,6 @@
                     break;
                 }
             }
-
         }
 
         private static double GetBusinessDays(DateTime startDate, DateTime endDate, IEnumerable<string> holidays)
@@ -519,6 +511,7 @@
 
                 startDate = startDate.AddDays(1);
             }
+
             return calcBusinessDays;
         }
 
@@ -528,10 +521,11 @@
         private static bool IsBeforeToday(DateTime date)
             => date < DateTime.UtcNow.Date;
 
-        private static void AddTotalDaysModelError(ModelStateDictionary ModelState, LeaveFormModel leaveModel)
+        private static void AddTotalDaysModelError(ModelStateDictionary modelState, LeaveFormModel leaveModel)
         {
-            ModelState.AddModelError(nameof(leaveModel.TotalDays), InsufficientLeaveDaysLeftMessage);
+            modelState.AddModelError(nameof(leaveModel.TotalDays), InsufficientLeaveDaysLeftMessage);
         }
+
         private void SendMailStatusChange(string status, int leaveId)
         {
             string message = GetMessage(status, leaveId);

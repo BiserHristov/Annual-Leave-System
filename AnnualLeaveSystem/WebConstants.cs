@@ -1,25 +1,25 @@
 ﻿namespace AnnualLeaveSystem
 {
-    public static class WebConstants
+    public class WebConstants
     {
         public const string UserRoleName = "User";
         public const string TeamLeadRoleName = "TeamLead";
         public const string DateFormat = "dd.MM.yyyy";
 
-        public static class Email
+        public class Email
         {
             public const string RequestSubject = "Leave request action required";
             public const string StatusChanged = "Leave request status changed";
             public const string ContentText = "A leave request is waiting for your approval: ";
         }
 
-        public static class Cache
+        public class Cache
         {
             public const string AllHolidayDatesCacheKey = nameof(AllHolidayDatesCacheKey);
             public const string AllHolidaysCacheKey = nameof(AllHolidaysCacheKey);
         }
 
-        public static class Leaves
+        public class Leaves
         {
             public const string OfficialHolidayMessage = "This date is official holiday ({name})";
             public const string StartBeforeEndDateMessage = "Start date should be before end date.";

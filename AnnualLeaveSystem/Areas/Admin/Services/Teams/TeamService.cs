@@ -14,10 +14,8 @@
         }
 
         public IEnumerable<int> All()
-        {
-            return this.db.Teams
+            => this.db.Teams
                 .Select(t => t.Id)
                 .ToList();
-        }
     }
 }

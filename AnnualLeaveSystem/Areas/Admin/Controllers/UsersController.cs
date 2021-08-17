@@ -14,6 +14,7 @@
     using Microsoft.AspNetCore.Mvc;
 
     using static AdminConstants.Users;
+
     public class UsersController : BaseAdminController
     {
         private readonly IEmployeeService employeeService;

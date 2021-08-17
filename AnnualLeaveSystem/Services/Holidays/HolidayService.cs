@@ -1,16 +1,14 @@
 ﻿namespace AnnualLeaveSystem.Services.Holidays
 {
-    using AnnualLeaveSystem.Data;
-    using AutoMapper;
-    using AutoMapper.QueryableExtensions;
-    using Microsoft.Extensions.Caching.Memory;
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Threading.Tasks;
+    using AutoMapper;
+    using AutoMapper.QueryableExtensions;
+    using Microsoft.Extensions.Caching.Memory;
+    using AnnualLeaveSystem.Data;
 
     using static WebConstants;
-
     using static WebConstants.Cache;
 
     public class HolidayService : IHolidayService
@@ -19,12 +17,16 @@
         private readonly IConfigurationProvider mapper;
         private readonly IMemoryCache cache;
 
-        public HolidayService(LeaveSystemDbContext db, IMapper mapper, IMemoryCache cache)
+        public HolidayService(
+            LeaveSystemDbContext db, 
+            IMapper mapper, 
+            IMemoryCache cache)
         {
             this.db = db;
             this.mapper = mapper.ConfigurationProvider;
             this.cache = cache;
         }
+
         public IEnumerable<HolidayServiceModel> All()
         {
             var allHolidays = this.cache.Get<IEnumerable<HolidayServiceModel>>(AllHolidaysCacheKey);
@@ -40,11 +42,9 @@
                     .SetAbsoluteExpiration(TimeSpan.FromMinutes(5));
 
                 this.cache.Set(AllHolidaysCacheKey, allHolidays, cacheOptions);
-
             }
 
             return allHolidays;
-           
         }
 
         public IEnumerable<string> AllDates()
@@ -62,7 +62,6 @@
                     .SetAbsoluteExpiration(TimeSpan.FromMinutes(5));
 
                 this.cache.Set(AllHolidayDatesCacheKey, allHolidayDates, cacheOptions);
-
             }
 
             return allHolidayDates;
@@ -81,6 +80,5 @@
 
             return (true, holiday.Name);
         }
-
     }
 }

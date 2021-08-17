@@ -7,8 +7,6 @@
     ViewBag.IsInMyLeavesPage = false;
 }
 
-
-
 <form method="get">
     <div class="row mb-4">
 
@@ -22,8 +20,6 @@
                 }
             </select>
         </div>
-
-
         <div class="form-group col-md-2">
             <label asp-for="FirstName"></label>
             <input asp-for="FirstName" class="form-control" />
@@ -33,7 +29,6 @@
             <label asp-for="LastName"></label>
             <input asp-for="LastName" class="form-control" />
         </div>
-
         <div class="form-group col-md-2">
             <label asp-for="Sorting"></label>
             <select asp-for="Sorting" class="form-control">
@@ -43,14 +38,11 @@
                 <option value="3">Total days</option>
             </select>
         </div>
-
         <div class="col-md-2 mt-4">
             <div class="mt-2"></div>
             <input class="btn btn-success" type="submit" value="Search" />
         </div>
-
     </div>
-
 </form>
 
 <partial name="_LeavesPartial" model="@Model"/>
@@ -59,36 +51,8 @@
 
     var modelStatus = Model.Status != null ? (int?)Model.Status : null;
 }
-@*<div class="row">
-        <div class="col-md-4">
-            <a class="btn btn-info @(Model.HasPreviousPage ? string.Empty: "disabled")"
-               asp-controller="Leaves"
-               asp-action="All"
-               asp-route-CurrentPage="@Model.PreviousPageNumber"
-               asp-route-Status="@modelStatus"
-               asp-route-FirstName="@Model.FirstName"
-               asp-route-LastName="@Model.LastName"
-               asp-route-Sorting="@((int)Model.Sorting)">Previous</a>
-        </div>
-
-        <div class="col-md-4">
-            <a class="btn btn-info">@Model.CurrentPage</a>
-        </div>
-
-        <div class="col-md-4">
-            <a class="btn btn-info @(Model.HasNextPage ? string.Empty: "disabled")"
-               asp-controller="Leaves"
-               asp-action="All"
-               asp-route-CurrentPage="@Model.NextPageNumber"
-               asp-route-Status="@modelStatus"
-               asp-route-FirstName="@Model.FirstName"
-               asp-route-LastName="@Model.LastName"
-               asp-route-Sorting="@((int)Model.Sorting)">Next</a>
-        </div>
-    </div>*@
 
 <ul class="pagination justify-content-center">
-
     <li class="page-item @(Model.CurrentPage==1 ? "disabled":string.Empty)">
         <a class="page-link"
            asp-controller="Leaves"
@@ -99,7 +63,6 @@
            asp-route-LastName="@Model.LastName"
            asp-route-Sorting="@((int)Model.Sorting)"><<</a>
     </li>
-
     <li class="page-item @(Model.HasPreviousPage ? string.Empty: "disabled")">
         <a class="page-link"
            asp-controller="Leaves"
@@ -110,11 +73,9 @@
            asp-route-LastName="@Model.LastName"
            asp-route-Sorting="@((int)Model.Sorting)">Previuos</a>
     </li>
-
     <li class="page-item active" aria-current="page">
         <span class="page-link">@Model.CurrentPage</span>
     </li>
-
     <li class="page-item @(Model.HasNextPage ? string.Empty: "disabled")">
         <a class="page-link"
            asp-controller="Leaves"
@@ -125,7 +86,6 @@
            asp-route-LastName="@Model.LastName"
            asp-route-Sorting="@((int)Model.Sorting)">Next</a>
     </li>
-
     <li class="page-item @(Model.CurrentPage==Model.MaxPage ? "disabled": string.Empty)">
         <a class="page-link"
            asp-controller="Leaves"

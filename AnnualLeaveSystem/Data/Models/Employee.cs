@@ -44,7 +44,7 @@
         public Team Team { get; set; }
 
         [Required]
-        [Column(TypeName = "date")]
+        [Column(TypeName = "Date")]
         public DateTime HireDate { get; set; }
 
         [InverseProperty("RequestEmployee")]

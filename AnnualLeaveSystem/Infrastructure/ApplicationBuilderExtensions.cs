@@ -23,12 +23,6 @@ namespace AnnualLeaveSystem.Infrastructure
     public static class ApplicationBuilderExtensions
     {
 
-
-        //static ApplicationBuilderExtensions()
-        //{
-
-        //}
-
         public static IApplicationBuilder PrepareDatabase(
             this IApplicationBuilder app)
         {

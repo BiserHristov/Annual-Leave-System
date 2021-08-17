@@ -39,6 +39,20 @@
             bool isTeamLead,
             string employeeId);
 
+        public void Approve(int leaveId, bool isUser);
+
+        public void Cancel(int leaveId);
+
+        public void Reject(int leaveId);
+
+        public int GetLeaveTypeId(int leaveId);
+
+        public int GetLeaveTotalDays(int leaveId);
+
+        public bool Exist(int leaveId);
+
+        public bool IsOwn(int leaveId, string employeeId);
+
         public IEnumerable<LeaveServiceModel> ByEmployee(string employeeId);
 
         public ICollection<SubstituteEmployeeServiceModel> GetEmployeesInTeam(string currentEmployeeId);
@@ -49,26 +63,12 @@
 
         public EditLeaveServiceModel GetLeave(int leaveId);
 
-        public int GetLeaveTypeId(int leaveId);
-
-        public int GetLeaveTotalDays(int leaveId);
-
         public LeaveDetailsServiceModel GetLeaveById(int leaveId);
 
         public IEnumerable<LeaveServiceModel> LeavesForApproval(string employeeId, bool isTeamLead);
 
-        public void Approve(int leaveId, bool isUser);
-
-        public void Cancel(int leaveId);
-
-        public void Reject(int leaveId);
-
         public IEnumerable<DateValidationServiceModel> GetNotFinishedLeaves(string employeeId);
 
         public IEnumerable<DateValidationServiceModel> GetSubstituteApprovedLeaves(string substituteId);
-
-        public bool Exist(int leaveId);
-
-        public bool IsOwn(int leaveId, string employeeId);
     }
 }

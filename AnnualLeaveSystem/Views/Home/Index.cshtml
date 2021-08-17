@@ -4,8 +4,6 @@
     ViewBag.Title = "Wellcome!";
 }
 
-
-
 @if (!this.User.Identity.IsAuthenticated)
 {
     <div class="text-center heading-margin">
@@ -28,9 +26,6 @@
             <img src="~/index.jpeg" class="mx-auto d-block img-fluid">
         </div>
     </div>
-
-
-
 
 }
 else
@@ -62,4 +57,3 @@ else
         </table>
     </div>
 }
-

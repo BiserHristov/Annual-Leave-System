@@ -7,36 +7,4 @@
     ViewBag.IsInMyLeavesPage = true;
 }
 
-
-
 <partial name="_LeavesPartial" model="@Model" />
-
-
-@*<div class="row">
-        <div class="col-md-4">
-            <a class="btn btn-info @(Model.HasPreviousPage ? string.Empty: "disabled")"
-               asp-controller="Leaves"
-               asp-action="All"
-               asp-route-CurrentPage="@Model.PreviousPageNumber"
-               asp-route-Status="@modelStatus"
-               asp-route-FirstName="@Model.FirstName"
-               asp-route-LastName="@Model.LastName"
-               asp-route-Sorting="@((int)Model.Sorting)">Previous</a>
-        </div>
-
-        <div class="col-md-4">
-            <a class="btn btn-info">@Model.CurrentPage</a>
-        </div>
-
-        <div class="col-md-4">
-            <a class="btn btn-info @(Model.HasNextPage ? string.Empty: "disabled")"
-               asp-controller="Leaves"
-               asp-action="All"
-               asp-route-CurrentPage="@Model.NextPageNumber"
-               asp-route-Status="@modelStatus"
-               asp-route-FirstName="@Model.FirstName"
-               asp-route-LastName="@Model.LastName"
-               asp-route-Sorting="@((int)Model.Sorting)">Next</a>
-        </div>
-    </div>*@
-

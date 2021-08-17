@@ -19,38 +19,28 @@
         }
 
         public string FullName(string employeeId)
-        {
-            return this.db.Employees
+            => this.db.Employees
                 .Where(e => e.Id == employeeId)
                 .Select(e =>
                     e.FirstName + ' ' +
                     (string.IsNullOrEmpty(e.MiddleName) ? string.Empty : e.MiddleName + ' ') + e.LastName)
                 .FirstOrDefault();
-        }
 
         public Employee Get(string employeeId)
-        {
-            return this.db.Employees
+            => this.db.Employees
                 .Where(e => e.Id == employeeId)
                 .FirstOrDefault();
-        }
 
         public int TeamId(string employeeId)
-        {
-            return this.db.Employees
+            => this.db.Employees
                 .Where(e => e.Id == employeeId)
                 .Select(e => e.TeamId)
                 .FirstOrDefault();
-        }
 
         public string TeamLeadId(string employeeId)
-        {
-            var teamLeadId = this.db.Employees
+            => this.db.Employees
                      .Where(e => e.Id == employeeId)
                      .Select(e => e.TeamLeadId)
                      .FirstOrDefault();
-
-            return teamLeadId;
-        }
     }
 }

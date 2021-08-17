@@ -19,10 +19,8 @@
         }
 
         public IEnumerable<RegisterDepartamentServiceModel> All()
-        {
-            return this.db.Departments
+            => this.db.Departments
                 .ProjectTo<RegisterDepartamentServiceModel>(this.mapper)
                 .ToList();
-        }
     }
 }
