@@ -1,12 +1,11 @@
 ﻿namespace AnnualLeaveSystem.Test.Controllers
 {
-    using Xunit;
-    using MyTested.AspNetCore.Mvc;
     using AnnualLeaveSystem.Controllers;
-    using FluentAssertions;
-    using static Data.Leaves;
     using AnnualLeaveSystem.Models.Home;
-    using Microsoft.AspNetCore.Mvc;
+    using FluentAssertions;
+    using MyTested.AspNetCore.Mvc;
+    using Xunit;
+    using static Data.LeaveTestData;
 
     public class HomeControllerTest
     {

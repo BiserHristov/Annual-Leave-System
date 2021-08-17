@@ -1,16 +1,9 @@
 ﻿namespace AnnualLeaveSystem.Test.Pipeline
 {
     using AnnualLeaveSystem.Controllers;
-    using AnnualLeaveSystem.Data.Models;
     using AnnualLeaveSystem.Models.Home;
-    using MyTested.AspNetCore.Mvc;
     using FluentAssertions;
-    using System;
-    using System.Collections;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
+    using MyTested.AspNetCore.Mvc;
     using Xunit;
 
     using static Data.LeaveTestData;
@@ -28,7 +21,6 @@
             .View(view => view
                 .WithModelOfType<IndexViewModel>()
                 .Passing(m => m.ApprovedLeaveCount.Should().Be(10)));
-
 
         [Fact]
         public void ErrorShouldReturnView()

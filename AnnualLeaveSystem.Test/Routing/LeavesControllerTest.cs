@@ -86,7 +86,5 @@
                .WithMethod(HttpMethod.Post)
                .WithLocation("/Leaves/ForApproval?leaveId=1"))
             .To<LeavesController>(c => c.ForApproval(1));
-
-
     }
 }

@@ -39,7 +39,7 @@
                  .ToList();
 
                 var cacheOptions = new MemoryCacheEntryOptions()
-                    .SetAbsoluteExpiration(TimeSpan.FromMinutes(5));
+                    .SetAbsoluteExpiration(TimeSpan.FromMinutes(1));
 
                 this.cache.Set(AllHolidaysCacheKey, allHolidays, cacheOptions);
             }
@@ -59,7 +59,7 @@
                  .ToList();
 
                 var cacheOptions = new MemoryCacheEntryOptions()
-                    .SetAbsoluteExpiration(TimeSpan.FromMinutes(5));
+                    .SetAbsoluteExpiration(TimeSpan.FromMinutes(1));
 
                 this.cache.Set(AllHolidayDatesCacheKey, allHolidayDates, cacheOptions);
             }
