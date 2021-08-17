@@ -19,6 +19,17 @@
             };
         }
 
+        public static Employee GetAdmin()
+        {
+            return new Employee
+            {
+                Id = "1b99c696-64f5-443a-ae1e-6b4a1bcadmin",
+                UserName = "adminuser",
+                Email = "adminuser@abv.bg",
+                PasswordHash = "sdasd324olkk34ddd",
+            };
+        }
+
         public static void ImportHolidays()
         {
             var data = DatabaseMock.Instance;
