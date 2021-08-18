@@ -425,20 +425,25 @@
             {
                 bool isStartDateTaken;
                 bool isEndDateTaken;
-
+                bool existingDateInPeriod;
                 if (isInEdit)
                 {
                     isStartDateTaken = IsInRange(leaveModel.StartDate, currentLeave.StartDate, currentLeave.EndDate) && currentLeave.Id != leaveId;
                     isEndDateTaken = IsInRange(leaveModel.EndDate, currentLeave.StartDate, currentLeave.EndDate) && currentLeave.Id != leaveId;
+
+                    existingDateInPeriod=(IsInRange(currentLeave.StartDate, leaveModel.StartDate, leaveModel.EndDate) ||
+                                       IsInRange(currentLeave.EndDate, leaveModel.StartDate, leaveModel.EndDate)) && currentLeave.Id != leaveId;
                 }
                 else
                 {
                     isStartDateTaken = IsInRange(leaveModel.StartDate, currentLeave.StartDate, currentLeave.EndDate);
                     isEndDateTaken = IsInRange(leaveModel.EndDate, currentLeave.StartDate, currentLeave.EndDate);
+
+                    existingDateInPeriod = IsInRange(currentLeave.StartDate, leaveModel.StartDate, leaveModel.EndDate) ||
+                                       IsInRange(currentLeave.EndDate, leaveModel.StartDate, leaveModel.EndDate);
                 }
 
-                var existingDateInPeriod = IsInRange(currentLeave.StartDate, leaveModel.StartDate, leaveModel.EndDate) ||
-                                       IsInRange(currentLeave.EndDate, leaveModel.StartDate, leaveModel.EndDate);
+                 
 
                 if (existingDateInPeriod)
                 {
