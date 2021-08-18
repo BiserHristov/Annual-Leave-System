@@ -510,6 +510,7 @@
                 }
 
                 startDate = startDate.AddDays(1);
+
             }
 
             return calcBusinessDays;

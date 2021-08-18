@@ -1,4 +1,4 @@
-﻿
+﻿@using System.Globalization;
 @model LeaveFormModel;
 
 <div class="container">
@@ -7,7 +7,6 @@
             <h2 class="heading-margin text-center"> @ViewBag.Title:</h2>
             <form method="post">
                 <div asp-validation-summary="All" class="text-danger"></div>
-
                 <div class="form-group date datepicker" id="startDate">
                     <label asp-for="StartDate"></label>
                     <input asp-for="StartDate" type="text" id="StartDateInput" class="form-control" value="@(Model.StartDate.Year<=1000?DateTime.Now.ToLocalTime().ToString("dd/MM/yyyy") : Model.StartDate.ToString("dd/MM/yyyy"))">
@@ -16,7 +15,6 @@
                         <span class="glyphicon glyphicon-th"></span>
                     </div>
                 </div>
-
                 <div class="form-group date datepicker" id="endDate">
                     <label asp-for="EndDate"></label>
                     <input asp-for="EndDate" type="text" class="form-control" id="EndDateInput" value="@(Model.EndDate.Year<=1000?DateTime.Now.ToLocalTime().ToString("dd/MM/yyyy") : Model.EndDate.ToString("dd/MM/yyyy"))">
@@ -37,7 +35,7 @@
                     <select asp-for="LeaveTypeId" class="form-control">
                         @foreach (var type in Model.LeaveTypes)
                         {
-                            <option value="@type.Id">@type.Name</option>
+                        <option value="@type.Id">@type.Name</option>
                         }
                     </select>
 
@@ -49,7 +47,7 @@
                     <select asp-for="SubstituteEmployeeId" class="form-control">
                         @foreach (var type in Model.EmployeesInTeam)
                         {
-                            <option value="@type.Id">@type.Name</option>
+                        <option value="@type.Id">@type.Name</option>
                         }
                     </select>
                     <span asp-validation-for="SubstituteEmployeeId" class="text-danger"></span>

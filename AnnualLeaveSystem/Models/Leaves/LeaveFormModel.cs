@@ -23,8 +23,7 @@
         [Required]
         [Display(Name = "Leave type")]
         public int LeaveTypeId { get; init; }
-
-        [Required]
+                
         public string RequestEmployeeId { get; init; }
 
         [Required]
