@@ -32,6 +32,7 @@
             public const string ExistingRequestInsidePeriodMessage = "You have already Leave Request inside the given period.";
             public const string ExistingRequestForDateMessage = "You already have Leave Request for this date.";
             public const string AlreadySubstituteForDateMessage = "You are already substitute for this date.";
+            public const string ExistingSubstituteRequestInsidePeriodMessage = "You are already substitute inside the given period.";
         }
     }
 }

@@ -285,7 +285,7 @@
 
             if (this.User.IsInRole(UserRoleName))
             {
-                return RedirectToAction("History", "Statistics");
+                return RedirectToAction(nameof(ForApproval));
             }
 
             return RedirectToAction(nameof(All));
@@ -431,7 +431,7 @@
                     isStartDateTaken = IsInRange(leaveModel.StartDate, currentLeave.StartDate, currentLeave.EndDate) && currentLeave.Id != leaveId;
                     isEndDateTaken = IsInRange(leaveModel.EndDate, currentLeave.StartDate, currentLeave.EndDate) && currentLeave.Id != leaveId;
 
-                    existingDateInPeriod=(IsInRange(currentLeave.StartDate, leaveModel.StartDate, leaveModel.EndDate) ||
+                    existingDateInPeriod = (IsInRange(currentLeave.StartDate, leaveModel.StartDate, leaveModel.EndDate) ||
                                        IsInRange(currentLeave.EndDate, leaveModel.StartDate, leaveModel.EndDate)) && currentLeave.Id != leaveId;
                 }
                 else
@@ -442,8 +442,6 @@
                     existingDateInPeriod = IsInRange(currentLeave.StartDate, leaveModel.StartDate, leaveModel.EndDate) ||
                                        IsInRange(currentLeave.EndDate, leaveModel.StartDate, leaveModel.EndDate);
                 }
-
-                 
 
                 if (existingDateInPeriod)
                 {
@@ -468,12 +466,14 @@
             }
 
             var substituteLeaves = leaveService.GetSubstituteApprovedLeaves(employeeId);
-
+           
             foreach (var currentLeave in substituteLeaves)
             {
+                
                 var isStartDateTaken = IsInRange(leaveModel.StartDate, currentLeave.StartDate, currentLeave.EndDate);
                 var isEndDateTaken = IsInRange(leaveModel.EndDate, currentLeave.StartDate, currentLeave.EndDate);
-
+                var existingDateInPeriod = IsInRange(currentLeave.StartDate, leaveModel.StartDate, leaveModel.EndDate) ||
+                                      IsInRange(currentLeave.EndDate, leaveModel.StartDate, leaveModel.EndDate);
                 if (isStartDateTaken)
                 {
                     modelState.AddModelError(nameof(leaveModel.StartDate), AlreadySubstituteForDateMessage);
@@ -484,7 +484,14 @@
                     modelState.AddModelError(nameof(leaveModel.EndDate), AlreadySubstituteForDateMessage);
                 }
 
-                if (isStartDateTaken || isEndDateTaken)
+
+                if (existingDateInPeriod)
+                {
+                    modelState.AddModelError(nameof(leaveModel.StartDate), ExistingSubstituteRequestInsidePeriodMessage);
+                    modelState.AddModelError(nameof(leaveModel.EndDate), ExistingSubstituteRequestInsidePeriodMessage);
+                }
+
+                if (isStartDateTaken || isEndDateTaken || existingDateInPeriod)
                 {
                     break;
                 }

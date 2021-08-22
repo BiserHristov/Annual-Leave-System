@@ -6,7 +6,6 @@
 
     public static class LeaveTestData
     {
-        //public static string substituteEmployeeId = Guid.NewGuid().ToString();
         public static IEnumerable<Leave> TenApprovedLeaves()
         {
             return Enumerable.Range(0, 10).Select(x => new Leave()

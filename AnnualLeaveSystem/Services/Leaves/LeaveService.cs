@@ -151,12 +151,32 @@
                 .FirstOrDefault();
 
         public IEnumerable<LeaveServiceModel> LeavesForApproval(string employeeId, bool isTeamLead)
-            => this.db.Leaves
+        {
+            var query = this.db.Leaves
                 .Where(l => l.LeaveStatus == Status.Pending)
-                .Where(l => l.ApproveEmployeeId == employeeId &&
-                            l.ApprovedBySubstitute == isTeamLead)
+                .AsQueryable();
+
+            if (isTeamLead)
+            {
+                var teamLeadTeamId = this.db.Employees
+                    .Where(e => e.Id == employeeId)
+                    .Select(x => x.TeamId)
+                    .FirstOrDefault();
+                query = query
+                    .Where(l => l.RequestEmployee.TeamId == teamLeadTeamId &&
+                                l.ApprovedBySubstitute);
+            }
+            else
+            {
+                query = query
+                    .Where(l => l.SubstituteEmployeeId == employeeId &&
+                                !l.ApprovedBySubstitute);
+            }
+
+            return query
                 .ProjectTo<LeaveServiceModel>(this.mapper)
                 .ToList();
+        }
 
         public void Approve(int leaveId, bool isUser)
         {

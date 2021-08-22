@@ -36,9 +36,9 @@
             {
                 StartDate = DateTime.Parse(startDate),
                 EndDate = DateTime.Parse(endDate),
-                TotalDays=1,
+                TotalDays = 1,
                 LeaveTypeId = leaveType,
-                RequestEmployeeId= EmployeeTestData.UserId,
+                RequestEmployeeId = EmployeeTestData.UserId,
                 SubstituteEmployeeId = EmployeeTestData.SubstituteId,
             }))
             .ShouldHave()
@@ -48,7 +48,7 @@
             .Data(data => data
                 .WithSet<Leave>(leaves => leaves
                 .Any(l =>
-                    l.StartDate.ToLocalTime().Date.ToString("dd.MM.yyyy") == startDate&&
+                    l.StartDate.ToLocalTime().Date.ToString("dd.MM.yyyy") == startDate &&
                     l.EndDate.ToLocalTime().Date.ToString("dd.MM.yyyy") == endDate &&
                     l.LeaveTypeId == leaveType &&
                     l.SubstituteEmployeeId == EmployeeTestData.SubstituteId
