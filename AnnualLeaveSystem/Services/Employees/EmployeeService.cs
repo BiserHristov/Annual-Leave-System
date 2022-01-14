@@ -31,6 +31,14 @@
                 .Where(e => e.Id == employeeId)
                 .FirstOrDefault();
 
+        public bool IsSameTeam(string firstEmployeeId, string secondEmployeeId)
+        {
+            var firstEmployeeTeamId = this.TeamId(firstEmployeeId);
+            var secondEmployeeTeamId = this.TeamId(secondEmployeeId);
+
+            return firstEmployeeTeamId == secondEmployeeTeamId;
+        }
+
         public int TeamId(string employeeId)
             => this.db.Employees
                 .Where(e => e.Id == employeeId)

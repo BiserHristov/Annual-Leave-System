@@ -144,7 +144,7 @@
                 .ProjectTo<LeaveTypeServiceModel>(this.mapper)
                 .ToList();
 
-        public EditLeaveServiceModel GetLeave(int leaveId)
+        public EditLeaveServiceModel GetLeave(string leaveId)
             => this.db.Leaves
                 .Where(l => l.Id == leaveId)
                 .ProjectTo<EditLeaveServiceModel>(this.mapper)
@@ -178,7 +178,7 @@
                 .ToList();
         }
 
-        public void Approve(int leaveId, bool isUser)
+        public void Approve(string leaveId, bool isUser)
         {
             var leave = this.db.Leaves
                 .Where(l => l.Id == leaveId)
@@ -204,10 +204,10 @@
             this.db.SaveChanges();
         }
 
-        public void Cancel(int leaveId)
+        public void Cancel(string leaveId)
             => this.ChangeStatus(leaveId, Status.Canceled);
 
-        public void Reject(int leaveId)
+        public void Reject(string leaveId)
             => this.ChangeStatus(leaveId, Status.Rejected);
 
         public IEnumerable<DateValidationServiceModel> GetNotFinishedLeaves(string employeeId)
@@ -229,7 +229,7 @@
         public IEnumerable<OfficialHoliday> GetHolidays()
             => this.db.OfficialHolidays.ToList();
 
-        public int Create(
+        public string Create(
             DateTime startDate,
             DateTime endDate,
             int totalDays,
@@ -242,6 +242,7 @@
         {
             var leave = new Leave
             {
+                Id = Guid.NewGuid().ToString(),
                 StartDate = startDate.Date,
                 EndDate = endDate.Date,
                 TotalDays = totalDays,
@@ -269,7 +270,7 @@
         }
 
         public bool Edit(
-            int leaveId,
+            string leaveId,
            DateTime startDate,
            DateTime endDate,
            int totalDays,
@@ -311,26 +312,26 @@
             return true;
         }
 
-        public bool Exist(int leaveId)
+        public bool Exist(string leaveId)
             => this.db.Leaves.Any(l => l.Id == leaveId);
 
-        public int GetLeaveTypeId(int leaveId)
+        public int GetLeaveTypeId(string leaveId)
             => this.db.Leaves
                 .Where(l => l.Id == leaveId)
                 .Select(l => l.LeaveTypeId)
                 .FirstOrDefault();
 
-        public int GetLeaveTotalDays(int leaveId)
+        public int GetLeaveTotalDays(string leaveId)
             => this.db.Leaves
              .Where(l => l.Id == leaveId)
              .Select(l => l.TotalDays)
              .FirstOrDefault();
 
-        public bool IsOwn(int leaveId, string employeeId)
+        public bool IsOwn(string leaveId, string employeeId)
             => this.db.Leaves
                 .Any(l => l.Id == leaveId && l.RequestEmployeeId == employeeId);
 
-        public LeaveDetailsServiceModel GetLeaveById(int leaveId)
+        public LeaveDetailsServiceModel GetLeaveById(string leaveId)
             => this.db.Leaves
                  .Include(l => l.LeaveType)
                  .Include(l => l.RequestEmployee)
@@ -340,7 +341,7 @@
                  .ProjectTo<LeaveDetailsServiceModel>(this.mapper)
                  .FirstOrDefault();
 
-        private void ChangeStatus(int leaveId, Status status)
+        private void ChangeStatus(string leaveId, Status status)
         {
             var leave = this.db.Leaves
                 .Where(l => l.Id == leaveId)

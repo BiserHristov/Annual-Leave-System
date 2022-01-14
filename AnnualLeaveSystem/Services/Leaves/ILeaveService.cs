@@ -8,7 +8,7 @@
     public interface ILeaveService
     {
         public bool Edit(
-           int leaveId,
+           string leaveId,
            DateTime startDate,
            DateTime endDate,
            int totalDays,
@@ -18,7 +18,7 @@
            string approveEmployeeId,
            string comments);
 
-        public int Create(
+        public string Create(
             DateTime startDate,
             DateTime endDate,
             int totalDays,
@@ -39,19 +39,19 @@
             bool isTeamLead,
             string employeeId);
 
-        public void Approve(int leaveId, bool isUser);
+        public void Approve(string leaveId, bool isUser);
 
-        public void Cancel(int leaveId);
+        public void Cancel(string leaveId);
 
-        public void Reject(int leaveId);
+        public void Reject(string leaveId);
 
-        public int GetLeaveTypeId(int leaveId);
+        public int GetLeaveTypeId(string leaveId);
 
-        public int GetLeaveTotalDays(int leaveId);
+        public int GetLeaveTotalDays(string leaveId);
 
-        public bool Exist(int leaveId);
+        public bool Exist(string leaveId);
 
-        public bool IsOwn(int leaveId, string employeeId);
+        public bool IsOwn(string leaveId, string employeeId);
 
         public IEnumerable<LeaveServiceModel> ByEmployee(string employeeId);
 
@@ -61,9 +61,9 @@
 
         public IEnumerable<OfficialHoliday> GetHolidays();
 
-        public EditLeaveServiceModel GetLeave(int leaveId);
+        public EditLeaveServiceModel GetLeave(string leaveId);
 
-        public LeaveDetailsServiceModel GetLeaveById(int leaveId);
+        public LeaveDetailsServiceModel GetLeaveById(string leaveId);
 
         public IEnumerable<LeaveServiceModel> LeavesForApproval(string employeeId, bool isTeamLead);
 

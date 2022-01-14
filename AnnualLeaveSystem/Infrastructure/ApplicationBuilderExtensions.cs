@@ -13,12 +13,8 @@ namespace AnnualLeaveSystem.Infrastructure
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.DependencyInjection;
 
-
     using static AdminConstants;
-
-
     using static WebConstants;
-
 
     public static class ApplicationBuilderExtensions
     {

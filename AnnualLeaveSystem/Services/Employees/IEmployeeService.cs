@@ -12,6 +12,8 @@
 
         public bool Exist(string employeeId);
 
+        public bool IsSameTeam(string firstEmployeeId, string secondEmployeeId);
+
         public Employee Get(string employeeId);
     }
 }

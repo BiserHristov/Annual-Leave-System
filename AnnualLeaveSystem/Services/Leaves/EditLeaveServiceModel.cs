@@ -5,8 +5,6 @@
     public class EditLeaveServiceModel : BaseServiceModel
     {
 
-        public int Id { get; init; }
-
         public int LeaveTypeId { get; init; }
 
         public string ApproveEmployeeId { get; set; }

@@ -67,18 +67,18 @@
             return allHolidayDates;
         }
 
-        public (bool, string) IsHoliday(DateTime date)
-        {
-            var holiday = this.db.OfficialHolidays
-                .Where(h => h.Date == date.Date)
-                .FirstOrDefault();
+        //public (bool, string) IsHoliday(DateTime date)
+        //{
+        //    var holiday = this.db.OfficialHolidays
+        //        .Where(h => h.Date == date.Date)
+        //        .FirstOrDefault();
 
-            if (holiday == null)
-            {
-                return (false, string.Empty);
-            }
+        //    if (holiday == null)
+        //    {
+        //        return (false, string.Empty);
+        //    }
 
-            return (true, holiday.Name);
-        }
+        //    return (true, holiday.Name);
+        //}
     }
 }

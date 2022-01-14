@@ -6,7 +6,8 @@
 
     public class Leave
     {
-        public int Id { get; init; }
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public string Id { get; init; }
 
         [Required]
         [Column(TypeName = "Date")]

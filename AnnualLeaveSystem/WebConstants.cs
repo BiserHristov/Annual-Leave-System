@@ -22,8 +22,8 @@
         public class Leaves
         {
             public const string OfficialHolidayMessage = "This date is official holiday ({name})";
-            public const string StartBeforeEndDateMessage = "Start date should be before end date.";
-            public const string EndAfterStartDateMessage = "End date should be after start date.";
+            public const string StartBeforeEndDateMessage = @"""Start date"" should be before ""End date"".";
+            public const string EndAfterStartDateMessage = @"""End date"" should be after ""Start date"".";
             public const string AfterOrEqualTodayMessage = " should be after or equal to todays' date.";
             public const string IncorrectTotalDaysMessage = "Count of days is not correct or it is equal to zero.";
             public const string IncorrectLeaveTypeMessage = "Leave type does not exist.";

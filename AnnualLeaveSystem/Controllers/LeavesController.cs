@@ -88,7 +88,7 @@
                 leaveService,
                 teamService,
                 this.User.GetId(),
-                0,
+                null,
                 false,
                 this.User.IsAdmin());
 
@@ -155,9 +155,9 @@
         }
 
         [Authorize]
-        public IActionResult Details(int leaveId)
+        public IActionResult Details(string leaveId)
         {
-            if (leaveId == 0)
+            if (leaveId == null)
             {
                 return this.NotFound();
             }
@@ -173,7 +173,7 @@
         }
 
         [Authorize]
-        public IActionResult Edit(int leaveId)
+        public IActionResult Edit(string leaveId)
         {
             if (!this.leaveService.Exist(leaveId))
             {
@@ -198,7 +198,7 @@
 
         [HttpPost]
         [Authorize]
-        public IActionResult Edit(int leaveId, LeaveFormModel leaveModel)
+        public IActionResult Edit(string leaveId, LeaveFormModel leaveModel)
         {
             if (!this.User.IsAdmin() && !this.leaveService.IsOwn(leaveId, this.User.GetId()))
             {
@@ -247,7 +247,7 @@
 
         [HttpPost]
         [Authorize]
-        public IActionResult Cancel(int leaveId)
+        public IActionResult Cancel(string leaveId)
         {
             var leaveExist = leaveService.Exist(leaveId);
 
@@ -270,7 +270,7 @@
 
         [HttpPost]
         [Authorize]
-        public IActionResult Reject(int leaveId)
+        public IActionResult Reject(string leaveId)
         {
             var leaveExist = leaveService.Exist(leaveId);
 
@@ -301,7 +301,7 @@
 
         [HttpPost]
         [Authorize]
-        public IActionResult ForApproval(int leaveId)
+        public IActionResult ForApproval(string leaveId)
         {
             if (!this.leaveService.Exist(leaveId))
             {
@@ -324,8 +324,8 @@
             IEmployeeLeaveTypesService employeeLeaveTypesService,
             ILeaveService leaveService,
             ITeamService teamService,
-            string employeeId,
-            int leaveId,
+            string requestEmployeeId,
+            string leaveId,
             bool isInEdit,
             bool isAdmin)
         {
@@ -345,19 +345,19 @@
                 modelState.AddModelError(nameof(leaveModel.EndDate), "End date" + AfterOrEqualTodayMessage);
             }
 
-            var (isHoliday, name) = holidayService.IsHoliday(leaveModel.StartDate);
+            //var (isHoliday, name) = holidayService.IsHoliday(leaveModel.StartDate);
 
-            if (isHoliday)
-            {
-                modelState.AddModelError(nameof(leaveModel.StartDate), string.Format(OfficialHolidayMessage, name));
-            }
+            //if (isHoliday)
+            //{
+            //    modelState.AddModelError(nameof(leaveModel.StartDate), string.Format(OfficialHolidayMessage, name));
+            //}
 
-            (isHoliday, name) = holidayService.IsHoliday(leaveModel.EndDate);
+            //(isHoliday, name) = holidayService.IsHoliday(leaveModel.EndDate);
 
-            if (isHoliday)
-            {
-                modelState.AddModelError(nameof(leaveModel.EndDate), string.Format(OfficialHolidayMessage, name));
-            }
+            //if (isHoliday)
+            //{
+            //    modelState.AddModelError(nameof(leaveModel.EndDate), string.Format(OfficialHolidayMessage, name));
+            //}
 
             var allHolidays = holidayService.AllDates();
 
@@ -375,15 +375,16 @@
                 modelState.AddModelError(nameof(leaveModel.LeaveTypeId), IncorrectLeaveTypeMessage);
             }
 
-            var teamId = employeeService.TeamId(employeeId);
+            //var teamId = employeeService.TeamId(requestEmployeeId);
 
-            var employeeExist = teamService.EmployeeExistInTeam(teamId, employeeId);
+            //var employeeExist = teamService.EmployeeExistInTeam(teamId, requestEmployeeId);
+            var isSameTeam = employeeService.IsSameTeam(requestEmployeeId, leaveModel.SubstituteEmployeeId);
 
-            var employeeLeave = employeeLeaveTypesService.GetLeaveType(employeeId, leaveModel.LeaveTypeId);
+            var employeeLeave = employeeLeaveTypesService.GetLeaveType(requestEmployeeId, leaveModel.LeaveTypeId);
 
             if (isInEdit)
             {
-                if (!isAdmin && !employeeExist)
+                if (!isAdmin && !isSameTeam)
                 {
                     modelState.AddModelError(nameof(leaveModel.SubstituteEmployeeId), NotExistingEmployeeInTeamMessage);
                 }
@@ -408,7 +409,7 @@
             }
             else
             {
-                if (!employeeExist)
+                if (!isSameTeam)
                 {
                     modelState.AddModelError(nameof(leaveModel.SubstituteEmployeeId), NotExistingEmployeeInTeamMessage);
                 }
@@ -419,7 +420,7 @@
                 }
             }
 
-            var leaves = leaveService.GetNotFinishedLeaves(employeeId);
+            var leaves = leaveService.GetNotFinishedLeaves(requestEmployeeId);
 
             foreach (var currentLeave in leaves)
             {
@@ -465,7 +466,7 @@
                 }
             }
 
-            var substituteLeaves = leaveService.GetSubstituteApprovedLeaves(employeeId);
+            var substituteLeaves = leaveService.GetSubstituteApprovedLeaves(requestEmployeeId);
            
             foreach (var currentLeave in substituteLeaves)
             {
@@ -539,14 +540,14 @@
             modelState.AddModelError(nameof(leaveModel.TotalDays), InsufficientLeaveDaysLeftMessage);
         }
 
-        private void SendMailStatusChange(string status, int leaveId)
+        private void SendMailStatusChange(string status, string leaveId)
         {
             string message = GetMessage(status, leaveId);
 
             this.emailSenderService.SendEmail(StatusChanged, message);
         }
 
-        private string GetMessage(string status, int leaveId)
+        private string GetMessage(string status, string leaveId)
         {
             var leaveModel = leaveService.GetLeaveById(leaveId);
 

@@ -19,7 +19,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-
+using System;
 using AdminServices = AnnualLeaveSystem.Areas.Admin.Services;
 
 public class Startup
@@ -44,6 +44,7 @@ public class Startup
                 options.Password.RequireLowercase = false;
                 options.Password.RequireNonAlphanumeric = false;
                 options.Password.RequireUppercase = false;
+                options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(30);
             })
             .AddRoles<IdentityRole>()
             .AddEntityFrameworkStores<LeaveSystemDbContext>();

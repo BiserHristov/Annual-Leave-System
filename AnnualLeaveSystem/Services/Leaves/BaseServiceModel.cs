@@ -4,6 +4,7 @@
 
     public abstract class BaseServiceModel
     {
+        public string Id { get; init; }
         public DateTime StartDate { get; init; }
 
         public DateTime EndDate { get; init; }

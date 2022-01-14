@@ -34,12 +34,12 @@
             this.CreateMap<EmployeeLeaveType, EmployeeLeaveTypesServiceModel>();
 
             this.CreateMap<Leave, LeaveServiceModel>()
-                     .ForMember(x => x.FirstName, cfg => cfg.MapFrom(y => y.RequestEmployee.FirstName))
-                     .ForMember(x => x.LastName, cfg => cfg.MapFrom(y => y.RequestEmployee.LastName))
-                      .ForMember(x => x.StartDate, cfg => cfg.MapFrom(y => y.StartDate.ToLocalTime().Date))
-                      .ForMember(x => x.RequestDate, cfg => cfg.MapFrom(y => y.RequestDate.ToLocalTime().Date))
-                      .ForMember(x => x.EndDate, cfg => cfg.MapFrom(y => y.EndDate.ToLocalTime().Date))
-                       .ForMember(x => x.Status, cfg => cfg.MapFrom(y => y.LeaveStatus.ToString()));
+                .ForMember(x => x.FirstName, cfg => cfg.MapFrom(y => y.RequestEmployee.FirstName))
+                .ForMember(x => x.LastName, cfg => cfg.MapFrom(y => y.RequestEmployee.LastName))
+                .ForMember(x => x.StartDate, cfg => cfg.MapFrom(y => y.StartDate.ToLocalTime().Date))
+                .ForMember(x => x.RequestDate, cfg => cfg.MapFrom(y => y.RequestDate.ToLocalTime().Date))
+                .ForMember(x => x.EndDate, cfg => cfg.MapFrom(y => y.EndDate.ToLocalTime().Date))
+                .ForMember(x => x.Status, cfg => cfg.MapFrom(y => y.LeaveStatus.ToString()));
 
             this.CreateMap<LeaveType, LeaveTypeServiceModel>();
 

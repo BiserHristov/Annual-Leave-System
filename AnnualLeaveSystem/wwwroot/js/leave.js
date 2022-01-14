@@ -9,7 +9,7 @@
         startDate = ParseDate($('#StartDateInput').val());
         if (startDate > ParseDate($('#EndDateInput').val())) {
             $('#EndDateInput').val($('#StartDateInput').val())
-            ValidateIsHoliday($('#EndDateInput').val(), allHolidays,"endDateSpanMessage")
+            ValidateIsHoliday($('#EndDateInput').val(), allHolidays, "endDateSpanMessage")
         }
         endDate = ParseDate($('#EndDateInput').val());
 

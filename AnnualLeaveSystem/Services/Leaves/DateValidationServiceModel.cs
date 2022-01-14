@@ -4,7 +4,7 @@
 
     public class DateValidationServiceModel
     {
-        public int Id{get;init;}
+        public string Id{get;init;}
 
         public DateTime StartDate { get; init; }
 
