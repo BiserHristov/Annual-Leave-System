@@ -166,6 +166,7 @@ namespace AnnualLeaveSystem.Migrations
             modelBuilder.Entity("AnnualLeaveSystem.Data.Models.Leave", b =>
                 {
                     b.Property<string>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("ApproveEmployeeId")

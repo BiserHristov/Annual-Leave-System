@@ -71,6 +71,16 @@
               .HasForeignKey(l => l.LeaveTypeId)
               .OnDelete(DeleteBehavior.Restrict);
 
+            //builder
+            //    .Entity<Leave>(entity =>
+            //    {
+            //        entity.Property(e => e.Id).ValueGeneratedOnAdd();
+            //    });
+
+            builder.Entity<Leave>(entity => {
+                entity.Property(e => e.Id).ValueGeneratedOnAdd();
+            });
+
             builder
               .Entity<Team>()
               .HasOne(t => t.Project)
