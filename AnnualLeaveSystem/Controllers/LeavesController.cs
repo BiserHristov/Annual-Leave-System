@@ -329,11 +329,6 @@
             bool isInEdit,
             bool isAdmin)
         {
-            if (leaveModel.StartDate > leaveModel.EndDate)
-            {
-                modelState.AddModelError(nameof(leaveModel.StartDate), StartBeforeEndDateMessage);
-                modelState.AddModelError(nameof(leaveModel.EndDate), EndAfterStartDateMessage);
-            }
 
             if (IsBeforeToday(leaveModel.StartDate))
             {
@@ -343,6 +338,12 @@
             if (IsBeforeToday(leaveModel.EndDate))
             {
                 modelState.AddModelError(nameof(leaveModel.EndDate), "End date" + AfterOrEqualTodayMessage);
+            }
+
+            if (leaveModel.StartDate > leaveModel.EndDate)
+            {
+                modelState.AddModelError(nameof(leaveModel.StartDate), StartBeforeEndDateMessage);
+                modelState.AddModelError(nameof(leaveModel.EndDate), EndAfterStartDateMessage);
             }
 
             //var (isHoliday, name) = holidayService.IsHoliday(leaveModel.StartDate);
@@ -394,18 +395,20 @@
 
                 if (leaveModel.LeaveTypeId == previousLeaveTypeId)
                 {
-                    if (employeeLeave.RemainingDays == 0 || employeeLeave.RemainingDays - (employeeLeave.PendingApprovalDays - previousLeaveTotalDays) < leaveModel.TotalDays)
-                    {
-                        AddTotalDaysModelError(modelState, leaveModel);
-                    }
+                    employeeLeave.PendingApprovalDays -= previousLeaveTotalDays;
+
+                    //if (employeeLeave.RemainingDays == 0 || employeeLeave.RemainingDays - (employeeLeave.PendingApprovalDays - previousLeaveTotalDays) < leaveModel.TotalDays)
+                    //{
+                    //    AddTotalDaysModelError(modelState, leaveModel);
+                    //}
                 }
-                else
+                //else
+                //{
+                if (employeeLeave.RemainingDays == 0 || employeeLeave.RemainingDays - employeeLeave.PendingApprovalDays < leaveModel.TotalDays)
                 {
-                    if (employeeLeave.RemainingDays == 0 || employeeLeave.RemainingDays - employeeLeave.PendingApprovalDays < leaveModel.TotalDays)
-                    {
-                        AddTotalDaysModelError(modelState, leaveModel);
-                    }
+                    AddTotalDaysModelError(modelState, leaveModel);
                 }
+                // }
             }
             else
             {
@@ -467,10 +470,10 @@
             }
 
             var substituteLeaves = leaveService.GetSubstituteApprovedLeaves(requestEmployeeId);
-           
+
             foreach (var currentLeave in substituteLeaves)
             {
-                
+
                 var isStartDateTaken = IsInRange(leaveModel.StartDate, currentLeave.StartDate, currentLeave.EndDate);
                 var isEndDateTaken = IsInRange(leaveModel.EndDate, currentLeave.StartDate, currentLeave.EndDate);
                 var existingDateInPeriod = IsInRange(currentLeave.StartDate, leaveModel.StartDate, leaveModel.EndDate) ||

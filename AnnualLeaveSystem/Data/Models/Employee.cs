@@ -47,13 +47,13 @@
         [Column(TypeName = "Date")]
         public DateTime HireDate { get; set; }
 
-        [InverseProperty("RequestEmployee")]
+        [InverseProperty(nameof(Leave.RequestEmployee))]
         public virtual ICollection<Leave> RequestedLeaves { get; init; } = new HashSet<Leave>();
 
-        [InverseProperty("SubstituteEmployee")]
+        [InverseProperty(nameof(Leave.SubstituteEmployee))]
         public virtual ICollection<Leave> SubstituteLeaves { get; init; } = new HashSet<Leave>();
 
-        [InverseProperty("ApproveEmployee")]
+        [InverseProperty(nameof(Leave.ApproveEmployee))]
         public virtual ICollection<Leave> ApprovedLeaves { get; init; } = new HashSet<Leave>();
 
         public virtual ICollection<EmployeeLeaveType> EmployeesTypes { get; set; } = new HashSet<EmployeeLeaveType>();

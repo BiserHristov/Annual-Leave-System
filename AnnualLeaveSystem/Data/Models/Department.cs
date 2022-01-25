@@ -12,6 +12,6 @@
         [MaxLength(NameMaxLength)]
         public string Name { get; set; }
 
-        public ICollection<Employee> Employees { get; init; } = new HashSet<Employee>();
+        public virtual ICollection<Employee> Employees { get; init; } = new HashSet<Employee>();
     }
 }

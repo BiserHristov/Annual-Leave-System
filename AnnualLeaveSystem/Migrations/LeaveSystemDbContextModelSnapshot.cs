@@ -474,7 +474,7 @@ namespace AnnualLeaveSystem.Migrations
                         .IsRequired();
 
                     b.HasOne("AnnualLeaveSystem.Data.Models.LeaveType", "LeaveType")
-                        .WithMany()
+                        .WithMany("TypesEmployees")
                         .HasForeignKey("LeaveTypeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -598,6 +598,8 @@ namespace AnnualLeaveSystem.Migrations
             modelBuilder.Entity("AnnualLeaveSystem.Data.Models.LeaveType", b =>
                 {
                     b.Navigation("Leaves");
+
+                    b.Navigation("TypesEmployees");
                 });
 
             modelBuilder.Entity("AnnualLeaveSystem.Data.Models.Project", b =>
