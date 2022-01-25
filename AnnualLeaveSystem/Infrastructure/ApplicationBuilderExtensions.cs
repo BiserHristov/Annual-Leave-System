@@ -373,7 +373,7 @@ namespace AnnualLeaveSystem.Infrastructure
                         JobTitle = "Team Lead",
                         HireDate = new DateTime(2010, 02, 20).ToUniversalTime().Date,
                         DepartmentId = 1,
-                        TeamId=1
+                        TeamId = 1
                     };
 
                     var adminEmployee = new Employee
@@ -387,7 +387,7 @@ namespace AnnualLeaveSystem.Infrastructure
                         JobTitle = "Senior Specialist",
                         HireDate = new DateTime(2010, 02, 20).ToUniversalTime().Date,
                         DepartmentId = 1,
-                        TeamId=1,
+                        TeamId = 1,
                         TeamLeadId = adminTeamLead.Id
                     };
 
@@ -419,70 +419,53 @@ namespace AnnualLeaveSystem.Infrastructure
 
             var holidays = new[]  {
             new OfficialHoliday{
-                Date= new DateTime(2021, 01, 01),
+                Date= new DateTime(2022, 01, 03),
                 Name= "New Year`s Day",
             },
             new OfficialHoliday{
-                Date= new DateTime(2021, 03, 03),
+                Date= new DateTime(2022, 03, 03),
                 Name= "Liberation Day",
             },
             new OfficialHoliday{
-                Date= new DateTime(2021, 04, 30),
+                Date= new DateTime(2022, 04, 22),
                 Name= "Good Friday",
             },
             new OfficialHoliday{
-                Date= new DateTime(2021, 05, 01),
+                Date= new DateTime(2022, 04, 25),
+                Name= "Easter",
+            },
+            new OfficialHoliday{
+                Date= new DateTime(2022, 05, 02),
                 Name= "International Workers Day",
             },
             new OfficialHoliday{
-                Date= new DateTime(2021, 05, 02),
-                Name= "Easter",
-            },
-            new OfficialHoliday{
-                Date= new DateTime(2021, 05, 03),
-                Name= "Easter",
-            },
-            new OfficialHoliday{
-                Date= new DateTime(2021, 05, 04),
-                Name= "Easter",
-            },
-            new OfficialHoliday{
-                Date= new DateTime(2021, 05, 06),
+                Date= new DateTime(2022, 05, 06),
                 Name= "St George`s Day",
             },
             new OfficialHoliday{
-                Date= new DateTime(2021, 05, 24),
+                Date= new DateTime(2022, 05, 24),
                 Name= "Sts Cyril and Methodius Day",
             },
             new OfficialHoliday{
-                Date= new DateTime(2021, 09, 06),
+                Date= new DateTime(2022, 09, 06),
                 Name= "Unification Day",
             },
             new OfficialHoliday{
-                Date= new DateTime(2021, 09, 22),
+                Date= new DateTime(2022, 09, 22),
                 Name= "Independence Day",
             },
             new OfficialHoliday{
-                Date= new DateTime(2021, 12, 24),
+                Date= new DateTime(2022, 12, 26),
                 Name= "Christmas",
             },
             new OfficialHoliday{
-                Date= new DateTime(2021, 12, 25),
+                Date= new DateTime(2022, 12, 27),
                 Name= "Christmas",
             },
             new OfficialHoliday{
-                Date= new DateTime(2021, 12, 26),
-                Name= "Christmas",
-            },
-            new OfficialHoliday{
-                Date= new DateTime(2021, 12, 27),
-                Name= "Christmas",
-            },
-            new OfficialHoliday{
-                Date= new DateTime(2021, 12, 28),
+                Date= new DateTime(2022, 12, 28),
                 Name= "Christmas",
             }};
-
 
             data.OfficialHolidays.AddRange(holidays);
 
