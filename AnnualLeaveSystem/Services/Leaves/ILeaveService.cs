@@ -67,7 +67,7 @@
 
         public IEnumerable<LeaveServiceModel> LeavesForApproval(string employeeId, bool isTeamLead);
 
-        public IEnumerable<DateValidationServiceModel> GetNotFinishedLeaves(string employeeId);
+        public IEnumerable<DateValidationServiceModel> GetActiveLeaves(string employeeId);
 
         public IEnumerable<DateValidationServiceModel> GetSubstituteApprovedLeaves(string substituteId);
     }

@@ -33,6 +33,7 @@
             public const string ExistingRequestForDateMessage = "You already have Leave Request for this date.";
             public const string AlreadySubstituteForDateMessage = "You are already substitute for this date.";
             public const string ExistingSubstituteRequestInsidePeriodMessage = "You are already substitute inside the given period.";
+            public const string NotAuthorizeMessage = "You are not authorized to perform this action.";
         }
     }
 }

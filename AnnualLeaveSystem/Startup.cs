@@ -57,8 +57,7 @@ public class Startup
             options.Filters.Add<AutoValidateAntiforgeryTokenAttribute>();
         });
 
-        services
-            .AddControllersWithViews();
+        services.AddControllersWithViews();
         services.AddTransient<ICommonInfoService, CommonInfoService>();
         services.AddTransient<ILeaveService, LeaveService>();
         services.AddTransient<ILeaveTypeService, LeaveTypeService>();

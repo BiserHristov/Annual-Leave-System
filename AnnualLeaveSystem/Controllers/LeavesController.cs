@@ -346,20 +346,6 @@
                 modelState.AddModelError(nameof(leaveModel.EndDate), EndAfterStartDateMessage);
             }
 
-            //var (isHoliday, name) = holidayService.IsHoliday(leaveModel.StartDate);
-
-            //if (isHoliday)
-            //{
-            //    modelState.AddModelError(nameof(leaveModel.StartDate), string.Format(OfficialHolidayMessage, name));
-            //}
-
-            //(isHoliday, name) = holidayService.IsHoliday(leaveModel.EndDate);
-
-            //if (isHoliday)
-            //{
-            //    modelState.AddModelError(nameof(leaveModel.EndDate), string.Format(OfficialHolidayMessage, name));
-            //}
-
             var allHolidays = holidayService.AllDates();
 
             var businessDaysCount = GetBusinessDays(leaveModel.StartDate, leaveModel.EndDate, allHolidays);
@@ -376,123 +362,72 @@
                 modelState.AddModelError(nameof(leaveModel.LeaveTypeId), IncorrectLeaveTypeMessage);
             }
 
-            //var teamId = employeeService.TeamId(requestEmployeeId);
-
-            //var employeeExist = teamService.EmployeeExistInTeam(teamId, requestEmployeeId);
             var isSameTeam = employeeService.IsSameTeam(requestEmployeeId, leaveModel.SubstituteEmployeeId);
+
+            if (!isSameTeam)
+            {
+                modelState.AddModelError(nameof(leaveModel.SubstituteEmployeeId), NotExistingEmployeeInTeamMessage);
+            }
 
             var employeeLeave = employeeLeaveTypesService.GetLeaveType(requestEmployeeId, leaveModel.LeaveTypeId);
 
             if (isInEdit)
             {
-                if (!isAdmin && !isSameTeam)
+                if (!isAdmin)
                 {
-                    modelState.AddModelError(nameof(leaveModel.SubstituteEmployeeId), NotExistingEmployeeInTeamMessage);
+                    modelState.AddModelError(nameof(leaveModel.SubstituteEmployeeId), NotAuthorizeMessage);
                 }
 
                 var previousLeaveTypeId = leaveService.GetLeaveTypeId(leaveId);
-                var previousLeaveTotalDays = leaveService.GetLeaveTotalDays(leaveId);
 
                 if (leaveModel.LeaveTypeId == previousLeaveTypeId)
                 {
+                    var previousLeaveTotalDays = leaveService.GetLeaveTotalDays(leaveId);
                     employeeLeave.PendingApprovalDays -= previousLeaveTotalDays;
-
-                    //if (employeeLeave.RemainingDays == 0 || employeeLeave.RemainingDays - (employeeLeave.PendingApprovalDays - previousLeaveTotalDays) < leaveModel.TotalDays)
-                    //{
-                    //    AddTotalDaysModelError(modelState, leaveModel);
-                    //}
                 }
-                //else
-                //{
-                if (employeeLeave.RemainingDays == 0 || employeeLeave.RemainingDays - employeeLeave.PendingApprovalDays < leaveModel.TotalDays)
-                {
-                    AddTotalDaysModelError(modelState, leaveModel);
-                }
-                // }
             }
-            else
+
+            if (employeeLeave.RemainingDays == 0 || employeeLeave.RemainingDays - employeeLeave.PendingApprovalDays < leaveModel.TotalDays)
             {
-                if (!isSameTeam)
-                {
-                    modelState.AddModelError(nameof(leaveModel.SubstituteEmployeeId), NotExistingEmployeeInTeamMessage);
-                }
-
-                if (employeeLeave.RemainingDays == 0 || employeeLeave.RemainingDays - employeeLeave.PendingApprovalDays < leaveModel.TotalDays)
-                {
-                    AddTotalDaysModelError(modelState, leaveModel);
-                }
+                AddTotalDaysModelError(modelState, leaveModel);
             }
 
-            var leaves = leaveService.GetNotFinishedLeaves(requestEmployeeId);
+            var activeLeaves = leaveService.GetActiveLeaves(requestEmployeeId);
 
-            foreach (var currentLeave in leaves)
-            {
-                bool isStartDateTaken;
-                bool isEndDateTaken;
-                bool existingDateInPeriod;
-                if (isInEdit)
-                {
-                    isStartDateTaken = IsInRange(leaveModel.StartDate, currentLeave.StartDate, currentLeave.EndDate) && currentLeave.Id != leaveId;
-                    isEndDateTaken = IsInRange(leaveModel.EndDate, currentLeave.StartDate, currentLeave.EndDate) && currentLeave.Id != leaveId;
-
-                    existingDateInPeriod = (IsInRange(currentLeave.StartDate, leaveModel.StartDate, leaveModel.EndDate) ||
-                                       IsInRange(currentLeave.EndDate, leaveModel.StartDate, leaveModel.EndDate)) && currentLeave.Id != leaveId;
-                }
-                else
-                {
-                    isStartDateTaken = IsInRange(leaveModel.StartDate, currentLeave.StartDate, currentLeave.EndDate);
-                    isEndDateTaken = IsInRange(leaveModel.EndDate, currentLeave.StartDate, currentLeave.EndDate);
-
-                    existingDateInPeriod = IsInRange(currentLeave.StartDate, leaveModel.StartDate, leaveModel.EndDate) ||
-                                       IsInRange(currentLeave.EndDate, leaveModel.StartDate, leaveModel.EndDate);
-                }
-
-                if (existingDateInPeriod)
-                {
-                    modelState.AddModelError(nameof(leaveModel.StartDate), ExistingRequestInsidePeriodMessage);
-                    modelState.AddModelError(nameof(leaveModel.EndDate), ExistingRequestInsidePeriodMessage);
-                }
-
-                if (isStartDateTaken)
-                {
-                    modelState.AddModelError(nameof(leaveModel.StartDate), ExistingRequestForDateMessage);
-                }
-
-                if (isEndDateTaken)
-                {
-                    modelState.AddModelError(nameof(leaveModel.EndDate), ExistingRequestForDateMessage);
-                }
-
-                if (isStartDateTaken || isEndDateTaken || existingDateInPeriod)
-                {
-                    break;
-                }
-            }
+            ValidateMatchingLeaves(modelState, leaveModel.StartDate, leaveModel.EndDate, activeLeaves, false);
 
             var substituteLeaves = leaveService.GetSubstituteApprovedLeaves(requestEmployeeId);
 
-            foreach (var currentLeave in substituteLeaves)
-            {
+            ValidateMatchingLeaves(modelState, leaveModel.StartDate, leaveModel.EndDate, substituteLeaves, true);
 
-                var isStartDateTaken = IsInRange(leaveModel.StartDate, currentLeave.StartDate, currentLeave.EndDate);
-                var isEndDateTaken = IsInRange(leaveModel.EndDate, currentLeave.StartDate, currentLeave.EndDate);
-                var existingDateInPeriod = IsInRange(currentLeave.StartDate, leaveModel.StartDate, leaveModel.EndDate) ||
-                                      IsInRange(currentLeave.EndDate, leaveModel.StartDate, leaveModel.EndDate);
+        }
+
+        private static void ValidateMatchingLeaves(ModelStateDictionary modelState, DateTime startDate, DateTime endDate, IEnumerable<DateValidationServiceModel> leaves, bool isSubstituteLeaves)
+        {
+            string dateTakenMessage = isSubstituteLeaves ? AlreadySubstituteForDateMessage : ExistingRequestForDateMessage;
+            string existingDateInPeriodMessage = isSubstituteLeaves ? ExistingSubstituteRequestInsidePeriodMessage : ExistingRequestInsidePeriodMessage;
+
+            foreach (var currentLeave in leaves)
+            {
+                var isStartDateTaken = IsInRange(startDate, currentLeave.StartDate, currentLeave.EndDate);
+                var isEndDateTaken = IsInRange(endDate, currentLeave.StartDate, currentLeave.EndDate);
+                var existingDateInPeriod = IsInRange(currentLeave.StartDate, startDate, endDate) ||
+                                      IsInRange(currentLeave.EndDate, startDate, endDate);
                 if (isStartDateTaken)
                 {
-                    modelState.AddModelError(nameof(leaveModel.StartDate), AlreadySubstituteForDateMessage);
+                    modelState.AddModelError(nameof(startDate), dateTakenMessage);
                 }
 
                 if (isEndDateTaken)
                 {
-                    modelState.AddModelError(nameof(leaveModel.EndDate), AlreadySubstituteForDateMessage);
+                    modelState.AddModelError(nameof(endDate), dateTakenMessage);
                 }
 
 
                 if (existingDateInPeriod)
                 {
-                    modelState.AddModelError(nameof(leaveModel.StartDate), ExistingSubstituteRequestInsidePeriodMessage);
-                    modelState.AddModelError(nameof(leaveModel.EndDate), ExistingSubstituteRequestInsidePeriodMessage);
+                    modelState.AddModelError(nameof(startDate), existingDateInPeriodMessage);
+                    modelState.AddModelError(nameof(endDate), existingDateInPeriodMessage);
                 }
 
                 if (isStartDateTaken || isEndDateTaken || existingDateInPeriod)

@@ -210,7 +210,7 @@
         public void Reject(string leaveId)
             => this.ChangeStatus(leaveId, Status.Rejected);
 
-        public IEnumerable<DateValidationServiceModel> GetNotFinishedLeaves(string employeeId)
+        public IEnumerable<DateValidationServiceModel> GetActiveLeaves(string employeeId)
             => this.db.Leaves
                 .Where(l => l.RequestEmployeeId == employeeId &&
                             (l.LeaveStatus == Status.Pending || l.LeaveStatus == Status.Approved) &&
